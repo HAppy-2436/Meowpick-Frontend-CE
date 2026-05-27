@@ -1,5 +1,5 @@
 <template>
-  <view class="home-view-container">
+  <view class="home-view-container" :class="themeStore.themeClass">
     <!-- 顶部欢迎语区域 -->
     <view class="header-welcome">
       <view class="welcome-Line">
@@ -59,7 +59,7 @@
     </view>
 
     <!-- 首次使用引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" @click="hideGuide">
+    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
       <view class="guide-content" @click.stop>
         <view class="guide-header">
           <text class="guide-title">欢迎使用选课猫 🎉</text>
@@ -101,6 +101,9 @@ import { ref, onMounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http } from '@/config';
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 // 状态定义
 const totalComment = ref(0);
