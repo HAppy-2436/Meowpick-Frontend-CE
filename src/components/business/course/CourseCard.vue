@@ -316,7 +316,7 @@ const handleLike = async () => {
         .tag-item {
           display: flex;
           align-items: center;
-          background: var(--bg-card)cfc; /* Consistent with light theme */
+          background: var(--bg-card); /* Consistent with light theme */
           border: 1px solid #ffebeb;
           padding: 4rpx 12rpx;
           border-radius: 12rpx;
