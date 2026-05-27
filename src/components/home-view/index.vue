@@ -531,7 +531,7 @@ $text-main: var(--text-main);
   .section-icon {
     width: 80rpx;
     height: 80rpx;
-    background-color: var(--bg-card)5f7;
+    background-color: #fff5f7;
     border-radius: 20rpx;
     display: flex;
     align-items: center;
