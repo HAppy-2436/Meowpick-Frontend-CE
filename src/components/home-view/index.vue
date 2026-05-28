@@ -568,6 +568,17 @@ $text-main: #2c2c2c;
   }
 }
 
+.dark-theme {
+  .guide-section {
+    .section-icon {
+      background-color: rgba(178, 0, 53, 0.15);
+    }
+    .section-desc {
+      color: #666;
+    }
+  }
+}
+
 .guide-footer {
   .start-btn {
     width: 100%;
