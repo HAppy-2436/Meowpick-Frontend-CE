@@ -991,7 +991,7 @@ $brand-red: #b20035;
         .recommend-tag {
             font-size: 22rpx;
             color: var(--text-muted);
-            background-color: var(--bg-page);
+            background-color: #f5f5f5;
             padding: 4rpx 12rpx;
             border-radius: 8rpx;
         }
@@ -1032,7 +1032,7 @@ $brand-red: #b20035;
         }
         
         .item-arrow {
-            color: var(--border-color);
+            color: #ccc;
             font-size: 28rpx;
         }
     }
@@ -1048,7 +1048,7 @@ $brand-red: #b20035;
     }
 }
 
-.placeholder-style { color: var(--text-muted); }
+.placeholder-style { color: #bbb; }
 
 /* Result Section Layout */
 .result-section {
@@ -1158,7 +1158,7 @@ $brand-red: #b20035;
             top: auto;
             bottom: 24rpx;
             right: 24rpx;
-            background-color: var(--bg-page);
+            background-color: #f5f5f5;
             color: var(--text-muted);
         }
     }
@@ -1309,7 +1309,7 @@ $brand-red: #b20035;
     justify-content: space-between;
     gap: 24rpx; /* Use gap property */
     padding: 24rpx 32rpx 40rpx; /* More bottom padding for aesthetics */
-    border-top: 1rpx solid var(--border-color);
+    border-top: 1rpx solid #f5f5f5;
     background-color: var(--bg-card);
     
     .btn-common {

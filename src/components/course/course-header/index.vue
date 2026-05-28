@@ -194,7 +194,7 @@ const teacherNames = computed(() => {
 .tags-section {
     margin-top: 40rpx;
     padding-top: 24rpx;
-    border-top: 2rpx dashed var(--border-color-dashed);
+    border-top: 2rpx dashed #f0f0f0;
     
     .desc-text {
         font-size: 26rpx;

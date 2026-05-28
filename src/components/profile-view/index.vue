@@ -821,7 +821,7 @@ const hideGuide = () => {
   background-color: var(--bg-card);
   border-radius: 32rpx;
   padding: 48rpx 40rpx;
-  box-shadow: 0 20rpx 60rpx var(--shadow-color);
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
 }
 
 .guide-header {

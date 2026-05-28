@@ -112,7 +112,7 @@ const handleSelect = (option: string) => {
 .search-input {
   width: 100%;
   height: 10vw;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e5e5e5;
   border-radius: 2vw;
   padding: 0 10vw 0 3vw;
   box-sizing: border-box;
@@ -140,7 +140,7 @@ const handleSelect = (option: string) => {
   left: 0;
   width: 100%;
   background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: 1px solid #e5e5e5;
   border-radius: 2vw;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -156,7 +156,7 @@ const handleSelect = (option: string) => {
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: var(--bg-page);
+    background-color: #f5f5f5;
   }
 }
 </style>
