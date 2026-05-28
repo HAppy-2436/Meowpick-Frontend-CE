@@ -305,7 +305,7 @@ $text-main: #2c2c2c;
     .search-placeholder {
       flex: 1;
       font-size: 32rpx;
-      color: var(--text-muted);
+      color: #bbbbbb;
       letter-spacing: 1rpx;
       font-weight: 400;
     }

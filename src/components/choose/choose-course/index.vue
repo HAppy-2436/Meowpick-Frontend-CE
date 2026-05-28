@@ -349,7 +349,7 @@ const handleLike = async () => {
           display: flex;
           align-items: center;
           background: var(--bg-card);
-          border: 1px solid var(--border-color);
+          border: 1px solid #eee;
           padding: 6rpx 16rpx;
           border-radius: 30rpx;
           margin-right: 16rpx;

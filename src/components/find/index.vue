@@ -796,7 +796,7 @@ $brand-red: #b20035;
     transition: 'all 0.12s ease';
     
     &.is-collapsed {
-        background-color: var(--bg-blur);
+        background-color: rgba(247, 248, 250, 0.98);
         box-shadow: 0 1rpx 0 rgba(0,0,0,0.05);
     }
 }
@@ -830,7 +830,7 @@ $brand-red: #b20035;
         display: flex;
         align-items: center;
         padding: 0 20rpx;
-        border: 1rpx solid var(--border-color);
+        border: 1rpx solid #eee;
         transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
         box-shadow: 0 2rpx 8rpx var(--shadow-color-sm); 
         
@@ -851,7 +851,7 @@ $brand-red: #b20035;
         .clear-icon {
             width: 36rpx;
             height: 36rpx;
-            background-color: var(--border-color);
+            background-color: #eee;
             border-radius: 50%;
             display: flex;
             justify-content: center;

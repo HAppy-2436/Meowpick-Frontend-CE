@@ -127,7 +127,7 @@ function onSwiperAnimationFinish(e: any) {
   flex-direction: column;
   height: 100vh;
   // 背景色稍微加深一点点，让白色组件反差更好看
-  background-color: var(--bg-page);
+  background-color: #f2f3f5;
 }
 
 .content-swiper {
@@ -146,22 +146,22 @@ function onSwiperAnimationFinish(e: any) {
 
 .bottom-tab-bar {
   position: absolute;
-  bottom: 0; 
+  bottom: 0;
   left: 0;
-  width: 100%; 
-  
+  width: 100%;
+
   height: auto; // 由内容撑开，不再固定死高度，避免布局冲突
   min-height: 100rpx;
-  
-  background-color: var(--bg-card); 
-  border-top-left-radius: 40rpx; 
+
+  background-color: rgba(255, 255, 255, 0.98);
+  border-top-left-radius: 40rpx;
   border-top-right-radius: 40rpx;
-  
+
   // 底部安全区适配：只作为 padding 存在，不参与定位计算
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
-  
-  box-shadow: 0 -10rpx 40rpx var(--shadow-color);
+
+  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.04);
 
   display: flex;
   flex-direction: column; 
@@ -182,13 +182,13 @@ function onSwiperAnimationFinish(e: any) {
 
   .tab-item {
     flex: 1;
-    padding-top: 0; 
+    padding-top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    font-size: 34rpx; 
-    color: var(--text-muted); 
+    font-size: 34rpx;
+    color: #9ea1a6;
     font-weight: 500;
     transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
     
