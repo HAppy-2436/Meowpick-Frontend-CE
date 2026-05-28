@@ -529,7 +529,7 @@ const hideGuide = () => {
             background: var(--brand-gradient);
             color: #fff;
             font-weight: 600;
-            box-shadow: 0 6rpx 16rpx var(--brand-shadow);
+            box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3);
         }
     }
 }
@@ -718,7 +718,7 @@ const hideGuide = () => {
     height: 110rpx;
     background: var(--brand-gradient);
     border-radius: 50%;
-    box-shadow: 0 8rpx 30rpx var(--brand-shadow);
+    box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
