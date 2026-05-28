@@ -559,7 +559,7 @@ $text-main: #2c2c2c;
 
   .section-desc {
     font-size: 24rpx;
-    color: var(--text-muted);
+    color: #888;
     line-height: 1.5;
   }
 }

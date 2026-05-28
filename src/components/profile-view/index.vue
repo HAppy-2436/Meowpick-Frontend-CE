@@ -859,7 +859,7 @@ const hideGuide = () => {
   .section-icon {
     width: 80rpx;
     height: 80rpx;
-    background-color: var(--bg-sub);
+    background-color: #fff5f7;
     border-radius: 20rpx;
     display: flex;
     align-items: center;
@@ -884,7 +884,7 @@ const hideGuide = () => {
 
   .section-desc {
     font-size: 24rpx;
-    color: var(--text-muted);
+    color: #888;
     line-height: 1.5;
   }
 }
