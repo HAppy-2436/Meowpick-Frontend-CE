@@ -10,7 +10,8 @@ let bottomHeight = computed(() =>
   ].includes(useRouteStore().url.trim())
 );
 const props = defineProps({
-  color: { type: String, default: "#fff" }
+  color: { type: String, default: "#fff" },
+  class: { type: String, default: "" }
 });
 const emits = defineEmits("onBottom");
 
@@ -21,6 +22,7 @@ function bottom() {
 <template>
   <div
     class="root"
+    :class="$props.class"
     :style="{
       background: `${color}`,
       height: `calc(100vh - env(safe-area-inset-bottom) - ${
