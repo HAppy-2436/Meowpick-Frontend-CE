@@ -188,7 +188,7 @@ const handleLike = async () => {
                display: flex;
                align-items: center;
                font-size: 26rpx;
-               color: var(--text-sub);
+               color: #555;
                margin-right: 40rpx;
                font-weight: 500;
 
