@@ -493,10 +493,14 @@ $text-main: #2c2c2c;
 .guide-content {
   width: 100%;
   max-width: 600rpx;
-  background-color: var(--bg-card);
+  background-color: #ffffff;
   border-radius: 32rpx;
   padding: 48rpx 40rpx;
   box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .guide-content {
+  background-color: #1e1e1e;
 }
 
 .guide-header {
