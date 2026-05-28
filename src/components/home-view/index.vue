@@ -176,7 +176,7 @@ const goToUpdate = () => {
 $brand-red: #c8102e; // 更加通透的亮红色
 $brand-light-bg: #fff1f1; // 极淡的粉红背景
 $card-bg: var(--bg-card);
-$text-main: var(--text-main);
+$text-main: #2c2c2c;
 
 .home-view-container {
   min-height: 100vh; 

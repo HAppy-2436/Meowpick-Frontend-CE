@@ -436,7 +436,7 @@ const hideGuide = () => {
     .page-title {
         font-size: 56rpx; /* Big Title */
         font-weight: 800; /* Extra Bold */
-        color: var(--text-title);
+        color: #1f1f1f;
         margin-right: 20rpx;
         line-height: 1;
         letter-spacing: -2rpx; /* Tighter tracking for modern look */
@@ -610,7 +610,7 @@ const hideGuide = () => {
              display: flex;
              align-items: center;
              font-size: 26rpx;
-             color: var(--text-sub);
+             color: #555;
              margin-right: 40rpx; 
              font-weight: 500;
 

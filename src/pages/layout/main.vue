@@ -214,16 +214,16 @@ function onSwiperAnimationFinish(e: any) {
     top: 86rpx; 
     bottom: auto; 
     
-    width: 48rpx; 
-    height: 8rpx; 
-    background: var(--brand-gradient); 
+    width: 48rpx;
+    height: 8rpx;
+    background: linear-gradient(90deg, #b70030, #ff4d6a);
     border-radius: 10rpx;
-    
-    transform: translateX(-50%); 
-    transition: left 0.1s linear; 
+
+    transform: translateX(-50%);
+    transition: left 0.1s linear;
     z-index: 3;
-    
-    box-shadow: 0 4rpx 12rpx var(--brand-shadow); 
+
+    box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.4); 
   }
 }
 </style>

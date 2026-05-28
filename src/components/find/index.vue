@@ -872,7 +872,7 @@ $brand-red: #b20035;
 .search-guide-banner {
     margin: 0 32rpx 30rpx 32rpx;
     padding: 20rpx 32rpx;
-    background-color: var(--bg-card);
+    background-color: #fffbe6;
     color: #d48806;
     display: flex;
     align-items: center;
@@ -922,7 +922,7 @@ $brand-red: #b20035;
         background-color: var(--bg-card);
         border-radius: 30rpx;
         font-size: 26rpx;
-        color: var(--text-sub);
+        color: #555;
         border: 1rpx solid transparent;
         transition: all 0.1s;
         
@@ -1038,7 +1038,7 @@ $brand-red: #b20035;
     }
 
     .suggest-item-input {
-        background-color: var(--bg-card);
+        background-color: #fff5f5;
     }
 
     .item-input-label {
@@ -1455,7 +1455,7 @@ $brand-red: #b20035;
 .search-guide-banner {
     margin: 0 32rpx 30rpx 32rpx;
     padding: 20rpx 32rpx;
-    background-color: var(--bg-card);
+    background-color: #fffbe6;
     color: #d48806;
     display: flex;
     align-items: center;
