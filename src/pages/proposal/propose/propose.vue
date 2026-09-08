@@ -1,76 +1,113 @@
 <template>
   <view class="container" :class="themeStore.themeClass">
-    <!-- Header -->
-    <view class="nav-bar" :style="navBarStyle">
-      <view class="nav-content" :style="navContentStyle">
-        <!-- Left aligned Back Button -->
-        <view class="nav-left" :style="navLeftStyle">
-            <BackBtn />
-        </view>
-        <!-- Title following Back Button with specific gap -->
-        <view class="nav-title-container">
-            <text class="nav-title">新增提议</text>
-        </view>
-      </view>
-    </view>
-    
-    <!-- Content Spacer -->
-    <view :style="contentSpacerStyle"></view>
+    <TopNavBar
+      :title="isApproveMode ? '最终确认提案' : (editProposalId ? '重新编辑提案' : '新增提议')"
+      :subtitle="quotaSubtitle"
+      @back="goBack"
+    />
 
-    <!-- Main Content -->
+    <view :style="{ height: navBarHeight + 'px' }"></view>
+
+    <view v-if="quotaInfo && !isApproveMode && !editProposalId" class="quota-banner">
+      <text class="quota-text">
+        今日剩余可提交 {{ quotaInfo.remaining }}/{{ quotaInfo.limit }} 个提案
+      </text>
+    </view>
+
     <view class="form-body">
-      
-      <!-- Section 1: Basic Course Info -->
+
+      <!-- 管理员审批模式提示 -->
+      <view v-if="isApproveMode" class="mode-banner mwp-fade-down">
+        <text class="mode-banner__icon">⚙️</text>
+        <text class="mode-banner__text">
+          管理员审批模式：可修改课程信息作为最终发布版本
+        </text>
+      </view>
+
+      <view v-else-if="editProposalId" class="mode-banner mode-banner--edit mwp-fade-down">
+        <text class="mode-banner__icon">📝</text>
+        <text class="mode-banner__text">
+          重新编辑模式：原提案状态保留，新提交将作为新提案
+        </text>
+      </view>
+
+      <!-- Section 1: 基本信息 -->
       <view class="card">
          <view class="card-title">基本信息</view>
-         
-         <view class="form-row">
+
+         <view class="form-row" @click="openSearchModal('courseName')">
             <view class="label">课程名称</view>
-            <input class="input" v-model="formData.courseName" placeholder="请输入课程名称" />
+            <view class="input-display">
+              <text class="input-display__text" :class="{ 'is-empty': !formData.courseName }">
+                {{ formData.courseName || '请输入课程名称' }}
+              </text>
+              <text class="arrow">›</text>
+            </view>
          </view>
-         
-         <view class="form-row">
+
+         <view class="form-row" @click="openSearchModal('courseCode')">
             <view class="label">课程代码</view>
-            <input class="input" v-model="formData.courseCode" placeholder="请输入课程代码 (选填)" />
+            <view class="input-display">
+              <text class="input-display__text" :class="{ 'is-empty': !formData.courseCode }">
+                {{ formData.courseCode || '请输入课程代码 (选填)' }}
+              </text>
+              <text class="arrow">›</text>
+            </view>
          </view>
 
-         <view class="form-row">
+         <view class="form-row" @click="openSearchModal('department')">
             <view class="label">开课院系</view>
-             <picker mode="selector" :range="departmentOptions" @change="onDepartmentChange">
-                <view class="picker-display" :class="{ empty: !formData.department }">
-                    {{ formData.department || '请选择院系' }}
-                    <text class="arrow">></text>
-                </view>
-             </picker>
+            <view class="input-display">
+              <text class="input-display__text" :class="{ 'is-empty': !formData.department }">
+                {{ formData.department || '请选择开课院系' }}
+              </text>
+              <text class="arrow">›</text>
+            </view>
          </view>
 
-         <view class="form-row">
+         <view class="form-row" @click="openSearchModal('category')">
             <view class="label">课程类别</view>
-             <picker mode="selector" :range="categoryOptions" @change="onCategoryChange">
-                <view class="picker-display" :class="{ empty: !formData.category }">
-                    {{ formData.category || '请选择类别' }}
-                    <text class="arrow">></text>
-                </view>
-             </picker>
+            <view class="input-display">
+              <text class="input-display__text" :class="{ 'is-empty': !formData.category }">
+                {{ formData.category || '请选择课程类别' }}
+              </text>
+              <text class="arrow">›</text>
+            </view>
          </view>
       </view>
 
-
-      <!-- Section 2: Teaching Info -->
+      <!-- Section 2: 教学信息 -->
       <view class="card">
          <view class="card-title">教学信息</view>
 
-         <view class="form-row">
+         <view class="form-row" @click="openTeacherListModal">
             <view class="label">授课教师</view>
-            <input class="input" v-model="formData.teacher" placeholder="多位教师请用逗号分隔" />
+            <view class="input-display">
+              <text class="input-display__text" :class="{ 'is-empty': !formData.teachers.length }">
+                {{ formData.teachers.length ? `${formData.teachers.length} 位教师` : '请添加授课教师' }}
+              </text>
+              <text class="arrow">›</text>
+            </view>
+         </view>
+
+         <view v-if="formData.teachers.length" class="teacher-summary">
+           <view
+             v-for="(t, idx) in formData.teachers"
+             :key="idx"
+             class="teacher-summary__chip mwp-stagger-item"
+             :style="{ animationDelay: `${Math.min(idx * 60, 240)}ms` }"
+           >
+             <text>{{ t.name }}</text>
+             <text v-if="t.title" class="teacher-summary__title">· {{ t.title }}</text>
+           </view>
          </view>
 
          <view class="form-col">
             <view class="label" style="margin-bottom: 20rpx;">开课校区 (多选)</view>
             <view class="tags-group">
-                <view 
-                    class="tag-item" 
-                    v-for="campus in campusOptions" 
+                <view
+                    class="tag-item mwp-pressable"
+                    v-for="campus in campusOptions"
                     :key="campus"
                     :class="{ active: formData.campuses.includes(campus) }"
                     @click="toggleCampus(campus)"
@@ -81,390 +118,357 @@
          </view>
       </view>
 
-      <!-- Section 3: Reason -->
+      <!-- Section 3: 提议理由 -->
       <view class="card">
          <view class="card-title">提议理由</view>
-         <textarea 
-            class="reason-area" 
-            v-model="formData.reason" 
-            placeholder="请详细描述新增该课程的理由，例如：这是一门新开的通识课..." 
+          <textarea
+            class="reason-area"
+            v-model="formData.reason"
+            placeholder="请详细描述新增该课程的理由"
+            placeholder-class="mwp-placeholder"
             maxlength="300"
-         />
+          />
          <view class="word-count">{{ formData.reason.length }}/300</view>
       </view>
 
-      <!-- Submit Button -->
-      <button class="submit-btn" @click="submit" :disabled="submitting">发布提议</button>
+      <!-- Section 4: 展示昵称 (管理员模式与编辑模式不显示) -->
+      <view v-if="!isApproveMode && !editProposalId" class="card">
+         <view class="card-title">展示设置</view>
+         <view class="form-row">
+            <view class="label">展示昵称</view>
+            <view class="show-username-options">
+                <view
+                  class="tag-item mwp-pressable"
+                  :class="{ active: formData.showUsername === true }"
+                  @click="formData.showUsername = true"
+                >展示</view>
+                <view
+                  class="tag-item mwp-pressable"
+                  :class="{ active: formData.showUsername === false }"
+                  @click="formData.showUsername = false"
+                >不展示</view>
+            </view>
+         </view>
+         <text class="field-hint">通过后展示你的昵称；选择"否"将匿名</text>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button class="submit-btn" @click="submit" :disabled="submitting || (quotaInfo?.remaining ?? 1) <= 0">
+        {{ submitting ? '提交中...' : (isApproveMode ? '通过提案' : (editProposalId ? '重新提交' : '发布提议')) }}
+      </button>
       <view class="safe-area-bottom"></view>
 
     </view>
+
+    <!-- 字段搜索弹窗 -->
+    <SearchModal
+      v-model:visible="showSearchModal"
+      :title="modalTitle"
+      :placeholder="searchPlaceholder"
+      :field="currentField"
+      :allow-add="true"
+      @select="handleSearchSelect"
+    />
+
+    <!-- 教师列表弹窗 -->
+    <TeacherListModal
+      v-model:visible="showTeacherListModal"
+      :teachers="formData.teachers"
+      @add="showAddTeacherModal = true"
+      @remove="handleRemoveTeacher"
+    />
+
+    <!-- 添加教师表单弹窗 -->
+    <AddTeacherModal
+      v-model:visible="showAddTeacherModal"
+      @confirm="handleConfirmAddTeacher"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, ref } from 'vue';
-import BackBtn from "@/components/common/BackBtn.vue";
-import { http, useThemeStore } from "@/config";
+import { reactive, ref, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import TopNavBar from '@/components/common/TopNavBar.vue';
+import SearchModal from '@/components/common/SearchModal.vue';
+import TeacherListModal from '@/components/common/TeacherListModal.vue';
+import AddTeacherModal, { type TeacherDraft } from '@/components/common/AddTeacherModal.vue';
+import { http, useThemeStore } from '@/config';
+import { useMenuButton } from '@/composables/useMenuButton';
+import { TOAST_DURATION_MS } from '@/utils/constants';
+import type { DtoProposalTeacherVO, DtoProposalCourseVO, FieldSuggestionVO } from '@/api/data-contracts';
+
 const themeStore = useThemeStore();
-import { TOAST_DURATION_MS } from "@/utils/constants";
+const { navBarHeight } = useMenuButton();
 
-// System Info
-const sysInfo = uni.getSystemInfoSync();
-// 默认胶囊信息
-let menuButtonInfo = { 
-    width: 87, 
-    height: 32, 
-    left: sysInfo.windowWidth - 87 - 10, 
-    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48, 
-    bottom: (sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48) + 32, 
-    right: sysInfo.windowWidth - 10 
-};
-try {
-    const res = uni.getMenuButtonBoundingClientRect();
-    if (res && res.width) {
-        menuButtonInfo = {
-            width: res.width,
-            height: res.height,
-            left: res.left,
-            top: res.top,
-            bottom: res.bottom,
-            right: res.right
-        };
-    }
-} catch (e) {}
-
-const NAV_BAR_HEIGHT = menuButtonInfo.bottom + 12;
-
-const navBarStyle = computed(() => {
-    return {
-        height: (menuButtonInfo.bottom + 12) + 'px',
-        paddingTop: menuButtonInfo.top + 'px',
-        paddingLeft: '32rpx',
-        paddingRight: '32rpx',
-        boxSizing: 'border-box'
-    };
-});
-
-const navContentStyle = computed(() => {
-    return {
-        height: menuButtonInfo.height + 'px',
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%'
-    };
-});
-
-const navLeftStyle = computed(() => {
-    return {
-        height: menuButtonInfo.height + 'px',
-        width: menuButtonInfo.height + 'px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    };
-});
-
-const navMiddleStyle = computed(() => {
-    return {
-        height: menuButtonInfo.height + 'px',
-        display: 'flex', 
-        alignItems: 'center',
-    };
-});
-
-const contentSpacerStyle = computed(() => {
-    return {
-        height: (menuButtonInfo.bottom + 12) + 'px'
-    };
-});
-
-// Data
-const submitting = ref(false);
-
+interface TeacherEntry { name: string; title: string; department?: string; teacherId?: string }
 const formData = reactive({
-    courseName: '',
-    courseCode: '',
-    department: '',
-    category: '',
-    teacher: '',
-    teachers: [] as string[],
-    campuses: [] as string[],
-    reason: ''
+  courseName: '',
+  courseCode: '',
+  department: '',
+  category: '',
+  teachers: [] as TeacherEntry[],
+  campuses: [] as string[],
+  reason: '',
+  showUsername: null as boolean | null,
 });
 
-// Options
-const campusOptions = ['普陀校区', '闵行校区', '临港校区'];
-const departmentOptions = [
-  '心理与认知科学学院', '社会发展学院', '化学与分子工程学院', '空间人工智能学院',
-  '数据科学与工程学院', '美术学院', '软件工程学院', '教育学部', '国际教育中心',
-  '外语学院', '英语系', '日语系', '大学英语教学部', '法语系', '中文系', '德语系',
-  '历史学系', '哲学系', '法学院', '马克思主义学院', '经管学院', '商学院', '体育与健康学院',
-  '数学科学学院', '物理学院', '政治与国际关系学院', '公共管理学院', '统计学院',
-  '生态与环境科学学院', '地理科学学院', '生命科学学院', '音乐学院', '计算机学院',
-  '传播学院', '设计学院', '其他'
-];
+const submitting = ref(false);
+const showSearchModal = ref(false);
+const showTeacherListModal = ref(false);
+const showAddTeacherModal = ref(false);
+const currentField = ref<'courseName' | 'courseCode' | 'department' | 'category' | 'campus' | 'teacherName'>('courseName');
 
-const categoryOptions = ['必修课', '选修课', '通识课', '体育课', '其他'];
+// 管理员模式：approveProposalId  /  重新编辑：editProposalId
+const isApproveMode = ref(false);
+const approveProposalId = ref('');
+const editProposalId = ref('');
 
-// Logic
-const onDepartmentChange = (e: any) => {
-    formData.department = departmentOptions[e.detail.value];
+const campusOptions = ['普陀校区', '闵行校区', '滴水湖校区'];
+
+interface QuotaInfo { remaining: number; limit: number }
+const quotaInfo = ref<QuotaInfo | null>(null);
+const quotaSubtitle = computed(() => {
+  if (quotaInfo.value) {
+    return `今日剩余 ${quotaInfo.value.remaining}/${quotaInfo.value.limit}`;
+  }
+  return '加载中...';
+});
+
+const loadQuota = async () => {
+  try {
+    const res: any = await http.UserController.userProfileList();
+    const data = res.data?.data;
+    if (data) {
+      quotaInfo.value = {
+        remaining: data.dailyQuota ?? 0,
+        limit: data.dailyQuotaLimit ?? 0,
+      };
+    }
+  } catch (e) {
+    console.warn('[propose] loadQuota failed:', e);
+  }
 };
 
-const onCategoryChange = (e: any) => {
-    formData.category = categoryOptions[e.detail.value];
+const fillFormFromProposal = (proposal: any) => {
+  const course = proposal.course || {};
+  formData.courseName = course.name || proposal.title || '';
+  formData.courseCode = course.code || '';
+  formData.department = course.department || '';
+  formData.category = course.category || '';
+  formData.teachers = (course.teachers || []).map((t: any) => ({
+    name: typeof t === 'string' ? t : (t.name || ''),
+    title: typeof t === 'string' ? '' : (t.title || ''),
+    department: typeof t === 'string' ? '' : (t.department || ''),
+    teacherId: typeof t === 'string' ? '' : (t.teacherId || ''),
+  }));
+  formData.campuses = Array.isArray(course.campuses) ? [...course.campuses] : [];
+  formData.reason = proposal.content || '';
+};
+
+const fetchProposalForForm = async (id: string) => {
+  const res: any = await http.ProposalController.proposalDetail(id, id);
+  const data = res.data?.data;
+  const proposal = data?.proposal || data?.data?.proposal;
+  if (proposal) {
+    fillFormFromProposal(proposal);
+  } else {
+    uni.showToast({ title: '获取提案信息失败', icon: 'none' });
+  }
+};
+
+// SearchModal 相关
+const modalTitle = computed(() => {
+  const titles: Record<string, string> = {
+    courseName: '选择课程名称',
+    courseCode: '输入课程代码',
+    department: '选择开课院系',
+    category: '选择课程类别',
+    campus: '选择开课校区',
+    teacherName: '选择教师',
+  };
+  return titles[currentField.value] || '搜索';
+});
+
+const searchPlaceholder = computed(() => {
+  const placeholders: Record<string, string> = {
+    courseName: '输入或搜索课程名称',
+    courseCode: '输入课程代码',
+    department: '输入或搜索开课院系',
+    category: '输入或选择课程类别',
+    campus: '输入或选择开课校区',
+    teacherName: '输入或搜索教师姓名',
+  };
+  return placeholders[currentField.value] || '请输入关键词';
+});
+
+const openSearchModal = (field: typeof currentField.value) => {
+  currentField.value = field;
+  showSearchModal.value = true;
+};
+
+const handleSearchSelect = (item: FieldSuggestionVO) => {
+  const value = item.value || item.label || '';
+  switch (currentField.value) {
+    case 'courseName':
+      formData.courseName = value;
+      break;
+    case 'courseCode':
+      formData.courseCode = value;
+      break;
+    case 'department':
+      formData.department = value;
+      break;
+    case 'category':
+      formData.category = value;
+      break;
+    case 'campus':
+      if (!formData.campuses.includes(value)) formData.campuses.push(value);
+      break;
+  }
+};
+
+const openTeacherListModal = () => {
+  showTeacherListModal.value = true;
+};
+
+const handleRemoveTeacher = (idx: number) => {
+  formData.teachers.splice(idx, 1);
+};
+
+const handleConfirmAddTeacher = (teacher: TeacherDraft) => {
+  formData.teachers.push({
+    name: teacher.name,
+    title: teacher.title || '',
+    department: teacher.department || '',
+    teacherId: teacher.teacherId || '',
+  });
 };
 
 const toggleCampus = (campus: string) => {
-    const idx = formData.campuses.indexOf(campus);
-    if (idx > -1) {
-        formData.campuses.splice(idx, 1);
-    } else {
-        formData.campuses.push(campus);
-    }
+  const idx = formData.campuses.indexOf(campus);
+  if (idx > -1) formData.campuses.splice(idx, 1);
+  else formData.campuses.push(campus);
+};
+
+const validate = (): string | null => {
+  if (!formData.courseName.trim()) return '请输入课程名称';
+  if (!formData.department) return '请选择开课院系';
+  if (!formData.category) return '请选择课程类别';
+  if (!formData.campuses.length) return '请选择开课校区';
+  const validTeachers = formData.teachers.filter((t) => t.name.trim());
+  if (!validTeachers.length) return '请填写至少一位授课教师';
+  if (!isApproveMode.value && !editProposalId.value && formData.showUsername === null) {
+    return '请选择是否展示昵称';
+  }
+  return null;
 };
 
 const submit = async () => {
-    if (!formData.courseName.trim()) return uni.showToast({ title: '请输入课程名称', icon: 'none' });
-    if (!formData.department) return uni.showToast({ title: '请选择开课院系', icon: 'none' });
-    if (!formData.reason.trim()) return uni.showToast({ title: '请填写提议理由', icon: 'none' });
+  const errMsg = validate();
+  if (errMsg) {
+    uni.showToast({ title: errMsg, icon: 'none' });
+    return;
+  }
+  if (!isApproveMode.value && quotaInfo.value && quotaInfo.value.remaining <= 0) {
+    uni.showToast({ title: `今日提交已达上限(${quotaInfo.value.limit})`, icon: 'none' });
+    return;
+  }
 
-    submitting.value = true;
+  submitting.value = true;
 
-    // 构建请求数据
-    const reqData = {
-      title: formData.courseName,
-      content: formData.reason,
-      course: {
-        name: formData.courseName,
-        code: formData.courseCode || undefined,
+  const teachers: DtoProposalTeacherVO[] = formData.teachers
+    .filter((t) => t.name.trim())
+    .map((t) => ({
+      name: t.name.trim(),
+      title: t.title.trim() || '',
+      department: t.department || '',
+      teacherId: t.teacherId || '',
+    }));
+
+  try {
+    if (isApproveMode.value && approveProposalId.value) {
+      // 管理员审批通过 - 复用表单填入 finalCourse
+      const finalCourse: DtoProposalCourseVO = {
+        name: formData.courseName.trim(),
+        code: (formData.courseCode || '').trim().toUpperCase() || undefined,
         department: formData.department,
-        category: formData.category || undefined,
-        campuses: formData.campuses.length > 0 ? formData.campuses : undefined,
-        teachers: formData.teacher ? [{ name: formData.teacher }] : []
-      }
-    };
-
-    http.ProposalController.proposalAddCreate(reqData).then((res: any) => {
-      submitting.value = false;
+        category: formData.category,
+        campuses: formData.campuses,
+        teachers,
+      };
+      const res: any = await http.ProposalController.proposalApproveCreate(
+        approveProposalId.value,
+        { proposalID: approveProposalId.value, finalCourse, title: formData.courseName.trim() }
+      );
       const code = res.data?.code;
       const msg = res.data?.msg;
-      console.log('[propose] submit response:', res.data);
       if (code === 200 || code === 0 || code === 201) {
-        uni.showToast({ title: '提交成功', icon: 'success' });
+        uni.showToast({ title: '已通过', icon: 'success' });
+        uni.$emit('proposalListShouldRefresh');
+        setTimeout(() => uni.navigateBack(), TOAST_DURATION_MS);
+      } else {
+        uni.showToast({ title: msg || '通过失败', icon: 'none' });
+      }
+    } else {
+      const reqData = {
+        title: formData.courseName.trim(),
+        content: formData.reason.trim(),
+        course: {
+          name: formData.courseName.trim(),
+          code: (formData.courseCode || '').trim().toUpperCase() || undefined,
+          department: formData.department,
+          category: formData.category,
+          campuses: formData.campuses,
+          teachers,
+        },
+        showUsername: formData.showUsername as boolean,
+      };
+      const res: any = await http.ProposalController.proposalAddCreate(reqData);
+      const code = res.data?.code;
+      const msg = res.data?.msg;
+      if (code === 200 || code === 0 || code === 201) {
+        uni.showToast({
+          title: editProposalId.value ? '重新提交成功' : '提交成功，等待管理员审核',
+          icon: 'success',
+        });
+        uni.$emit('proposalListShouldRefresh');
         setTimeout(() => uni.navigateBack(), TOAST_DURATION_MS);
       } else {
         uni.showToast({ title: msg || `提交失败(code:${code})`, icon: 'none' });
       }
-    }).catch((err: any) => {
-      submitting.value = false;
-      const errMsg = err?.message || err?.response?.data?.msg || JSON.stringify(err);
-      console.error('[propose] submit error:', err);
-      uni.showToast({ title: `提交失败:${errMsg}`, icon: 'none' });
-    });
+    }
+  } catch (err: any) {
+    const m = err?.response?.data?.msg || err?.message || '操作失败';
+    console.error('[propose] submit error:', err);
+    uni.showToast({ title: m, icon: 'none' });
+  } finally {
+    submitting.value = false;
+  }
 };
 
+const goBack = () => uni.navigateBack();
+
+onLoad(async (options: any) => {
+  if (options.approveProposalId) {
+    isApproveMode.value = true;
+    approveProposalId.value = options.approveProposalId;
+    try {
+      await fetchProposalForForm(options.approveProposalId);
+    } catch (e) {
+      console.error('approve form load error:', e);
+    }
+  } else if (options.editProposalId) {
+    editProposalId.value = options.editProposalId;
+    try {
+      await fetchProposalForForm(options.editProposalId);
+    } catch (e) {
+      console.error('edit form load error:', e);
+    }
+  } else {
+    loadQuota();
+  }
+});
 </script>
 
-<style lang="scss" scoped>
-.container {
-    min-height: 100vh;
-    background: #FAFAFA;
-}
-
-.nav-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    background: transparent;
-    box-shadow: none;
-}
-
-.nav-content {
-    /* empty container can be targeted via inline styles */
-}
-
-.nav-title-container {
-    margin-left: 32rpx; /* Gap = padding-left of navbar */
-    display: flex;
-    align-items: center;
-
-    .nav-title {
-        font-size: 36rpx;
-        font-weight: 600;
-        color: #333;
-    }
-}
-
-/* .nav-middle {
-    flex: 1;
-    .nav-title {
-        font-size: 32rpx;
-        font-weight: bold;
-        color: #333;
-    }
-} */
-// Content Spacer handles margin
-
-.form-body {
-    padding: 0rpx 30rpx 60rpx;
-}
-
-.card {
-    background: #fff;
-    border-radius: 20rpx;
-    padding: 30rpx;
-    margin-bottom: 30rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.02);
-}
-
-.card-title {
-    font-size: 30rpx;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 30rpx;
-    position: relative;
-    padding-left: 20rpx;
-    
-    &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 6rpx;
-        bottom: 6rpx;
-        width: 8rpx;
-        background: #FF4D6A;
-        border-radius: 4rpx;
-    }
-}
-
-.form-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24rpx 0;
-    border-bottom: 1rpx solid #F5F5F5;
-    
-    &:last-child {
-        border-bottom: none;
-    }
-
-    .label {
-        font-size: 28rpx;
-        color: #333;
-        width: 180rpx;
-        font-weight: 500;
-    }
-
-    .input {
-        flex: 1;
-        text-align: right;
-        font-size: 28rpx;
-        color: #333;
-    }
-    
-    .picker-display {
-        font-size: 28rpx;
-        color: #333;
-        
-        &.empty {
-            color: #ccc;
-        }
-        
-        .arrow {
-            margin-left: 10rpx;
-            color: #ccc;
-        }
-    }
-}
-
-.form-col {
-    padding: 20rpx 0;
-    
-    .label {
-        font-size: 28rpx;
-        color: #333;
-        font-weight: 500;
-    }
-}
-
-.tags-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20rpx;
-}
-
-.tag-item {
-    padding: 12rpx 30rpx;
-    background: #F5F5F5;
-    border-radius: 30rpx;
-    font-size: 26rpx;
-    color: #666;
-    border: 1px solid transparent;
-    transition: all 0.1s;
-    
-    &.active {
-        background: #FFF0F6;
-        color: #b20035;
-        border-color: #ffadd2;
-    }
-}
-
-.reason-area {
-    width: 100%;
-    height: 200rpx;
-    font-size: 28rpx;
-    line-height: 1.6;
-    color: #333;
-}
-
-.word-count {
-    text-align: right;
-    font-size: 24rpx;
-    color: #ccc;
-    margin-top: 10rpx;
-}
-
-.submit-btn {
-    width: 100%;
-    height: 90rpx;
-    line-height: 90rpx;
-    border-radius: 45rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
-    color: #fff;
-    font-size: 32rpx;
-    font-weight: bold;
-    margin-top: 20rpx;
-    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25);
-    
-    &:active {
-        transform: scale(0.96);
-        box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
-    }
-
-    &[disabled] {
-        background: #ccc;
-        color: #fff;
-        box-shadow: none;
-    }
-}
-
-.safe-area-bottom {
-    height: env(safe-area-inset-bottom);
-}
-</style>
-
-<style lang="scss">
-$brand-red: #b20035;
-
-.container.dark-theme { background: #121212; }
-.container.dark-theme .nav-bar { background-color: #1e1e1e; .nav-title { color: #e0e0e0; } }
-.container.dark-theme .card { background: #1e1e1e; .card-title { color: #e0e0e0; } .label { color: #aaa; } }
-.container.dark-theme .input { background: #2a2a2a; color: #e0e0e0; }
-.container.dark-theme .picker-display { background: #2a2a2a; color: #e0e0e0; }
-.container.dark-theme .tag-item { background: #2a2a2a; color: #aaa; &.active { background: rgba(178,0,53,0.15); color: $brand-red; } }
-.container.dark-theme .reason-area { background: #2a2a2a; color: #e0e0e0; }
-.container.dark-theme .word-count { color: #666; }
-</style>
+<style lang="scss" scoped src="./_style.scss" />

@@ -20,7 +20,7 @@ type MixedResult = DtoCourseVO & {
   link?: string[][];
   point?: number;
   describe?: string;
-  teachers?: string[];
+  teachers?: DtoTeacherVO[];
   teacherList?: DtoTeacherVO[];
   campuses?: string[];
   tagCount?: object;
@@ -72,6 +72,7 @@ export function useChoose() {
       loading.value = false;
       return;
     }
+    if (loading.value && !reload) return; // 防止重复加载
     if (reload) {
       page.value = 1;
       resultList.value = [];
@@ -92,6 +93,8 @@ export function useChoose() {
     };
 
     // 只搜索课程和教师，不搜索提议（提议延迟到点击按钮后）
+    // 注意：swagger v2.0 的 DtoListCoursesReq 只有 page/pageSize，
+    // keyword/type/sort 是后端实际支持但 swagger 未声明的参数
     Promise.all([
       http.CoursesController.searchCreate({ ...param, type: "course" }),
       http.CoursesController.searchCreate({ ...param, type: "teacher" })

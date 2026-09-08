@@ -1,0 +1,1054 @@
+@import "@/styles/index.scss";
+
+// =====================================================
+// 整体容器
+// =====================================================
+.profile-container {
+  position: relative;
+  padding: 0 $space-9;
+  box-sizing: border-box;
+  background-color: $bg-page-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
+}
+
+
+
+// =====================================================
+// 用户信息层（固定在底部，不随内容滚动）
+// =====================================================
+.user-info-layer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-base;
+  padding: 48rpx 0 $space-9;
+  min-height: 200rpx;
+  display: flex;
+  align-items: center;
+  gap: $space-7;
+  background-color: $bg-page-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
+}
+
+.avatar-circle {
+  width: 136rpx;
+  height: 136rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe2e8 0%, #ffd4d4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6rpx 20rpx rgba(178, 0, 53, 0.18);
+  transition: box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%);
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.40);
+  }
+}
+
+.avatar-emoji {
+  font-size: 76rpx;
+  line-height: 1;
+  text-align: center;
+}
+
+.user-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.user-nickname {
+  font-size: $font-4xl;
+  font-weight: $weight-black;
+  color: $text-primary-light;
+  letter-spacing: -2rpx;
+  line-height: 1.2;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.user-contribution {
+  font-size: $font-lg;
+  color: $text-tertiary-light;
+  font-weight: $weight-regular;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+// 每日配额 chip（新增 — 之前缺失样式）
+.user-quota {
+  align-self: flex-start;
+  font-size: $font-xs;
+  color: $brand-red;
+  background: $danger-soft;
+  padding: 4rpx $space-3;
+  border-radius: $radius-pill;
+  margin-top: 4rpx;
+  transition: all $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: rgba(178, 0, 53, 0.20);
+    color: $brand-red-soft;
+  }
+}
+
+// =====================================================
+// 三条杠按钮
+// =====================================================
+.user-more-btn {
+  position: relative;
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 7rpx;
+  background-color: $bg-card-light;
+  border-radius: $radius-pill;
+  box-shadow: $shadow-sm;
+  flex-shrink: 0;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-fast $ease-standard,
+              background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-lg);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  }
+
+  .line {
+    width: 30rpx;
+    height: 3rpx;
+    background-color: $text-secondary-light;
+    border-radius: 2rpx;
+    display: block;
+    transition: background-color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      background-color: $text-secondary-dark;
+    }
+  }
+}
+
+// =====================================================
+// 三条杠弹出菜单（移至顶层，z-index 高于列表）
+// =====================================================
+.more-menu-mask {
+  position: fixed;
+  inset: 0;
+  background: $bg-overlay-light;
+  z-index: $z-modal - 1;
+  animation: mwp-fade-in 240ms $ease-standard both;
+}
+
+.more-menu-popover {
+  position: fixed;
+  top: 280rpx;
+  right: $space-9;
+  min-width: 280rpx;
+  background-color: $bg-card-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  padding: $space-3 0;
+  z-index: $z-modal;
+  overflow: hidden;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+    box-shadow: $shadow-md-dark;
+  }
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-5 $space-7;
+  font-size: $font-base;
+  color: $text-primary-light;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+
+  &:active {
+    background-color: $bg-muted-light;
+    .dark-theme & {
+      background-color: $bg-muted-dark;
+    }
+  }
+}
+
+.menu-icon {
+  font-size: $font-xl;
+  line-height: 1;
+  width: 40rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.menu-text {
+  flex: 1;
+  font-weight: $weight-medium;
+  text-align: left;
+}
+
+// =====================================================
+// "我的发布"圆角矩形容器
+// =====================================================
+.profile-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.my-publish-card {
+  display: block;
+  min-height: 70vh;
+  background-color: $bg-card-light;
+  border-radius: $radius-2xl $radius-2xl 0 0;
+  box-shadow: 0 -4rpx 24px rgba(0, 0, 0, 0.08), 0 -1px 0 rgba(0, 0, 0, 0.04);
+  margin: 0 -#{$space-9};
+  padding-top: $space-7;
+  // position: relative + z-index > user-info-layer → 滚动时覆盖用户信息
+  position: relative;
+  z-index: $z-base + 4;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+    box-shadow: 0 -4rpx 16px rgba(0, 0, 0, 0.30), 0 -1px 0 rgba(255, 255, 255, 0.04);
+  }
+}
+
+.my-publish-header {
+  padding: 0 $space-9 $space-4;
+
+  .page-title {
+    font-size: $font-3xl;
+    font-weight: $weight-black;
+    color: $text-primary-light;
+    letter-spacing: -1rpx;
+    text-align: left;
+    display: block;
+    margin-bottom: 4rpx;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+
+  .sub-title {
+    font-size: $font-xs;
+    color: $text-tertiary-light;
+    text-align: left;
+    display: block;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+// =====================================================
+// 胶囊筛选栏（初始在"我的发布"下方，滚到与系统胶囊对齐时停住）
+// =====================================================
+.sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: $z-base + 5;
+  padding: $space-4 $space-9 $space-2;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24rpx);
+  -webkit-backdrop-filter: blur(24rpx);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.20);
+  }
+}
+
+.filter-row-wrapper {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 $space-5;
+  height: 64rpx;
+  background-color: transparent;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  font-weight: $weight-medium;
+  color: $text-secondary-light;
+  border: 1rpx solid transparent;
+  text-align: center;
+  line-height: 1;
+  transition: all $dur-fast $ease-emphasized;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-md);
+  }
+
+  &.active {
+    background: $gradient-brand;
+    color: $pure-white;
+    font-weight: $weight-semibold;
+    box-shadow: $shadow-brand-sm;
+  }
+}
+
+// =====================================================
+// 列表
+// =====================================================
+.list-container {
+  padding: $space-6 $space-9 $space-9;
+  min-height: 300rpx;
+}
+
+.list-bottom-spacer {
+  height: 60rpx;
+}
+
+.loading-state,
+.error-state,
+.empty-tip {
+  text-align: center;
+  padding: $space-12 0;
+
+  text {
+    font-size: $font-base;
+    color: $text-tertiary-light;
+    text-align: center;
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+.loading-state {
+  width: 100%;
+  padding: $space-12 0;
+  text-align: center;
+
+  .loading-spinner {
+    width: 80rpx;
+    height: 80rpx;
+    margin: 0 auto $space-6;
+    border: 4rpx solid $neutral-light;
+    border-top-color: $brand-red;
+    border-radius: 50%;
+    animation: mwp-spin 800ms linear infinite;
+  }
+
+  .loading-text {
+    font-size: $font-base;
+    color: $text-secondary-light;
+    text-align: center;
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+  }
+}
+
+.error-state {
+  width: 100%;
+  padding: $space-12 0;
+  text-align: center;
+
+  .error-text {
+    font-size: $font-base;
+    color: $brand-red;
+    text-align: center;
+    display: block;
+    margin-bottom: $space-7;
+  }
+
+  .retry-btn {
+    background: $gradient-brand;
+    color: $pure-white;
+    border-radius: $radius-pill;
+    font-size: $font-base;
+    padding: 0 $space-9;
+    height: 80rpx;
+    min-width: 240rpx;
+    box-shadow: $shadow-brand-sm;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+}
+
+.empty-tip {
+  text {
+    font-size: $font-base;
+    color: $text-tertiary-light;
+    text-align: center;
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+// 列表项
+.list-item {
+  display: block;
+  margin-bottom: $space-6;
+  animation: mwp-fade-up 380ms $ease-decelerate both;
+}
+
+// =====================================================
+// 卡片（吐槽 + 提议通用）
+// =====================================================
+.card {
+  background-color: $bg-card-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-fast $ease-standard,
+              background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-md);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  }
+
+  &.proposal-card {
+    background: linear-gradient(135deg, $brand-red-tint 0%, $bg-card-light 100%);
+    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06);
+    border: 1rpx solid rgba(178, 0, 53, 0.15);
+
+    .dark-theme & {
+      background: linear-gradient(135deg, rgba(178, 0, 53, 0.15) 0%, $bg-card-dark 100%);
+      border-color: rgba(178, 0, 53, 0.30);
+    }
+  }
+}
+
+.card-main {
+  flex: 1;
+  padding: $space-7;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $space-6;
+  gap: $space-4;
+}
+
+.course-name {
+  font-size: $font-xl;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  flex: 1;
+  line-height: 1.4;
+  letter-spacing: 0.5rpx;
+  @include ellipsis(2);
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.time-text {
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  font-weight: $weight-regular;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 6rpx;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.course-row-middle {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-5;
+  margin-bottom: $space-7;
+}
+
+.course-info-item {
+  display: flex;
+  align-items: center;
+  font-size: $font-sm + 2rpx;
+  color: $text-secondary-light;
+  font-weight: $weight-medium;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+
+  .info-icon {
+    width: 30rpx;
+    height: 30rpx;
+    margin-right: $space-3;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+}
+
+.content-text {
+  font-size: $font-base;
+  color: $text-primary-light;
+  line-height: 1.6;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: $space-6;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+// =====================================================
+// 卡片底部（点赞 / 状态）
+// =====================================================
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1rpx dashed $divider-light;
+  padding-top: $space-6;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-top-color: $divider-dark;
+  }
+}
+
+.likes-box {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  .like-icon {
+    width: 36rpx;
+    height: 36rpx;
+    opacity: 0.6;
+    transition: opacity $dur-fast $ease-standard;
+  }
+
+  .likes-text {
+    font-size: $font-sm + 2rpx;
+    color: $text-secondary-light;
+    font-weight: $weight-medium;
+    text-align: center;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+  }
+}
+
+.vote-count-box {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  background: linear-gradient(90deg, $brand-red-tint, #fff5f6);
+  padding: $space-3 $space-6;
+  border-radius: $radius-pill;
+  border: 1rpx solid rgba(178, 0, 53, 0.05);
+
+  .dark-theme & {
+    background: linear-gradient(90deg, rgba(178, 0, 53, 0.15), rgba(178, 0, 53, 0.08));
+    border-color: rgba(178, 0, 53, 0.20);
+  }
+
+  .vote-icon {
+    width: 30rpx;
+    height: 30rpx;
+    margin-right: $space-3;
+  }
+
+  .vote-num {
+    font-size: $font-lg;
+    font-weight: $weight-black;
+    color: $brand-red;
+    margin-right: 6rpx;
+  }
+
+  .vote-label {
+    font-size: $font-xs;
+    color: $brand-red;
+    opacity: 0.9;
+    font-weight: $weight-medium;
+  }
+}
+
+.status-badge {
+  padding: $space-3 $space-5;
+  border-radius: $radius-pill;
+  font-size: $font-xs;
+  font-weight: $weight-semibold;
+  text-align: center;
+  line-height: 1;
+
+  &.status-pending {
+    background: $info-soft;
+    color: $info;
+  }
+  &.status-approved {
+    background: $success-soft;
+    color: $success;
+  }
+  &.status-rejected {
+    background: $danger-soft;
+    color: $brand-red;
+  }
+}
+
+// =====================================================
+// FAB
+// =====================================================
+.fab-btn {
+  position: fixed;
+  right: $space-9;
+  bottom: 220rpx;
+  width: 110rpx;
+  height: 110rpx;
+  background: $gradient-brand;
+  border-radius: 50%;
+  box-shadow: $shadow-brand-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-modal - 2;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-medium $ease-standard;
+  animation: mwp-fade-up 480ms $ease-decelerate 240ms both;
+}
+
+.plus-icon {
+  color: $pure-white;
+  font-size: 60rpx;
+  font-weight: $weight-regular;
+  line-height: 1;
+  text-align: center;
+  margin-top: -8rpx;
+}
+
+// =====================================================
+// 引导弹窗
+// =====================================================
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.60);
+  z-index: $z-modal + 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-9;
+  box-sizing: border-box;
+  animation: mwp-fade-in 320ms $ease-standard both;
+}
+
+.guide-content {
+  width: 100%;
+  max-width: 600rpx;
+  background-color: $bg-card-light;
+  border-radius: $radius-2xl;
+  padding: $space-10 $space-8;
+  box-shadow: $shadow-xl;
+  animation: mwp-bounce-in 480ms $ease-spring both;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+  }
+}
+
+.guide-header {
+  text-align: center;
+  margin-bottom: $space-10;
+
+  .guide-title {
+    display: block;
+    font-size: $font-3xl;
+    font-weight: $weight-black;
+    color: $text-primary-light;
+    margin-bottom: $space-4;
+    text-align: center;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+
+  .guide-subtitle {
+    display: block;
+    font-size: $font-sm + 2rpx;
+    color: $text-tertiary-light;
+    text-align: center;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+.guide-sections {
+  margin-bottom: $space-10;
+}
+
+.guide-section {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: $space-9;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-icon {
+    width: 80rpx;
+    height: 80rpx;
+    background-color: $brand-red-tint;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-2xl;
+    margin-right: $space-6;
+    flex-shrink: 0;
+    transition: background-color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      background-color: rgba(178, 0, 53, 0.15);
+    }
+  }
+
+  .section-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-title {
+    font-size: $font-md;
+    font-weight: $weight-semibold;
+    color: $text-primary-light;
+    margin-bottom: $space-2;
+    text-align: left;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+
+  .section-desc {
+    font-size: $font-xs + 2rpx;
+    color: $text-tertiary-light;
+    line-height: 1.5;
+    text-align: left;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+.guide-footer {
+  .start-btn {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: $gradient-brand;
+    color: $pure-white;
+    font-size: $font-lg;
+    font-weight: $weight-semibold;
+    border-radius: $radius-pill;
+    border: none;
+    box-shadow: $shadow-brand-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+// =====================================================
+// 昵称编辑 Modal
+// =====================================================
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: $bg-overlay-light;
+  z-index: $z-modal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-9;
+  animation: mwp-fade-in 240ms $ease-standard both;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 600rpx;
+  background-color: $bg-card-light;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  animation: mwp-scale-in 280ms $ease-spring both;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-7;
+  border-bottom: 1rpx solid $divider-light;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-bottom-color: $divider-dark;
+  }
+}
+
+.modal-title {
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.modal-close {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-2xl;
+  color: $text-tertiary-light;
+  text-align: center;
+  line-height: 1;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+
+  &:active {
+    background-color: $bg-muted-light;
+    .dark-theme & {
+      background-color: $bg-muted-dark;
+    }
+  }
+}
+
+.modal-body {
+  padding: $space-7;
+}
+
+.field-label {
+  font-size: $font-base;
+  color: $text-secondary-light;
+  margin-bottom: $space-4;
+  display: block;
+  text-align: left;
+  font-weight: $weight-medium;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+.nickname-input {
+  width: 100%;
+  height: 80rpx;
+  background-color: $bg-muted-light;
+  border-radius: $radius-sm;
+  padding: 0 $space-6;
+  font-size: $font-base;
+  color: $text-primary-light;
+  box-sizing: border-box;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-muted-dark;
+    color: $text-primary-dark;
+  }
+}
+
+.word-count {
+  font-size: $font-xs + 2rpx;
+  color: $text-tertiary-light;
+  text-align: right;
+  margin-top: $space-2;
+  display: block;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid $divider-light;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-top-color: $divider-dark;
+  }
+}
+
+.btn-cancel,
+.btn-confirm {
+  flex: 1;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-md;
+  font-weight: $weight-semibold;
+  text-align: center;
+  line-height: 1;
+  transition: background-color $dur-fast $ease-standard;
+}
+
+.btn-cancel {
+  color: $text-secondary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+
+  &:active {
+    background-color: $bg-muted-light;
+    .dark-theme & {
+      background-color: $bg-muted-dark;
+    }
+  }
+}
+
+.btn-confirm {
+  color: $brand-red;
+  font-weight: $weight-bold;
+  border-left: 1rpx solid $divider-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+    border-left-color: $divider-dark;
+  }
+
+  &:active {
+    background-color: $danger-soft;
+  }
+
+  &.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+}
+
+// =====================================================
+// 偏好减少动画
+// =====================================================
+@media (prefers-reduced-motion: reduce) {
+  .list-item,
+  .guide-content,
+  .modal-card,
+  .more-menu-popover,
+  .fab-btn,
+  .avatar-circle,
+  .user-more-btn,
+  .line,
+  .filter-pill,
+  .status-badge,
+  .course-name,
+  .content-text,
+  .more-menu-mask {
+    animation: none !important;
+    transition: none !important;
+  }
+}

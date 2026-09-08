@@ -1,158 +1,198 @@
-<script setup lang="ts">
-import type { CommentVO } from "@/api/data-contracts";
-import { useTokenStore, useThemeStore } from "@/config";
-const themeStore = useThemeStore();
-import Like from "@/images/like-icon.png";
-import Liked from "@/images/like_active.png";
-import { format as formatTime } from "./utils";
-
-import { Emoji } from "@/utils/tags";
-
-type CommentBoxProps = {
-    data: CommentVO;
-}
-const props = defineProps<CommentBoxProps>();
-const emit = defineEmits<{ like: [id: string] }>();
-
-// 处理表情展示
-// 假设评论数据里有一个字段 score（或者其他字段）存储了用户选择的表情等级 1-5
-// 如果没有，暂时假设 data.score 存在
-// 如果 data 里没有 score，但有 tags? 用户说表情是评价者选择的。
-// 假设评价者选择的表情对应一个 score 值，我们在 CommentBox 里把这个值还原成表情图片展示出来
-
-
-const format = (time: string) => {
-    return formatTime(time);
-}
-
-const like = () => {
-    emit("like", props.data.id); // 保证传 id 供后端点赞逻辑
-}
-// 移除旧 tag 逻辑，或者保留文本 tag
-// 下面只展示文本 tag，表情单独展示
-const textTags = (tags: string[]) => {
-    return tags || [];
-}
-</script>
-
 <template>
   <view class="comment-box" :class="themeStore.themeClass">
-
-    <!-- 头部：表情（评价态度） + 标签 -->
     <view class="header-section">
-
-      <!-- 2. 标签：将这里的标签也加上对应的小猫表情 -->
       <view class="tags-wrapper">
-        <template v-for="(item, index) in textTags(data.tags || [])" :key="index">
-             <view class="ctag">
-                <!-- 注入 Emoji 函数显示表情图标 -->
-                <image v-if="Emoji(item)" :src="Emoji(item)" class="tag-icon" />
-                <view class="txt">{{ item }}</view>
-             </view>
-        </template>
+        <view
+          v-for="(item, index) in textTags(data.tags || [])"
+          :key="index"
+          class="ctag mwp-stagger-item"
+          :style="{ animationDelay: `${index * 40}ms` }"
+        >
+          <image v-if="Emoji(item)" :src="Emoji(item)" class="tag-icon" />
+          <text class="txt">{{ item }}</text>
+        </view>
       </view>
     </view>
 
-    <view class="content-section">
-      {{ data.content || data.text }}
-    </view>
+    <text class="content-section">{{ data.content || data.text }}</text>
 
     <view class="footer-section">
-      <view class="date-str">{{ format(data.createdAt || data.crateAt || '') }}</view>
-      <view class="like-block" @click="like">
-         <!-- 注意点赞的逻辑是从 relation 中获取 -->
-         <image :src="data.relation?.like ? Liked : Like" class="icon-small" mode="aspectFit" />
-         <view class="count">{{ data.relation?.like_cnt || 0 }}</view>
+      <text class="date-str">{{ format(data.createdAt || data.crateAt || '') }}</text>
+      <view class="like-block mwp-pressable" @click="like">
+        <image
+          :src="data.relation?.like ? Liked : Like"
+          class="icon-small"
+          :class="{ 'is-liked': data.relation?.like }"
+          mode="aspectFit"
+        />
+        <text class="count">{{ data.relation?.like_cnt || 0 }}</text>
       </view>
     </view>
-
   </view>
 </template>
 
-<style scoped lang="scss">
+<script setup lang="ts">
+import type { DtoCommentVO } from '@/api/data-contracts';
+import { useThemeStore } from '@/config';
+import Like from '@/images/like-icon.png';
+import Liked from '@/images/like_active.png';
+import { format as formatTime } from './utils';
+import { Emoji } from '@/utils/tags';
+
+const themeStore = useThemeStore();
+
+type CommentBoxProps = { data: DtoCommentVO };
+const props = defineProps<CommentBoxProps>();
+const emit = defineEmits<{ like: [id: string] }>();
+
+const format = (time: string) => formatTime(time);
+
+const like = () => emit('like', props.data.id);
+
+const textTags = (tags: string[]) => tags || [];
+</script>
+
+<style lang="scss" scoped>
+@import "@/styles/index.scss";
+
 .comment-box {
-  background-color: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+  background: $bg-card-light;
+  border-radius: $radius-md;
+  padding: $space-6;
+  margin-bottom: $space-6;
+  box-shadow: $shadow-sm;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard,
+              transform $dur-fast $ease-standard;
+  animation: mwp-fade-up 360ms $ease-decelerate both;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-md);
+  }
 }
 
 .header-section {
   display: flex;
   align-items: center;
-  margin-bottom: 16rpx;
+  margin-bottom: $space-4;
+}
 
-  .emoji-wrapper {
-      margin-right: 16rpx;
-      .comment-emoji {
-          width: 50rpx;
-          height: 50rpx;
-          display: block; // 添加 display block 以防止行内元素间隙影响对齐
-      }
+.tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6rpx $space-3;
+}
+
+.ctag {
+  display: inline-flex;
+  align-items: center;
+  background: $bg-muted-light;
+  padding: 4rpx $space-4;
+  border-radius: $radius-pill;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-muted-dark;
   }
+}
 
-  .tags-wrapper {
-      display: flex;
-      flex-wrap: wrap;
+.tag-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: $space-2;
+  display: block;
+  flex-shrink: 0;
+}
 
-      .ctag {
-        display: flex;
-        align-items: center;
-        background-color: #f7f8fa;
-        padding: 4rpx 16rpx; // 微调 padding 使其更匀称
-        border-radius: 20rpx;
-        margin-right: 12rpx;
-        margin-bottom: 8rpx;
+.txt {
+  font-size: $font-xs;
+  color: $text-secondary-light;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
 
-        .tag-icon {
-          width: 28rpx; // 调大了一点表情，使其看起来协调
-          height: 28rpx;
-          margin-right: 8rpx;
-          display: block; // 防止图片异常变形或错位
-        }
-
-        .txt {
-          font-size: 24rpx;
-          color: #666;
-        }
-      }
+  .dark-theme & {
+    color: $text-secondary-dark;
   }
 }
 
 .content-section {
-  font-size: 28rpx;
-  color: #333;
+  font-size: $font-base;
+  color: $text-primary-light;
   line-height: 1.6;
-  margin-bottom: 20rpx;
+  margin-bottom: $space-5;
+  text-align: left;
+  display: block;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
 }
 
 .footer-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
-  .date-str {
-    font-size: 24rpx;
-    color: #999;
+}
+
+.date-str {
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
   }
-  
-  .like-block {
-    display: flex;
-    align-items: center;
-    .icon-small {
-      width: 32rpx;
-      height: 32rpx;
-      margin-right: 8rpx;
-    }
-    .count {
-      font-size: 26rpx;
-      color: #666;
+}
+
+.like-block {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx $space-3;
+  border-radius: $radius-pill;
+  transition: background-color $dur-fast $ease-standard;
+
+  &:active {
+    background: $bg-muted-light;
+    .dark-theme & {
+      background: $bg-muted-dark;
     }
   }
 }
-</style>
 
-<style lang="scss">
-.comment-box.dark-theme { background-color: #1e1e1e; .ctag { background-color: #2a2a2a; .txt { color: #aaa; } } .content-section { color: #ccc; } .date-str { color: #666; } .like-block .count { color: #888; } }
+.icon-small {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: $space-2;
+  transition: transform $dur-base $ease-spring;
+
+  &.is-liked {
+    animation: mwp-heart-beat 480ms $ease-spring;
+  }
+}
+
+.count {
+  font-size: $font-sm + 2rpx;
+  color: $text-secondary-light;
+  font-weight: $weight-medium;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comment-box,
+  .ctag,
+  .icon-small {
+    animation: none;
+  }
+}
 </style>

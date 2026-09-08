@@ -1,2538 +1,3859 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "选课猫后端接口文档",
-        "title": "Meowpick Backend API",
-        "contact": {},
-        "version": "1.0"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Meowpick Backend API",
+    "description": "选课猫后端接口文档",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "auth"
     },
-    "basePath": "/",
-    "paths": {
-        "/api/auth/grant_admin": {
-            "post": {
-                "description": "授予指定用户管理员权限",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "授予管理员权限",
-                "parameters": [
-                    {
-                        "description": "GrantAdminReq",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.GrantAdminReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GrantAdminResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/auth/is_admin": {
-            "get": {
-                "description": "判断当前用户是否具有管理员权限",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "是否管理员",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_IsAdminResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/auth/sign_in": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "登录",
-                "parameters": [
-                    {
-                        "description": "SignInReq",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.SignInReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_SignInResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/changelog/list": {
-            "post": {
-                "description": "按目标类型+ID分页查询变更记录",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "changelog"
-                ],
-                "summary": "分页查询变更记录",
-                "parameters": [
-                    {
-                        "description": "查询参数",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListChangeLogsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ListChangeLogsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/changelog/proposal/grouped": {
-            "get": {
-                "description": "以提案为维度的分页列表，包含提案基础信息、提议者信息、审核操作信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProposalLogs"
-                ],
-                "summary": "按提案聚合的日志列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 20,
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ListProposalLogsGroupedResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/changelog/proposal/timeline": {
-            "get": {
-                "description": "一条记录代表一次独立动作的扁平化分页，严格按时间倒序排列",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ProposalLogs"
-                ],
-                "summary": "扁平化时间线日志",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 20,
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ListProposalLogsTimelineResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/comment/add": {
-            "post": {
-                "description": "用户对指定课程发布评论",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "comment"
-                ],
-                "summary": "发布课程评论",
-                "parameters": [
-                    {
-                        "description": "CreateCommentReq",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateCommentReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_CreateCommentResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/comment/history": {
-            "post": {
-                "description": "分页获取当前用户发布过的评论",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "comment"
-                ],
-                "summary": "获取我的评论历史",
-                "parameters": [
-                    {
-                        "description": "GetMyCommentsReq",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetMyCommentsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetMyCommentsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/comment/query": {
-            "get": {
-                "description": "根据课程ID分页查询评论列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "comment"
-                ],
-                "summary": "分页获取课程评论",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "课程ID",
-                        "name": "courseId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ListCourseCommentsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/course/campuses": {
-            "get": {
-                "description": "根据课程名字获取课程开课校区",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "course"
-                ],
-                "summary": "获取课程开课校区",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "课程名称关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetCourseCampusesResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/course/categories": {
-            "get": {
-                "description": "根据课程名字获取课程分类",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "course"
-                ],
-                "summary": "获取课程分类",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "课程名称关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetCourseCategoriesResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/course/departs": {
-            "get": {
-                "description": "根据课程名字获取课程开课院系",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "course"
-                ],
-                "summary": "获取课程开课院系",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "课程名称关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetCourseDepartmentsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/course/{courseId}": {
-            "get": {
-                "description": "获取课程信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "course"
-                ],
-                "summary": "获取课程信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "课程ID",
-                        "name": "courseId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetCourseResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/like/{likeId}": {
-            "post": {
-                "description": "对指定目标（提案或评论）进行点赞或取消点赞操作；若已点赞则取消，未点赞则新增",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "like"
-                ],
-                "summary": "点赞 / 取消点赞",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "目标ID（提案ID或评论ID）",
-                        "name": "likeId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "点赞请求参数",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ToggleLikeReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "操作成功",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ToggleLikeResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/add": {
-            "post": {
-                "description": "创建一个新的提案",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "新增提案",
-                "parameters": [
-                    {
-                        "description": "创建提案的请求参数",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateProposalReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_CreateProposalResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/field-suggestions": {
-            "get": {
-                "description": "根据字段类型和关键词获取建议列表，支持学院、类别、校区、课程名称、课程代码、教师姓名",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "获取提案字段建议",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "字段类型: department/category/campus/courseName/courseCode/teacherName",
-                        "name": "field",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "搜索关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "default": 0,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetProposalFieldSuggestionsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/history": {
-            "get": {
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "获取我的提案",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "pending",
-                            "approved",
-                            "rejected"
-                        ],
-                        "type": "string",
-                        "description": "状态",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetMyProposalsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/list": {
-            "get": {
-                "description": "分页查询提案列表数据",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "分页获取提案列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ListProposalResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/suggest": {
-            "post": {
-                "description": "根据关键词模糊分页搜索提案标题，返回匹配的提案建议列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "获取提案搜索建议",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "搜索关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "default": 0,
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "pageSize",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetProposalSuggestionsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/{proposalId}": {
-            "get": {
-                "description": "根据提案ID查询提案完整信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "获取提案详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "提案ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetProposalResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/{proposalId}/approve": {
-            "post": {
-                "description": "通过提案并创建课程，或拒绝提案",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "审批提案",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "提案ID",
-                        "name": "proposalId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ToggleProposalResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/{proposalId}/delete": {
-            "post": {
-                "description": "根据提案ID软删除提案（标记为已删除状态）",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "删除提案",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "提案ID",
-                        "name": "proposalId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_DeleteProposalResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/proposal/{proposalId}/update": {
-            "post": {
-                "description": "根据提案ID修改提案的标题和内容",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "proposal"
-                ],
-                "summary": "更新提案内容",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "提案唯一ID",
-                        "name": "proposalId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "更新参数（标题、内容）",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateProposalReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "更新成功响应",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_UpdateProposalResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search": {
-            "post": {
-                "description": "搜索课程列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "courses"
-                ],
-                "summary": "搜索课程列表",
-                "parameters": [
-                    {
-                        "description": "ListCoursesReq",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListCoursesReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_ListCoursesResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search/recent": {
-            "get": {
-                "description": "获取最近搜索历史",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "search"
-                ],
-                "summary": "获取最近搜索历史",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetSearchHistoriesResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search/suggest": {
-            "get": {
-                "description": "根据关键词获取搜索建议\n根据 type 不同执行不同的搜索逻辑：\n- course：模糊分页搜索课程\n- teacher：精确分页搜索教师开设的课程\n- category：精确分页搜索该类别下的课程\n- department：精确分页搜索该开课院系下的课程",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "search"
-                ],
-                "summary": "获取搜索建议",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "搜索关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetSearchSuggestionsResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search/total": {
-            "get": {
-                "description": "获取系统中所有课程评论的总数量",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "comment"
-                ],
-                "summary": "获取吐槽总数",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetTotalCourseCommentsCountResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/teacher/add": {
-            "post": {
-                "description": "新建教师",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "teacher"
-                ],
-                "summary": "新建教师",
-                "parameters": [
-                    {
-                        "description": "CreateTeacherReq",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateTeacherReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_CreateTeacherResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/teacher/suggest": {
-            "get": {
-                "description": "根据关键词获取教师搜索建议",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "teacher"
-                ],
-                "summary": "获取教师搜索建议",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "搜索关键词",
-                        "name": "keyword",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response-dto_GetTeacherSuggestionsResp"
-                        }
-                    }
-                }
-            }
-        }
+    {
+      "name": "changeLog"
     },
-    "definitions": {
-        "dto.AdminActionVO": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "description": "approve/reject/delete",
-                    "type": "string"
-                },
-                "actionTime": {
-                    "type": "string"
-                },
-                "adminId": {
-                    "type": "string"
-                },
-                "adminName": {
-                    "type": "string"
-                },
-                "reason": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ChangeLogVO": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "integer"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "proposalId": {
-                    "type": "string"
-                },
-                "targetId": {
-                    "type": "string"
-                },
-                "targetType": {
-                    "type": "integer"
-                },
-                "updateSource": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CommentVO": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "courseId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "department": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "like": {
-                    "type": "boolean"
-                },
-                "likeCnt": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "teachers": {
-                    "description": "这里还是直接返回教师名字+职称组合后的字符串列表",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CourseVO": {
-            "type": "object",
-            "properties": {
-                "campuses": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "category": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "department": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "tagCount": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                },
-                "teachers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TeacherVO"
-                    }
-                }
-            }
-        },
-        "dto.CreateCommentReq": {
-            "type": "object",
-            "required": [
-                "content",
-                "courseId"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "courseId": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "dto.CreateCommentResp": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "courseId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "department": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "like": {
-                    "type": "boolean"
-                },
-                "likeCnt": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "teachers": {
-                    "description": "这里还是直接返回教师名字+职称组合后的字符串列表",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CreateProposalReq": {
-            "type": "object",
-            "required": [
-                "content",
-                "course",
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "course": {
-                    "$ref": "#/definitions/dto.CourseVO"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CreateProposalResp": {
-            "type": "object",
-            "properties": {
-                "proposal": {
-                    "description": "提案详情",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ProposalVO"
-                        }
-                    ]
-                },
-                "proposalId": {
-                    "description": "提案ID",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CreateTeacherReq": {
-            "type": "object",
-            "required": [
-                "department",
-                "name",
-                "title"
-            ],
-            "properties": {
-                "department": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CreateTeacherResp": {
-            "type": "object",
-            "properties": {
-                "department": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.CreatorVO": {
-            "type": "object",
-            "properties": {
-                "createTime": {
-                    "type": "string"
-                },
-                "creatorId": {
-                    "type": "string"
-                },
-                "creatorName": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.DeleteProposalResp": {
-            "type": "object",
-            "properties": {
-                "deleted": {
-                    "type": "boolean"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "operatorId": {
-                    "type": "string"
-                },
-                "proposalId": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.FieldSuggestionVO": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.GetCourseCampusesResp": {
-            "type": "object",
-            "properties": {
-                "campuses": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "dto.GetCourseCategoriesResp": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "dto.GetCourseDepartmentsResp": {
-            "type": "object",
-            "properties": {
-                "departments": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "dto.GetCourseResp": {
-            "type": "object",
-            "properties": {
-                "course": {
-                    "$ref": "#/definitions/dto.CourseVO"
-                }
-            }
-        },
-        "dto.GetMyCommentsReq": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.GetMyCommentsResp": {
-            "type": "object",
-            "properties": {
-                "comments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.CommentVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.GetMyProposalsResp": {
-            "type": "object",
-            "properties": {
-                "proposals": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ProposalVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.GetProposalFieldSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "field": {
-                    "type": "string"
-                },
-                "suggestions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.FieldSuggestionVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.GetProposalResp": {
-            "type": "object",
-            "properties": {
-                "proposal": {
-                    "$ref": "#/definitions/dto.ProposalVO"
-                }
-            }
-        },
-        "dto.GetProposalSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "suggestions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ProposalSuggestionsVO"
-                    }
-                }
-            }
-        },
-        "dto.GetSearchHistoriesResp": {
-            "type": "object",
-            "properties": {
-                "histories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.SearchHistoryVO"
-                    }
-                }
-            }
-        },
-        "dto.GetSearchSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "suggestions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.SearchSuggestionsVO"
-                    }
-                }
-            }
-        },
-        "dto.GetTeacherSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "teachers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TeacherVO"
-                    }
-                }
-            }
-        },
-        "dto.GetTotalCourseCommentsCountResp": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.GrantAdminReq": {
-            "type": "object",
-            "properties": {
-                "userId": {
-                    "type": "string"
-                },
-                "verifyCode": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.GrantAdminResp": {
-            "type": "object",
-            "properties": {
-                "isAdmin": {
-                    "description": "操作后的管理员状态",
-                    "type": "boolean"
-                }
-            }
-        },
-        "dto.IsAdminResp": {
-            "type": "object",
-            "properties": {
-                "isAdmin": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "dto.ListChangeLogsReq": {
-            "type": "object",
-            "properties": {
-                "keyword": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "course",
-                        "proposal",
-                        "teacher",
-                        "user"
-                    ]
-                }
-            }
-        },
-        "dto.ListChangeLogsResp": {
-            "type": "object",
-            "properties": {
-                "changeLogs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ChangeLogVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ListCourseCommentsResp": {
-            "type": "object",
-            "properties": {
-                "comments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.CommentVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ListCoursesReq": {
-            "type": "object",
-            "properties": {
-                "keyword": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "type": {
-                    "description": "teacher or course",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ListCoursesResp": {
-            "type": "object",
-            "properties": {
-                "courses": {
-                    "description": "当前页的课程列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.CourseVO"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "description": "符合条件的总记录数",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ListProposalLogsGroupedResp": {
-            "type": "object",
-            "properties": {
-                "proposals": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ProposalLogVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ListProposalLogsTimelineResp": {
-            "type": "object",
-            "properties": {
-                "logs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ProposalTimelineLogVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ListProposalResp": {
-            "type": "object",
-            "properties": {
-                "proposals": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ProposalVO"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ProposalLogVO": {
-            "type": "object",
-            "properties": {
-                "adminAction": {
-                    "$ref": "#/definitions/dto.AdminActionVO"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "course": {
-                    "$ref": "#/definitions/dto.CourseVO"
-                },
-                "creator": {
-                    "$ref": "#/definitions/dto.CreatorVO"
-                },
-                "proposalId": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ProposalSnapshotVO": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "courseName": {
-                    "type": "string"
-                },
-                "department": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ProposalSuggestionsVO": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ProposalTimelineLogVO": {
-            "type": "object",
-            "properties": {
-                "actionTime": {
-                    "type": "string"
-                },
-                "actionType": {
-                    "description": "CREATE/APPROVE/REJECT/DELETE/UPDATE/GRANT_ADMIN/REVOKE_ADMIN",
-                    "type": "string"
-                },
-                "details": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "logId": {
-                    "type": "string"
-                },
-                "operatorId": {
-                    "type": "string"
-                },
-                "operatorName": {
-                    "type": "string"
-                },
-                "proposalId": {
-                    "type": "string"
-                },
-                "proposalSnapshot": {
-                    "$ref": "#/definitions/dto.ProposalSnapshotVO"
-                }
-            }
-        },
-        "dto.ProposalVO": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "course": {
-                    "$ref": "#/definitions/dto.CourseVO"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deleted": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "like": {
-                    "type": "boolean"
-                },
-                "likeCnt": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "pending / approved / rejected",
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SearchHistoryVO": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "query": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SearchSuggestionsVO": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SignInReq": {
-            "type": "object",
-            "required": [
-                "authId",
-                "authType",
-                "verifyCode"
-            ],
-            "properties": {
-                "authId": {
-                    "description": "微信开放平台ID",
-                    "type": "string"
-                },
-                "authType": {
-                    "description": "认证类型(wechat/phone等)",
-                    "type": "string"
-                },
-                "verifyCode": {
-                    "description": "res.code",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SignInResp": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string"
-                },
-                "expiresIn": {
-                    "type": "integer"
-                },
-                "isAdmin": {
-                    "type": "boolean"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.TeacherVO": {
-            "type": "object",
-            "properties": {
-                "department": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ToggleLikeReq": {
-            "type": "object",
-            "properties": {
-                "targetId": {
-                    "type": "string"
-                },
-                "targetType": {
-                    "description": "1: \"proposal\"，2: \"comment\"",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ToggleLikeResp": {
-            "type": "object",
-            "properties": {
-                "like": {
-                    "type": "boolean"
-                },
-                "likeCnt": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ToggleProposalResp": {
-            "type": "object",
-            "properties": {
-                "proposal": {
-                    "type": "boolean"
-                },
-                "proposalCnt": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateProposalReq": {
-            "type": "object",
-            "required": [
-                "content",
-                "course",
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "course": {
-                    "$ref": "#/definitions/dto.CourseVO"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateProposalResp": {
-            "type": "object",
-            "properties": {
-                "proposalId": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.Response-dto_CreateCommentResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.CreateCommentResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_CreateProposalResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.CreateProposalResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_CreateTeacherResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.CreateTeacherResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_DeleteProposalResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.DeleteProposalResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetCourseCampusesResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetCourseCampusesResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetCourseCategoriesResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetCourseCategoriesResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetCourseDepartmentsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetCourseDepartmentsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetCourseResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetCourseResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetMyCommentsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetMyCommentsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetMyProposalsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetMyProposalsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetProposalResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetProposalResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetProposalSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetProposalSuggestionsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetSearchHistoriesResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetSearchHistoriesResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetSearchSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetSearchSuggestionsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetTeacherSuggestionsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetTeacherSuggestionsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GetTotalCourseCommentsCountResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GetTotalCourseCommentsCountResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_GrantAdminResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.GrantAdminResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_IsAdminResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.IsAdminResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ListChangeLogsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ListChangeLogsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ListCourseCommentsResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ListCourseCommentsResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ListCoursesResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ListCoursesResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ListProposalLogsGroupedResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ListProposalLogsGroupedResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ListProposalLogsTimelineResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ListProposalLogsTimelineResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ListProposalResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ListProposalResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_SignInResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.SignInResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ToggleLikeResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ToggleLikeResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_ToggleProposalResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ToggleProposalResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "handler.Response-dto_UpdateProposalResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "业务代码, 0表示成功",
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "description": "实际业务数据",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.UpdateProposalResp"
-                        }
-                    ]
-                },
-                "msg": {
-                    "description": "提示信息",
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        }
+    {
+      "name": "comment"
+    },
+    {
+      "name": "course"
+    },
+    {
+      "name": "like"
+    },
+    {
+      "name": "proposal"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "teacher"
+    },
+    {
+      "name": "user"
     }
+  ],
+  "paths": {
+    "/api/auth/grant_admin": {
+      "post": {
+        "summary": "切换管理员权限",
+        "deprecated": false,
+        "description": "登录用户凭服务端配置的管理员授权密钥切换指定用户的管理员状态：普通用户变为管理员，管理员再次操作则撤销权限。目标用户必须存在；操作会写入管理员变更日志。该接口不是“只授予不撤销”，响应 isAdmin 表示切换后的状态",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.GrantAdminReq",
+                    "summary": "body",
+                    "description": "目标用户ID和管理员授权密钥"
+                  }
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GrantAdminResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/is_admin": {
+      "get": {
+        "summary": "是否管理员",
+        "deprecated": false,
+        "description": "校验 Bearer 登录态并返回当前用户实时管理员状态；用户不存在或查询失败时返回用户查询错误",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_IsAdminResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/sign_in": {
+      "post": {
+        "summary": "登录",
+        "deprecated": false,
+        "description": "使用微信临时登录 code 换取 OpenID，查找或首次创建用户并返回 Bearer 访问令牌。请求若同时携带仍有效、属于同一用户且尚无需续期的令牌，服务端会复用原令牌；否则签发新令牌。authId 和 authType 当前为兼容必填字段，实际身份以 verifyCode 换取的 OpenID 为准",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.SignInReq",
+                    "summary": "body",
+                    "description": "登录参数；authId、authType、verifyCode 均必填"
+                  }
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_SignInResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/changelog/list": {
+      "post": {
+        "summary": "分页查询变更记录",
+        "deprecated": false,
+        "description": "仅管理员可用。按可选目标类型和日志正文关键词分页查询全部变更记录，type 支持 course、proposal、teacher、user，keyword 使用大小写不敏感模糊匹配；两者为空时查询全部，结果按时间倒序",
+        "tags": [
+          "changeLog"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.ListChangeLogsReq",
+                    "summary": "req",
+                    "description": "可选类型、内容关键词和分页参数"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListChangeLogsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/changelog/proposal/grouped": {
+      "get": {
+        "summary": "按提案聚合的日志列表",
+        "deprecated": false,
+        "description": "仅管理员可用。以提案为分页单位返回提案原始内容、课程、创建者信息和最近一次管理员操作；同一提案存在多次审核、撤回或更新日志时 adminAction 只保留时间最新的一条，尚无管理员操作时省略",
+        "tags": [
+          "changeLog"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，默认20；大于100按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 20,
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListProposalLogsGroupedResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/changelog/proposal/timeline": {
+      "get": {
+        "summary": "扁平化时间线日志",
+        "deprecated": false,
+        "description": "仅管理员可用。以每次独立操作为一条记录分页返回全部变更日志，严格按操作时间倒序，包含操作者、标准化动作名、可选关联提案当前摘要及日志正文；管理员权限变更等非提案操作可能没有 proposalId 和 proposalSnapshot",
+        "tags": [
+          "changeLog"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，默认20；大于100按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 20,
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListProposalLogsTimelineResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/comment/add": {
+      "post": {
+        "summary": "发布课程评论",
+        "deprecated": false,
+        "description": "登录用户对指定正式课程发布评论。courseId 和 content 必填，tags 可省略或为空数组；成功响应包含新评论ID、发布时间以及当前点赞状态。该接口本身不修改课程标签字段，课程详情的 tagCount 会从未删除评论标签实时聚合",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.CreateCommentReq",
+                    "summary": "body",
+                    "description": "课程ID、评论正文和可选标签"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_CreateCommentResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/comment/history": {
+      "post": {
+        "summary": "获取我的评论历史",
+        "deprecated": false,
+        "description": "登录后分页获取当前用户发布的未删除评论，按创建时间倒序返回。每条记录包含当前点赞状态和对应未删除课程的名称、分类、开课院系及教师姓名职称信息",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.GetMyCommentsReq",
+                    "summary": "body",
+                    "description": "分页参数；page 小于1按1处理，pageSize 范围1-100且非法值按10处理"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetMyCommentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/comment/query": {
+      "get": {
+        "summary": "分页获取课程评论",
+        "deprecated": false,
+        "description": "登录后分页查询指定课程的未删除评论，按创建时间倒序返回，并为每条评论附带当前用户是否点赞及最新点赞总数。新调用使用 courseId；服务端仍兼容旧 query 参数 id，但旧参数不展示在 Swagger 中",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "query",
+            "description": "课程ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListCourseCommentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/search/total": {
+      "get": {
+        "summary": "获取吐槽总数",
+        "deprecated": false,
+        "description": "登录后获取系统中所有未删除课程评论总数。服务端优先读取短期缓存，缓存不可用或未命中时查询数据库并回填；已随课程撤回而软删除的评论不计入",
+        "tags": [
+          "comment"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetTotalCourseCommentsCountResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/course/campuses": {
+      "get": {
+        "summary": "获取课程开课校区",
+        "deprecated": false,
+        "description": "登录后按完整课程名称精确匹配所有未删除同名课程，返回这些课程涉及的去重开设校区名称；没有同名课程时返回空数组，历史映射缺失时可能返回“未知校区”",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetCourseCampusesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/course/categories": {
+      "get": {
+        "summary": "获取课程分类",
+        "deprecated": false,
+        "description": "登录后按完整课程名称精确匹配所有未删除同名课程，返回这些课程涉及的去重课程分类名称；没有同名课程时返回空数组，历史映射缺失时可能返回“未知分类”",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetCourseCategoriesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/course/departments": {
+      "get": {
+        "summary": "获取课程开课院系",
+        "deprecated": false,
+        "description": "登录后按完整课程名称精确匹配所有未删除同名课程，返回这些课程涉及的去重开课院系名称；没有同名课程时返回空数组，历史映射缺失时可能返回“未知开课院系”",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetCourseDepartmentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/course/departs": {
+      "get": {
+        "summary": "获取课程开课院系",
+        "deprecated": false,
+        "description": "根据课程名字获取课程开课院系",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "课程名称关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetCourseDepartmentsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/course/{courseId}": {
+      "get": {
+        "summary": "获取课程信息",
+        "deprecated": false,
+        "description": "登录后按课程ID获取未被软删除的正式课程，包含课程分类、开课院系、校区、教师、评论标签统计，以及可选的来源提案贡献者信息。课程由匿名提案创建时 contributor 仅返回 proposalId 和 showUsername=false，不返回用户身份",
+        "tags": [
+          "course"
+        ],
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "课程ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetCourseResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/search": {
+      "post": {
+        "summary": "搜索课程列表",
+        "deprecated": false,
+        "description": "登录后分页搜索未删除课程。type=course 时按课程名称大小写不敏感模糊匹配；type=teacher 时先按教师完整姓名查找教师，再返回其课程；type=category 或 department 时按映射完整名称精确匹配。未知 type 返回参数错误。非空 keyword 会异步写入当前用户搜索历史，重复关键词更新时间且仅保留最近15条",
+        "tags": [
+          "course"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.ListCoursesReq",
+                    "summary": "body",
+                    "description": "搜索类型、关键词和分页；type 支持 course/teacher/category/department"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListCoursesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/like/{likeId}": {
+      "post": {
+        "summary": "点赞 / 取消点赞",
+        "deprecated": false,
+        "description": "登录用户切换指定未删除提案或评论的点赞状态：未点赞时新增，已点赞时取消。path 中 likeId 是目标ID，请求体 targetType 必须是 proposal 或 comment；目标不存在、已删除或类型非法时拒绝且不会产生悬空点赞。响应返回操作后的点赞状态与最新总数",
+        "tags": [
+          "like"
+        ],
+        "parameters": [
+          {
+            "name": "likeId",
+            "in": "path",
+            "description": "目标ID（提案ID或评论ID）",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.ToggleLikeReq",
+                    "summary": "body",
+                    "description": "点赞请求参数"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ToggleLikeResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/add": {
+      "post": {
+        "summary": "新增提案",
+        "deprecated": false,
+        "description": "登录用户创建待审核课程提案。标题、课程名称、课程开课院系、课程分类及至少一个已有校区必填，课程代码和补充说明可空；教师列表可为空，教师项姓名必填，id 有值时复用已有教师、为空时审批通过后创建新教师，教师 department 可为空且不会用课程开课院系推断。系统还会检查同课程重复提案、已有课程及当前用户每日额度",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.CreateProposalReq",
+                    "summary": "req",
+                    "description": "创建提案的请求参数"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_CreateProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/field-suggestions": {
+      "get": {
+        "summary": "获取提案字段建议",
+        "deprecated": false,
+        "description": "登录后获取提案表单字段建议。department、category、campus 从当前映射名称中匹配；courseName、courseCode 从未删除课程中分页搜索；teacherName 从教师中分页搜索，每位教师额外返回其按创建时间倒序的最多两门未删除课程，未教授课程时 courses 返回空数组。未知 field 返回无效字段错误",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "field",
+            "in": "query",
+            "description": "字段类型: department/category/campus/courseName/courseCode/teacherName",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.GetProposalFieldSuggestionsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/filter": {
+      "get": {
+        "summary": "分页筛选提案列表",
+        "deprecated": false,
+        "description": "登录后按状态、校区、课程开课院系和课程分类组合筛选提案。status 与 campus 支持重复 query 参数或 JSON 数组字符串；普通用户的状态条件固定为 approved。校区必须是系统已有名称，院系和分类按名称精确匹配；所有条件均为空时管理员查询全部、普通用户查询全部已通过提案；已通过提案附带关联正式课程 finalCourse，课程查询失败或已删除时省略",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "提案状态，可多选，不传则不按状态过滤",
+            "required": false,
+            "example": "",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          },
+          {
+            "name": "campus",
+            "in": "query",
+            "description": "校区，可多选，不传则不按校区过滤",
+            "required": false,
+            "example": "",
+            "schema": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "style": "form"
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "description": "开课院系，精确匹配",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "课程分类，精确匹配",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/history": {
+      "get": {
+        "summary": "获取我的提案",
+        "deprecated": false,
+        "description": "登录后获取当前用户的完整提案历史，包含 pending、approved、rejected 及已软删除提案，按创建时间倒序分页。updatedAt 是最近一次编辑或审批时间；已通过提案附带关联正式课程 finalCourse，课程查询失败或已删除时省略。此接口中 contribution 对创建者可见",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetMyProposalsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/list": {
+      "get": {
+        "summary": "分页获取提案列表",
+        "deprecated": false,
+        "description": "登录后分页查询提案。管理员可按 status 查询 pending、approved、rejected，不传 status 时查询全部；普通用户无论传什么 status 都只返回 approved。返回的 contribution 仅提案创建者可见，其他用户看到 -1；已通过提案附带关联正式课程 finalCourse，课程查询失败或已删除时省略",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "提案状态：pending/approved/rejected；管理员不传时查询全部，普通用户传值会被忽略",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ListProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/suggest": {
+      "get": {
+        "summary": "获取提案搜索建议",
+        "deprecated": false,
+        "description": "登录后根据关键词模糊分页搜索未删除且已通过的提案标题，返回提案ID和标题；无结果时返回空数组",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetProposalSuggestionsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/{proposalId}": {
+      "get": {
+        "summary": "获取提案详情",
+        "deprecated": false,
+        "description": "登录后根据提案ID查询完整信息及当前用户点赞状态。已删除提案仅创建者本人可见；contribution 仅创建者可见。已通过提案的 finalCourse 仅创建者或管理员可见，关联正式课程已删除或查询失败时省略",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/{proposalId}/approve": {
+      "post": {
+        "summary": "审批提案",
+        "deprecated": false,
+        "description": "管理员将 pending 提案审批为 approved，并在同一数据库事务内处理映射、教师、正式课程、贡献值及操作日志。finalCourse 可省略、传 null，或直接使用空请求体，此时以用户原始 course 为准；传入时以管理员确认内容创建或恢复正式课程，但不覆盖提案原文。已有教师传 id 后直接复用；id 为空则创建新教师，department 可为空并保存为未维护状态，不创建空院系映射，也不从课程开课院系推断",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.ToggleProposalReq",
+                    "summary": "req",
+                    "description": "可选审批参数；finalCourse 省略或为 null 时使用提案原始课程"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_ToggleProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/{proposalId}/delete": {
+      "post": {
+        "summary": "删除提案",
+        "deprecated": false,
+        "description": "登录用户按 path 中的提案ID执行软删除，请求体可为空。仅提案创建者本人可删除自己的 pending 或 rejected 提案，管理员也不能代删；approved 提案不能删除。软删除后创建者仍可在个人提案历史中查看",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_DeleteProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/{proposalId}/reject": {
+      "post": {
+        "summary": "拒绝提案",
+        "deprecated": false,
+        "description": "管理员操作：将状态为 pending（待审核）的提案变更为 rejected（已拒绝）\n使用场景：课程提案审核流程中，管理员认为提案不符合要求，驳回该提案\n注意事项：\n- 仅管理员可操作（需先调用 /api/auth/is_admin 确认权限）\n- 仅状态为 pending 的提案可以拒绝，已 approved/rejected 的提案无法再次操作\n- 拒绝后不会创建课程记录，仅更新提案状态",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.RejectProposalReq",
+                    "summary": "body",
+                    "description": "拒绝参数（可选理由）"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_RejectProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/{proposalId}/revoke": {
+      "post": {
+        "summary": "撤回提案操作",
+        "deprecated": false,
+        "description": "管理员把已通过或已拒绝提案恢复为 pending。actionType=approve 仅适用于 approved：事务内软删除提案关联课程和评论、删除相关评论点赞、扣回已结算贡献值，并清理无引用的教师、分类和院系；教师仍被未删除课程或提案通过 teacherId 引用时保留，分类仍被未删除课程引用时保留，院系仍被未删除课程或正式教师引用时保留。提案中的院系和分类是名称文本，不计作映射引用。actionType=reject 仅适用于 rejected：清空拒绝理由。状态与 actionType 不匹配时拒绝操作",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.RevokeProposalReq",
+                    "summary": "req",
+                    "description": "撤回类型：approve 撤回通过，reject 撤回拒绝"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_RevokeProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/proposal/{proposalId}/update": {
+      "post": {
+        "summary": "更新提案内容",
+        "deprecated": false,
+        "description": "管理员更新 pending 提案的标题、补充说明和完整课程信息；已通过、已拒绝或已删除提案不能更新。请求必须提交完整 course，教师规则与创建提案一致：姓名必填，id 为空表示新教师，department 可为空",
+        "tags": [
+          "proposal"
+        ],
+        "parameters": [
+          {
+            "name": "proposalId",
+            "in": "path",
+            "description": "提案唯一ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.UpdateProposalReq",
+                    "summary": "body",
+                    "description": "完整更新参数；title、content、course 必填"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_UpdateProposalResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/search/recent": {
+      "get": {
+        "summary": "获取最近搜索历史",
+        "deprecated": false,
+        "description": "登录后返回当前用户最近15条课程搜索历史，按最近搜索时间倒序。相同关键词会复用原记录并更新时间；搜索建议不会写入历史，只有提交非空课程搜索时才异步记录",
+        "tags": [
+          "search"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetSearchHistoriesResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/search/suggest": {
+      "get": {
+        "summary": "获取搜索建议",
+        "deprecated": false,
+        "description": "登录后并行匹配未删除课程名称，以及至少被一门未删除课程引用的教师、课程分类和课程开课院系；按 course、teacher、category、department 的顺序合并，最终最多返回 pageSize 条。任一数据库建议查询失败时整个请求失败。此接口只返回建议，不写入搜索历史",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "最终建议条数上限，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetSearchSuggestionsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/teacher/add": {
+      "post": {
+        "summary": "新建教师",
+        "deprecated": false,
+        "description": "管理员独立创建正式教师。此接口的姓名、职称和所属院系均必填；与提案审批自动创建教师不同，独立创建教师不接受空院系。院系名称不存在时会创建并持久化对应映射",
+        "tags": [
+          "teacher"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.CreateTeacherReq",
+                    "summary": "body",
+                    "description": "正式教师信息；name、title、department 均必填"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_CreateTeacherResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/teacher/suggest": {
+      "get": {
+        "summary": "获取教师搜索建议",
+        "deprecated": false,
+        "description": "登录后按教师姓名模糊搜索并返回分页建议。响应字段 id 是正式教师ID，可作为提案 course.teachers[].id 提交；教师院系暂未维护时 department 会显示为未知开课院系",
+        "tags": [
+          "teacher"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码，小于1按1处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页数量，范围1-100，超出范围按10处理",
+            "required": false,
+            "example": "",
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetTeacherSuggestionsResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/profile": {
+      "get": {
+        "summary": "获取当前用户资料",
+        "deprecated": false,
+        "description": "返回当前登录用户的昵称、头像引用、累计贡献值、按中国时区自然日统计的今日提案使用量、按贡献值等级计算的每日上限，以及当前能否设置或修改非空昵称。昵称未设置和头像未设置均返回空字符串",
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetUserProfileResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/profile/update": {
+      "post": {
+        "summary": "更新当前用户资料",
+        "deprecated": false,
+        "description": "原子更新当前登录用户的昵称和头像，任一字段校验或写入失败时两者都不改变。字段省略或为 null 表示保持原值，空字符串表示清空。非空昵称去除首尾空白后最多15个 Unicode 字符，不允许控制字符、不得与其他用户昵称重复，设置或改名后30天内不能再次设置非空昵称；清空昵称不受冷却限制。头像仅保存引用字符串，不负责上传、下载或 URL 格式校验",
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  {
+                    "$ref": "#/components/schemas/dto.UpdateUserProfileReq",
+                    "summary": "body",
+                    "description": "昵称和头像的局部更新；字段省略/null 保持，空字符串清空"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_UpdateUserProfileResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/{userId}/username": {
+      "get": {
+        "summary": "根据用户 ID 获取昵称",
+        "deprecated": false,
+        "description": "登录后查询指定用户昵称。查询本人或管理员查询任意用户时无需 proposalId；普通用户跨用户查询必须提供属于目标用户且 showUsername=true 的未删除提案ID，否则拒绝，避免绕过匿名提案设置。目标用户尚未设置昵称时成功返回空字符串",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "用户 ID",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "proposalId",
+            "in": "query",
+            "description": "跨用户查询时必填，且该提案必须允许展示昵称；本人和管理员可省略",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.Response-dto_GetUsernameByUserIDResp"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "dto.CommentVO": {
+        "properties": {
+          "category": {
+            "description": "“我的评论”中附带的课程分类；普通课程评论列表中为空",
+            "type": "string"
+          },
+          "content": {
+            "description": "评论正文",
+            "type": "string"
+          },
+          "courseId": {
+            "description": "所属正式课程ID",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "发布时间",
+            "type": "string"
+          },
+          "department": {
+            "description": "“我的评论”中附带的课程开课院系；普通课程评论列表中为空",
+            "type": "string"
+          },
+          "id": {
+            "description": "评论ID",
+            "type": "string"
+          },
+          "like": {
+            "description": "当前登录用户在操作后或查询时是否已点赞",
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "description": "目标当前点赞总数",
+            "type": "integer"
+          },
+          "name": {
+            "description": "“我的评论”中附带的课程名称；普通课程评论列表中为空",
+            "type": "string"
+          },
+          "tags": {
+            "description": "评论标签列表，可为空",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "teachers": {
+            "description": "“我的评论”中附带的教师姓名与职称拼接字符串列表；普通课程评论列表中为空",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "updatedAt": {
+            "description": "最近更新时间",
+            "type": "string"
+          },
+          "userId": {
+            "description": "评论发布者用户ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.CourseVO": {
+        "description": "未被软删除的课程完整信息",
+        "properties": {
+          "campuses": {
+            "description": "开设校区名称列表",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "category": {
+            "description": "课程分类名称；映射缺失时返回未知分类",
+            "type": "string"
+          },
+          "code": {
+            "description": "课程代码，历史数据中可能为空",
+            "type": "string"
+          },
+          "contributor": {
+            "$ref": "#/components/schemas/dto.CourseContributorVO"
+          },
+          "department": {
+            "description": "课程开课院系名称；不是教师所属院系",
+            "type": "string"
+          },
+          "id": {
+            "description": "正式课程ID",
+            "type": "string"
+          },
+          "name": {
+            "description": "课程名称",
+            "type": "string"
+          },
+          "tagCount": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "当前未删除评论中出现次数最多的至多三个非空标签及计数",
+            "type": "object",
+            "properties": {}
+          },
+          "teachers": {
+            "description": "任课教师详情；教师所属院系暂未维护时返回未知开课院系",
+            "items": {
+              "$ref": "#/components/schemas/dto.TeacherVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.CreateCommentReq": {
+        "properties": {
+          "content": {
+            "description": "评论正文，必填",
+            "type": "string"
+          },
+          "courseId": {
+            "description": "所属正式课程ID，必填",
+            "type": "string"
+          },
+          "tags": {
+            "description": "可选标签列表",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "required": [
+          "content",
+          "courseId"
+        ],
+        "type": "object"
+      },
+      "dto.CreateCommentResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "category": {
+            "description": "“我的评论”中附带的课程分类；普通课程评论列表中为空",
+            "type": "string"
+          },
+          "content": {
+            "description": "评论正文",
+            "type": "string"
+          },
+          "courseId": {
+            "description": "所属正式课程ID",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "发布时间",
+            "type": "string"
+          },
+          "department": {
+            "description": "“我的评论”中附带的课程开课院系；普通课程评论列表中为空",
+            "type": "string"
+          },
+          "id": {
+            "description": "评论ID",
+            "type": "string"
+          },
+          "like": {
+            "description": "当前登录用户在操作后或查询时是否已点赞",
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "description": "目标当前点赞总数",
+            "type": "integer"
+          },
+          "name": {
+            "description": "“我的评论”中附带的课程名称；普通课程评论列表中为空",
+            "type": "string"
+          },
+          "tags": {
+            "description": "评论标签列表，可为空",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "teachers": {
+            "description": "“我的评论”中附带的教师姓名与职称拼接字符串列表；普通课程评论列表中为空",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "updatedAt": {
+            "description": "最近更新时间",
+            "type": "string"
+          },
+          "userId": {
+            "description": "评论发布者用户ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.CreateProposalReq": {
+        "properties": {
+          "content": {
+            "description": "提案补充说明，可为空",
+            "type": "string"
+          },
+          "course": {
+            "$ref": "#/components/schemas/dto.ProposalCourseVO"
+          },
+          "showUsername": {
+            "description": "是否允许公开展示提案创建者昵称；false 表示匿名展示",
+            "type": "boolean"
+          },
+          "title": {
+            "description": "提案标题，去除首尾空白后不能为空",
+            "type": "string"
+          }
+        },
+        "required": [
+          "course",
+          "title"
+        ],
+        "type": "object"
+      },
+      "dto.CreateProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposal": {
+            "$ref": "#/components/schemas/dto.ProposalVO"
+          },
+          "proposalId": {
+            "description": "新建提案ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.CreateTeacherReq": {
+        "properties": {
+          "department": {
+            "description": "教师所属院系，独立创建教师时必填；这与提案内教师院系可空的规则不同",
+            "type": "string"
+          },
+          "name": {
+            "description": "教师姓名，必填",
+            "type": "string"
+          },
+          "title": {
+            "description": "教师职称，必填",
+            "type": "string"
+          }
+        },
+        "required": [
+          "department",
+          "name",
+          "title"
+        ],
+        "type": "object"
+      },
+      "dto.CreateTeacherResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "department": {
+            "description": "教师所属院系；提案场景允许为空，表示暂未维护",
+            "type": "string"
+          },
+          "id": {
+            "description": "教师ID；提案引用已有教师时传入，新教师可为空",
+            "type": "string"
+          },
+          "name": {
+            "description": "教师姓名",
+            "type": "string"
+          },
+          "title": {
+            "description": "教师职称",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetCourseCampusesResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "campuses": {
+            "description": "同名未删除课程涉及的去重开设校区名称",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetCourseCategoriesResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "categories": {
+            "description": "同名未删除课程涉及的去重课程分类名称",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetCourseDepartmentsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "departments": {
+            "description": "同名未删除课程涉及的去重开课院系名称",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetCourseResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/dto.CourseVO"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetMyCommentsReq": {
+        "properties": {
+          "page": {
+            "description": "页码，从1开始；小于1时按1处理",
+            "form": "page",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description": "每页数量，范围1-100；未传、非正数或超过100时按10处理",
+            "form": "pageSize",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetMyCommentsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "comments": {
+            "description": "当前分页评论，附带对应课程信息及当前点赞状态",
+            "items": {
+              "$ref": "#/components/schemas/dto.CommentVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "当前用户未删除评论总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposal": {
+            "$ref": "#/components/schemas/dto.ProposalVO"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetSearchHistoriesResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "histories": {
+            "description": "当前用户最近15条搜索历史，按最近搜索时间倒序",
+            "items": {
+              "$ref": "#/components/schemas/dto.SearchHistoryVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetSearchSuggestionsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "suggestions": {
+            "description": "合并后的建议列表，最多 pageSize 条",
+            "items": {
+              "$ref": "#/components/schemas/dto.SearchSuggestionsVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetTotalCourseCommentsCountResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "count": {
+            "description": "系统中所有未删除课程评论总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListCourseCommentsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "comments": {
+            "description": "当前分页评论，按创建时间倒序",
+            "items": {
+              "$ref": "#/components/schemas/dto.CommentVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "该课程未删除评论总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListCoursesReq": {
+        "properties": {
+          "page": {
+            "description": "页码，从1开始；小于1时按1处理",
+            "form": "page",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description": "每页数量，范围1-100；未传、非正数或超过100时按10处理",
+            "form": "pageSize",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListCoursesResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "courses": {
+            "description": "当前页的课程列表",
+            "items": {
+              "$ref": "#/components/schemas/dto.CourseVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "page": {
+            "description": "页码，从1开始；小于1时按1处理",
+            "form": "page",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description": "每页数量，范围1-100；未传、非正数或超过100时按10处理",
+            "form": "pageSize",
+            "type": "integer"
+          },
+          "total": {
+            "description": "符合条件的总记录数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposals": {
+            "description": "当前分页提案列表，无结果时为空数组",
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "符合当前权限与筛选条件的提案总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ProposalVO": {
+        "description": "新建后的完整待审核提案",
+        "properties": {
+          "content": {
+            "description": "提案补充说明，可能为空",
+            "type": "string"
+          },
+          "contribution": {
+            "description": "本提案结算贡献值；仅创建者可见，其他用户响应中为 -1",
+            "type": "integer"
+          },
+          "course": {
+            "$ref": "#/components/schemas/dto.ProposalCourseVO"
+          },
+          "createdAt": {
+            "description": "提案创建时间",
+            "type": "string"
+          },
+          "deleted": {
+            "description": "是否已被创建者软删除",
+            "type": "boolean"
+          },
+          "finalCourse": {
+            "$ref": "#/components/schemas/dto.ProposalCourseVO"
+          },
+          "id": {
+            "description": "提案ID",
+            "type": "string"
+          },
+          "like": {
+            "description": "当前登录用户在操作后或查询时是否已点赞",
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "description": "目标当前点赞总数",
+            "type": "integer"
+          },
+          "rejectReason": {
+            "description": "拒绝理由；未拒绝或未填写理由时为空",
+            "type": "string"
+          },
+          "showUsername": {
+            "description": "是否允许公开展示创建者昵称",
+            "type": "boolean"
+          },
+          "status": {
+            "description": "提案状态：pending 待审核、approved 已通过、rejected 已拒绝",
+            "type": "string"
+          },
+          "title": {
+            "description": "提案标题",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "最近一次编辑或审批时间",
+            "type": "string"
+          },
+          "userId": {
+            "description": "提案创建者用户ID；是否展示昵称由 showUsername 控制",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.SearchHistoryVO": {
+        "properties": {
+          "createdAt": {
+            "description": "最近一次搜索该关键词的时间",
+            "type": "string"
+          },
+          "id": {
+            "description": "搜索历史记录ID",
+            "type": "string"
+          },
+          "query": {
+            "description": "曾提交的非空课程搜索关键词",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.SearchSuggestionsVO": {
+        "properties": {
+          "name": {
+            "description": "建议显示及后续搜索使用的名称",
+            "type": "string"
+          },
+          "type": {
+            "description": "建议类型：course、teacher、category、department",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.SignInReq": {
+        "properties": {
+          "authId": {
+            "description": "客户端认证标识，当前版本为兼容字段且仍需传入",
+            "type": "string"
+          },
+          "authType": {
+            "description": "认证类型标识，当前登录流程使用微信临时登录凭证",
+            "type": "string"
+          },
+          "verifyCode": {
+            "description": "微信登录临时 code，用于换取 OpenID，不能为空",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authId",
+          "authType",
+          "verifyCode"
+        ],
+        "type": "object"
+      },
+      "dto.SignInResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "accessToken": {
+            "description": "Bearer 访问令牌；已有令牌仍有效且无需续期时可能原样返回",
+            "type": "string"
+          },
+          "expiresIn": {
+            "description": "访问令牌剩余有效秒数",
+            "type": "integer"
+          },
+          "isAdmin": {
+            "description": "当前用户是否具有管理员权限",
+            "type": "boolean"
+          },
+          "userId": {
+            "description": "当前用户ID；首次登录时自动创建用户",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.TeacherVO": {
+        "properties": {
+          "department": {
+            "description": "教师所属院系；提案场景允许为空，表示暂未维护",
+            "type": "string"
+          },
+          "id": {
+            "description": "教师ID；提案引用已有教师时传入，新教师可为空",
+            "type": "string"
+          },
+          "name": {
+            "description": "教师姓名",
+            "type": "string"
+          },
+          "title": {
+            "description": "教师职称",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ToggleLikeReq": {
+        "properties": {
+          "targetType": {
+            "description": "点赞对象类型：proposal/comment",
+            "enum": [
+              "proposal",
+              "comment"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "targetType"
+        ],
+        "type": "object"
+      },
+      "dto.ToggleLikeResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "like": {
+            "description": "当前登录用户在操作后或查询时是否已点赞",
+            "type": "boolean"
+          },
+          "likeCnt": {
+            "description": "目标当前点赞总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.DeleteProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "deleted": {
+            "description": "是否成功软删除",
+            "type": "boolean"
+          },
+          "deletedAt": {
+            "description": "本次删除完成时间",
+            "type": "string"
+          },
+          "operatorId": {
+            "description": "执行删除的提案创建者用户ID",
+            "type": "string"
+          },
+          "proposalId": {
+            "description": "被软删除的提案ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.UpdateProposalReq": {
+        "properties": {
+          "content": {
+            "description": "更新后的补充说明，当前接口要求非空",
+            "type": "string"
+          },
+          "course": {
+            "$ref": "#/components/schemas/dto.ProposalCourseVO"
+          },
+          "title": {
+            "description": "更新后的提案标题，不能为空",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "course",
+          "title"
+        ],
+        "type": "object"
+      },
+      "dto.UpdateProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposalId": {
+            "description": "更新成功的提案ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ProposalSuggestionsVO": {
+        "properties": {
+          "id": {
+            "description": "提案ID",
+            "type": "string"
+          },
+          "title": {
+            "description": "提案标题",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetProposalSuggestionsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalSuggestionsVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetTeacherSuggestionsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "teachers": {
+            "description": "当前分页教师建议列表",
+            "items": {
+              "$ref": "#/components/schemas/dto.TeacherVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.IsAdminResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "isAdmin": {
+            "description": "当前登录用户是否为管理员",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GrantAdminReq": {
+        "properties": {
+          "userId": {
+            "description": "要切换管理员状态的目标用户ID",
+            "type": "string"
+          },
+          "verifyCode": {
+            "description": "管理员授权密钥，必须与服务端配置完全一致",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GrantAdminResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "isAdmin": {
+            "description": "切换后的管理员状态；true 表示已授予，false 表示已撤销",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_CreateCommentResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.CreateCommentResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_CreateProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.CreateProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_CreateTeacherResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.CreateTeacherResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_DeleteProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.DeleteProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetCourseCampusesResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetCourseCampusesResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetCourseCategoriesResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetCourseCategoriesResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetCourseDepartmentsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetCourseDepartmentsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetCourseResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetCourseResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetMyCommentsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetMyCommentsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetProposalSuggestionsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetProposalSuggestionsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetSearchHistoriesResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetSearchHistoriesResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetSearchSuggestionsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetSearchSuggestionsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetTeacherSuggestionsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetTeacherSuggestionsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetTotalCourseCommentsCountResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetTotalCourseCommentsCountResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GrantAdminResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GrantAdminResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_IsAdminResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.IsAdminResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ListCourseCommentsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ListCourseCommentsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ListCoursesResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ListCoursesResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ListProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ListProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_SignInResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.SignInResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ToggleLikeResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ToggleLikeResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_UpdateProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.UpdateProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "dto.AdminActionVO": {
+        "description": "最近一次管理员操作；尚无管理员操作时省略",
+        "properties": {
+          "action": {
+            "description": "最近动作名称，例如 approve、reject、delete、update",
+            "type": "string"
+          },
+          "actionTime": {
+            "description": "操作时间，格式 YYYY-MM-DD HH:mm:ss",
+            "type": "string"
+          },
+          "adminId": {
+            "description": "操作管理员用户ID",
+            "type": "string"
+          },
+          "adminName": {
+            "description": "管理员昵称；未设置时回退为 OpenID",
+            "type": "string"
+          },
+          "reason": {
+            "description": "日志正文或拒绝理由，无内容时省略",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.CreatorVO": {
+        "description": "提案创建者信息",
+        "properties": {
+          "createTime": {
+            "description": "提案创建时间，格式 YYYY-MM-DD HH:mm:ss",
+            "type": "string"
+          },
+          "creatorId": {
+            "description": "提案创建者用户ID",
+            "type": "string"
+          },
+          "creatorName": {
+            "description": "创建者昵称；未设置时回退为 OpenID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.FieldSuggestionVO": {
+        "properties": {
+          "courses": {
+            "description": "仅 teacherName 建议返回，固定存在且最多两门；其他字段省略",
+            "items": {
+              "$ref": "#/components/schemas/dto.CourseBrief"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "id": {
+            "description": "建议关联实体ID；教师、课程等数据库建议可能返回",
+            "type": "string"
+          },
+          "label": {
+            "description": "前端展示文本；教师有职称时格式为“姓名 - 职称”",
+            "type": "string"
+          },
+          "value": {
+            "description": "选中建议后写入请求字段的值",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetProposalFieldSuggestionsResp": {
+        "properties": {
+          "field": {
+            "description": "原样返回请求的字段类型",
+            "type": "string"
+          },
+          "suggestions": {
+            "description": "当前分页建议列表",
+            "items": {
+              "$ref": "#/components/schemas/dto.FieldSuggestionVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "匹配建议总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListProposalLogsGroupedResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposals": {
+            "description": "当前分页提案及其最近一次管理员操作摘要",
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalLogVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "提案总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListProposalLogsTimelineResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "logs": {
+            "description": "当前分页时间线日志，严格按操作时间倒序",
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalTimelineLogVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "全部变更日志总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ProposalLogVO": {
+        "properties": {
+          "adminAction": {
+            "$ref": "#/components/schemas/dto.AdminActionVO"
+          },
+          "content": {
+            "description": "提案补充说明",
+            "type": "string"
+          },
+          "course": {
+            "$ref": "#/components/schemas/dto.ProposalCourseVO"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/dto.CreatorVO"
+          },
+          "proposalId": {
+            "description": "提案ID",
+            "type": "string"
+          },
+          "status": {
+            "description": "当前提案状态",
+            "type": "string"
+          },
+          "title": {
+            "description": "提案标题",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ProposalSnapshotVO": {
+        "description": "能找到关联提案时返回当前提案摘要",
+        "properties": {
+          "category": {
+            "description": "提案课程分类",
+            "type": "string"
+          },
+          "courseName": {
+            "description": "提案课程名称",
+            "type": "string"
+          },
+          "department": {
+            "description": "提案课程开课院系",
+            "type": "string"
+          },
+          "title": {
+            "description": "提案标题",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ProposalTimelineLogVO": {
+        "properties": {
+          "actionTime": {
+            "description": "操作时间，格式 YYYY-MM-DD HH:mm:ss",
+            "type": "string"
+          },
+          "actionType": {
+            "description": "CREATE/APPROVE/REJECT/DELETE/UPDATE/GRANT_ADMIN/REVOKE_ADMIN",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": {},
+            "description": "额外操作信息；当前主要通过 content 返回日志正文",
+            "type": "object",
+            "properties": {}
+          },
+          "logId": {
+            "description": "变更日志ID",
+            "type": "string"
+          },
+          "operatorId": {
+            "description": "操作者用户ID",
+            "type": "string"
+          },
+          "operatorName": {
+            "description": "操作者昵称；未设置时回退为 OpenID",
+            "type": "string"
+          },
+          "proposalId": {
+            "description": "关联提案ID；非提案操作时省略",
+            "type": "string"
+          },
+          "proposalSnapshot": {
+            "$ref": "#/components/schemas/dto.ProposalSnapshotVO"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ChangeLogVO": {
+        "properties": {
+          "action": {
+            "description": "操作类型内部编号",
+            "type": "integer"
+          },
+          "content": {
+            "description": "操作说明或拒绝理由等日志正文",
+            "type": "string"
+          },
+          "id": {
+            "description": "变更日志ID",
+            "type": "string"
+          },
+          "proposalId": {
+            "description": "与提案相关时返回提案ID，否则省略",
+            "type": "string"
+          },
+          "targetId": {
+            "description": "被操作业务对象ID",
+            "type": "string"
+          },
+          "targetType": {
+            "description": "目标类型内部编号",
+            "type": "integer"
+          },
+          "updateSource": {
+            "description": "操作来源内部编号，例如用户或管理员",
+            "type": "integer"
+          },
+          "updatedAt": {
+            "description": "操作记录时间",
+            "type": "string"
+          },
+          "userId": {
+            "description": "操作者用户ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetMyProposalsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposals": {
+            "description": "当前分页的个人提案历史",
+            "items": {
+              "$ref": "#/components/schemas/dto.ProposalVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "当前用户全部提案总数，包含所有状态及已删除提案",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListChangeLogsReq": {
+        "properties": {
+          "keyword": {
+            "description": "可选日志内容关键词，大小写不敏感模糊匹配",
+            "type": "string"
+          },
+          "page": {
+            "description": "页码，从1开始；小于1时按1处理",
+            "form": "page",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description": "每页数量，范围1-100；未传、非正数或超过100时按10处理",
+            "form": "pageSize",
+            "type": "integer"
+          },
+          "type": {
+            "description": "可选目标类型：course、proposal、teacher、user；为空时不过滤类型",
+            "enum": [
+              "course",
+              "proposal",
+              "teacher",
+              "user"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ListChangeLogsResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "changeLogs": {
+            "description": "当前分页日志，按时间倒序",
+            "items": {
+              "$ref": "#/components/schemas/dto.ChangeLogVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "total": {
+            "description": "符合筛选条件的日志总数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ToggleProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposal": {
+            "description": "是否成功通过提案",
+            "type": "boolean"
+          },
+          "proposalCnt": {
+            "description": "操作后剩余待审核提案数量",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetMyProposalsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetMyProposalsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ListChangeLogsResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ListChangeLogsResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ListProposalLogsGroupedResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ListProposalLogsGroupedResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ListProposalLogsTimelineResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ListProposalLogsTimelineResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_ToggleProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.ToggleProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ProposalCourseVO": {
+        "description": "用户提交的课程快照",
+        "properties": {
+          "campuses": {
+            "description": "开设校区名称列表，至少一项且必须是系统已有校区，不允许由提案创建新校区",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": false
+          },
+          "category": {
+            "description": "课程分类名称，不能为空；审批时可落库为新分类",
+            "type": "string"
+          },
+          "code": {
+            "description": "课程代码，可为空",
+            "type": "string"
+          },
+          "department": {
+            "description": "课程开课院系，不能为空；与教师所属院系是两个独立字段",
+            "type": "string"
+          },
+          "id": {
+            "description": "课程ID；创建提案时无需传入，finalCourse 返回正式课程时可能携带",
+            "type": "string"
+          },
+          "name": {
+            "description": "课程名称，去除首尾空白后不能为空",
+            "type": "string"
+          },
+          "teachers": {
+            "description": "任课教师列表；每项姓名必填，id 为空表示新增教师，department 可为空",
+            "items": {
+              "$ref": "#/components/schemas/dto.TeacherVO"
+            },
+            "type": "array",
+            "uniqueItems": false
+          }
+        },
+        "type": "object"
+      },
+      "dto.RevokeProposalReq": {
+        "properties": {
+          "actionType": {
+            "description": "必填；approve 撤回已通过提案，reject 撤回已拒绝提案",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.RevokeProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "proposalId": {
+            "description": "已恢复为 pending 的提案ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_RevokeProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.RevokeProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "dto.RejectProposalReq": {
+        "properties": {
+          "proposalId": {
+            "description": "提案ID，由 URL path 写入，请求体无需传",
+            "type": "string"
+          },
+          "reason": {
+            "description": "拒绝理由，可为空",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.RejectProposalResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "pendingCount": {
+            "description": "操作后剩余待审核提案数量",
+            "type": "integer"
+          },
+          "rejected": {
+            "description": "是否成功拒绝",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_RejectProposalResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.RejectProposalResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "dto.ToggleProposalReq": {
+        "properties": {
+          "finalCourse": {
+            "$ref": "#/components/schemas/dto.ProposalCourseVO"
+          },
+          "proposalID": {
+            "description": "提案ID，由 URL path 写入，请求体无需传",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.CourseBrief": {
+        "properties": {
+          "id": {
+            "description": "未删除课程ID",
+            "type": "string"
+          },
+          "name": {
+            "description": "课程名称",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetUserProfileResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "avatar": {
+            "description": "当前头像引用，未设置时为空字符串",
+            "type": "string"
+          },
+          "canEditUsername": {
+            "description": "当前是否允许设置或修改非空昵称；清空昵称不受30天冷却限制",
+            "type": "boolean"
+          },
+          "contribution": {
+            "description": "用户累计贡献值，用于计算每日提案上限",
+            "type": "integer"
+          },
+          "dailyQuota": {
+            "description": "当前中国时区自然日内已创建的提案数量",
+            "type": "integer"
+          },
+          "dailyQuotaLimit": {
+            "description": "按当前贡献值等级计算的每日提案上限",
+            "type": "integer"
+          },
+          "username": {
+            "description": "当前昵称，未设置时为空字符串",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.UpdateUserProfileReq": {
+        "properties": {
+          "avatar": {
+            "description": "省略或 null 保持不变；空字符串清空；服务端仅保存引用字符串，不上传或校验 URL",
+            "type": "string"
+          },
+          "username": {
+            "description": "省略或 null 保持不变；空字符串清空；非空昵称会去除首尾空白并校验长度、控制字符、唯一性和30天冷却",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dto.UpdateUserProfileResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "avatar": {
+            "description": "更新后的头像引用",
+            "type": "string"
+          },
+          "username": {
+            "description": "更新后的昵称",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetUserProfileResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetUserProfileResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_UpdateUserProfileResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.UpdateUserProfileResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "dto.GetUsernameByUserIDResp": {
+        "description": "实际业务数据",
+        "properties": {
+          "username": {
+            "description": "目标用户昵称，尚未设置时为空字符串",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "handler.Response-dto_GetUsernameByUserIDResp": {
+        "properties": {
+          "code": {
+            "description": "业务代码, 0表示成功",
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/dto.GetUsernameByUserIDResp"
+          },
+          "msg": {
+            "description": "提示信息",
+            "type": "string",
+            "example": "success"
+          }
+        },
+        "type": "object"
+      },
+      "dto.CourseContributorVO": {
+        "description": "课程由审批提案创建时返回来源信息；历史课程无来源提案时省略",
+        "properties": {
+          "proposalId": {
+            "description": "创建该课程的已通过提案ID",
+            "type": "string"
+          },
+          "showUsername": {
+            "description": "来源提案是否允许公开展示创建者昵称",
+            "type": "boolean"
+          },
+          "userId": {
+            "description": "提案允许展示昵称时返回创建者用户ID，匿名时省略",
+            "type": "string"
+          },
+          "username": {
+            "description": "提案允许展示昵称时返回当前昵称，未设置昵称时可能为空",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "responses": {},
+    "securitySchemes": {
+      "Bearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "servers": [],
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

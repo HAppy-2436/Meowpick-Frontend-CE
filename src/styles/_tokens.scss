@@ -1,0 +1,176 @@
+// =====================================================================
+// Meowpick 设计令牌（Design Tokens）
+// 单一事实源：所有页面通过 @import '@/styles/tokens.scss' 引用
+// 同步到 main.scss 全局可用
+// =====================================================================
+
+// ---------- 主题色 ----------
+$brand-red: #b20035;          // 品牌主色（红）
+$brand-red-soft: #ff4d6a;     // 品牌柔色（渐变终点）
+$brand-red-tint: #fff5f6;     // 品牌极淡背景
+$brand-red-deep: #8a0028;     // 按压态深红
+$brand-red-glow: rgba(178, 0, 53, 0.30);   // 品牌发光环
+
+// 状态色完整集
+$success: #388E3C;
+$success-soft: rgba(56, 142, 60, 0.12);
+$success-deep: #2e7d32;
+$warning: #E6A23C;
+$warning-soft: rgba(230, 162, 60, 0.14);
+$warning-deep: #c79141;
+$danger: #b20035;
+$danger-soft: rgba(178, 0, 53, 0.10);
+$danger-deep: #ff4d4f;
+$danger-light: #ff7875;
+$info: #0066cc;
+$info-soft: rgba(0, 102, 204, 0.10);
+$info-deep: #1565c0;
+$neutral-light: #f5f5f5;
+$neutral-mid: #999999;
+
+// 纯白与纯黑（语义）
+$pure-white: #ffffff;
+$pure-black: #000000;
+
+// ---------- 中性色（亮色） ----------
+$bg-page-light: #f7f8fa;
+$bg-card-light: #ffffff;
+$bg-muted-light: #f5f5f5;
+$bg-overlay-light: rgba(0, 0, 0, 0.5);
+
+$text-primary-light: #1f1f1f;
+$text-secondary-light: #666666;
+$text-tertiary-light: #999999;
+$text-placeholder-light: #cccccc;
+$divider-light: #f0f0f0;
+
+// ---------- 中性色（暗色） ----------
+$bg-page-dark: #121212;
+$bg-card-dark: #1e1e1e;
+$bg-muted-dark: #2a2a2a;
+$bg-muted-darker: #3a3a3a;
+$bg-overlay-dark: rgba(0, 0, 0, 0.65);
+
+$text-primary-dark: #e0e0e0;
+$text-secondary-dark: #aaaaaa;
+$text-tertiary-dark: #888888;
+$text-placeholder-dark: #555555;
+$divider-dark: #2a2a2a;
+
+// ---------- 圆角 ----------
+$radius-xs: 8rpx;
+$radius-sm: 12rpx;
+$radius-md: 16rpx;
+$radius-lg: 20rpx;
+$radius-xl: 28rpx;
+$radius-2xl: 36rpx;
+$radius-pill: 999rpx;
+
+// ---------- 间距（8 像素阶梯） ----------
+$space-1: 4rpx;
+$space-2: 8rpx;
+$space-3: 12rpx;
+$space-4: 16rpx;
+$space-5: 20rpx;
+$space-6: 24rpx;
+$space-7: 32rpx;
+$space-8: 40rpx;
+$space-9: 48rpx;
+$space-10: 64rpx;
+$space-11: 80rpx;
+$space-12: 96rpx;
+
+// ---------- 字号 ----------
+$font-xs: 22rpx;
+$font-sm: 24rpx;
+$font-base: 28rpx;
+$font-md: 30rpx;
+$font-lg: 32rpx;
+$font-xl: 36rpx;
+$font-2xl: 40rpx;
+$font-3xl: 44rpx;
+$font-4xl: 56rpx;
+
+// 字重
+$weight-regular: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+$weight-black: 800;
+
+// ---------- 阴影 ----------
+$shadow-xs: 0 2rpx 6rpx rgba(0, 0, 0, 0.04);
+$shadow-sm: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+$shadow-md: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 12rpx 32rpx rgba(0, 0, 0, 0.10);
+$shadow-xl: 0 20rpx 60rpx rgba(0, 0, 0, 0.18);
+
+// 品牌色阴影（按钮发光）
+$shadow-brand-sm: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
+$shadow-brand-md: 0 8rpx 24rpx rgba(178, 0, 53, 0.20);
+$shadow-brand-lg: 0 12rpx 32rpx rgba(178, 0, 53, 0.30);
+
+$shadow-card: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+$shadow-card-hover: 0 12rpx 32rpx rgba(0, 0, 0, 0.10);
+
+// 组件级阴影（首页卡片、搜索框、统计卡等通用）
+$shadow-comp: 0 6rpx 20rpx rgba(0, 0, 0, 0.04);
+$shadow-comp-glow: 0 6rpx 20rpx rgba(178, 0, 53, 0.06);
+
+// Logo 投影
+$shadow-logo: drop-shadow(0 16rpx 32rpx rgba(178, 0, 53, 0.15));
+
+// 暗色阴影（更黑、更不透明）
+$shadow-xs-dark: 0 2rpx 6rpx rgba(0, 0, 0, 0.20);
+$shadow-sm-dark: 0 4rpx 12rpx rgba(0, 0, 0, 0.30);
+$shadow-md-dark: 0 8rpx 24rpx rgba(0, 0, 0, 0.40);
+
+// ---------- 动画曲线 & 时长 ----------
+// 标准曲线
+$ease-standard: cubic-bezier(0.4, 0, 0.2, 1);     // 通用
+$ease-emphasized: cubic-bezier(0.25, 0.8, 0.25, 1); // 强调（按钮、卡片缩放）
+$ease-decelerate: cubic-bezier(0, 0, 0.2, 1);    // 入场减速
+$ease-accelerate: cubic-bezier(0.4, 0, 1, 1);     // 出场加速
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  // 弹性回弹
+
+// 标准时长
+$dur-instant: 100ms;
+$dur-fast: 150ms;
+$dur-base: 200ms;
+$dur-medium: 300ms;
+$dur-slow: 450ms;
+$dur-slower: 600ms;
+
+// ---------- 按压反馈缩放 ----------
+$press-scale-sm: 0.97;  // 按钮/卡片（小）
+$press-scale-md: 0.94;  // 标签 chip/搜索结果
+$press-scale-lg: 0.92;  // 头像/重要按钮
+
+// ---------- 渐变 ----------
+$gradient-brand: linear-gradient(135deg, #{$brand-red} 0%, #{$brand-red-soft} 100%);
+$gradient-brand-vertical: linear-gradient(180deg, #{$brand-red} 0%, #{$brand-red-soft} 100%);
+$gradient-brand-soft: linear-gradient(135deg, #{$brand-red-tint} 0%, #ffffff 100%);
+$gradient-info-soft: linear-gradient(135deg, rgba(0, 102, 204, 0.08) 0%, rgba(0, 102, 204, 0.02) 100%);
+$gradient-success-soft: linear-gradient(135deg, rgba(56, 142, 60, 0.08) 0%, rgba(56, 142, 60, 0.02) 100%);
+$gradient-danger-soft: linear-gradient(135deg, rgba(178, 0, 53, 0.08) 0%, rgba(178, 0, 53, 0.02) 100%);
+$gradient-header: linear-gradient(180deg, rgba(255, 245, 246, 0.95) 0%, rgba(255, 245, 246, 0) 100%);
+
+// ---------- 描边 ----------
+$border-light: 1px solid #f0f0f0;
+$border-medium: 1px solid #e5e5e5;
+$border-brand: 1px solid rgba(178, 0, 53, 0.15);
+$border-dark: 1px solid #2a2a2a;
+
+// ---------- z-index 层级 ----------
+$z-base: 1;
+$z-sticky: 10;
+$z-tabbar: 50;
+$z-navbar: 100;
+$z-popover: 500;
+$z-modal: 2000;
+$z-toast: 9999;
+
+// ---------- 响应式断点 ----------
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;

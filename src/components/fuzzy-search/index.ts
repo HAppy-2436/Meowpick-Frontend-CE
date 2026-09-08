@@ -1,9 +1,9 @@
 import { ref, watch } from 'vue';
 
 interface FuzzySearchReturn {
-  keyword: typeof keyword;
-  filteredOptions: typeof filteredOptions;
-  isVisible: typeof isVisible;
+  keyword: import('vue').Ref<string>;
+  filteredOptions: import('vue').Ref<string[]>;
+  isVisible: import('vue').Ref<boolean>;
   setKeyword: (value: string) => void;
   toggleVisible: () => void;
   hide: () => void;

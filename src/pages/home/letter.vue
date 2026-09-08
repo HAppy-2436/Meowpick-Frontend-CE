@@ -1,213 +1,52 @@
 <template>
   <view class="letter-container" :class="themeStore.themeClass">
-    <view class="custom-header" :style="{ paddingTop: menuButtonInfo.top + 'px' }">
-        <view class="nav-bar-content" :style="{ height: menuButtonInfo.height + 'px' }">
-            <view class="back-area" @click="goBack" :style="{ width: menuButtonInfo.height + 'px', height: menuButtonInfo.height + 'px' }">
-                <BackBtn />
-            </view>
-            <view class="title-area">
-                <text class="page-title">致用户的一封信</text>
-            </view>
-        </view>
-    </view>
+    <TopNavBar title="致用户的一封信" @back="goBack" />
 
-    <!-- Content Card -->
-    <!-- Content starts below header -->
-    <view class="content-card" :class="themeStore.themeClass" :style="{ marginTop: (menuButtonInfo.top + menuButtonInfo.height + 20) + 'px' }">
+    <view :style="{ height: navBarHeight + 'px' }"></view>
+
+    <view class="content-card">
       <view class="card-body">
-        <text class="paragraph">{{ text1 }}</text>
-        <text class="paragraph">{{ text2 }}</text>
-        <text class="paragraph highlight">{{ text3 }}</text>
-
-        <text class="paragraph">{{ text5 }}</text>
-        <text class="paragraph highlight">{{ text6 }}</text>
-        <text class="paragraph">{{ text7 }}</text>
-
-        <text class="paragraph">{{ text9 }}</text>
-        <text class="paragraph">{{ text10 }}</text>
+        <text v-for="(line, i) in letterLines"
+          :key="i"
+          class="paragraph"
+          :class="{ highlight: line.highlight }"
+        >{{ line.text }}</text>
       </view>
       <view class="card-footer">
-        <text class="footer-text">{{ text11 }}</text>
-        <text class="signature">{{ text12 }}</text>
+        <text class="footer-text">感谢大家一直以来对选课猫的喜爱与支持 ❤</text>
+        <text class="signature">选课猫团队 2025年10月13日</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { onLoad } from "@dcloudio/uni-app";
-import BackBtn from "@/components/common/BackBtn.vue";
+import { onLoad } from '@dcloudio/uni-app';
+import TopNavBar from '@/components/common/TopNavBar.vue';
 import { useThemeStore } from '@/config';
+import { useMenuButton } from '@/composables/useMenuButton';
 
 const themeStore = useThemeStore();
+const { navBarHeight } = useMenuButton();
 
-const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = {
-    top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight : 20,
-    height: 32
-};
+const letterLines = [
+  { text: '全新版的 选课猫 终于和大家见面啦！', highlight: false },
+  { text: '原开发团队的朋友们大多已经毕业或升学，因此选课猫曾有一段时间陷入无人维护的状态。', highlight: false },
+  { text: '在 2025 年暑假，我们新团队正式接过选课猫的维护与重构任务。', highlight: true },
+  { text: ' ', highlight: false },
+  { text: '也许大家暂时不会觉得新版有太多变化，这是因为我们暂未增加新功能。', highlight: false },
+  { text: '但事实上，我们已经彻底重构了选课猫的整体后端架构，让系统更加稳定流畅。', highlight: true },
+  { text: '今后在选课高峰期，也不再那么容易出现崩溃的情况啦！', highlight: false },
+  { text: ' ', highlight: false },
+  { text: '未来，我们还计划逐步推出更多功能，', highlight: false },
+  { text: '包括大家期待已久的「新增课程和老师」功能等。', highlight: false },
+];
 
-try {
-    const res = uni.getMenuButtonBoundingClientRect();
-    if (res && res.top) {
-        menuButtonInfo = {
-            top: res.top,
-            height: res.height
-        };
-    }
-} catch (e) {}
-
-const goBack = () => {
-    uni.navigateBack();
-};
+const goBack = () => uni.navigateBack();
 
 onLoad(() => {
   uni.setStorageSync('hasReadLetter', true);
 });
-
-const text1 = `全新版的 选课猫 终于和大家见面啦！`;
-const text2 = `原开发团队的朋友们大多已经毕业或升学，因此选课猫曾有一段时间陷入无人维护的状态。`;
-const text3 = `在 2025 年暑假，我们新团队正式接过选课猫的维护与重构任务。`;
-
-const text5 = `也许大家暂时不会觉得新版有太多变化，这是因为我们暂未增加新功能。`;
-const text6 = `但事实上，我们已经彻底重构了选课猫的整体后端架构，让系统更加稳定流畅。`;
-const text7 = `今后在选课高峰期，也不再那么容易出现崩溃的情况啦！`;
-
-const text9 = `未来，我们还计划逐步推出更多功能，`;
-const text10 = `包括大家期待已久的「新增课程和老师」功能等。`;
-const text11 = `感谢大家一直以来对选课猫的喜爱与支持 ❤`;
-const text12 = `选课猫团队 2025年10月13日`;
 </script>
 
-<style scoped lang="scss">
-.letter-container {
-  min-height: 100vh;
-  background-color: #f7f8fa;
-  position: relative;
-  overflow: hidden;
-  padding: 0 32rpx 40rpx;
-  box-sizing: border-box;
-}
-
-.custom-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-  background-color: transparent;
-  backdrop-filter: blur(5px);
-}
-
-.nav-bar-content {
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding-left: 32rpx;
-}
-
-.back-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.title-area {
-  margin-left: 32rpx;
-  display: flex;
-  align-items: center;
-}
-
-.page-title {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #333;
-}
-
-.content-card {
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24rpx;
-  padding: 48rpx 40rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(10px);
-}
-
-.card-body {
-  .paragraph {
-    display: block;
-    font-size: 30rpx;
-    color: #555;
-    line-height: 1.8;
-    margin-bottom: 24rpx;
-    text-align: justify;
-
-    &.highlight {
-      color: #b20035;
-      font-weight: 500;
-    }
-  }
-}
-
-.card-footer {
-  margin-top: 60rpx;
-  padding-top: 40rpx;
-  border-top: 2rpx dashed #eee;
-  text-align: center;
-
-  .footer-text {
-    display: block;
-    font-size: 28rpx;
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 16rpx;
-  }
-
-  .signature {
-    display: block;
-    font-size: 24rpx;
-    color: #999;
-  }
-}
-</style>
-
-<style lang="scss">
-.letter-container.dark-theme {
-  background-color: #121212;
-}
-
-.letter-container.dark-theme .custom-header {
-  background-color: rgba(18, 18, 18, 0.95);
-}
-
-.letter-container.dark-theme .page-title {
-  color: #e0e0e0;
-}
-
-.letter-container.dark-theme .content-card {
-  background: rgba(30, 30, 30, 0.95);
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
-}
-
-.letter-container.dark-theme .content-card .card-body .paragraph {
-  color: #b0b0b0;
-}
-
-.letter-container.dark-theme .content-card .card-body .paragraph.highlight {
-  color: #ff6b8a;
-}
-
-.letter-container.dark-theme .content-card .card-footer {
-  border-top-color: #333;
-}
-
-.letter-container.dark-theme .content-card .card-footer .footer-text {
-  color: #e0e0e0;
-}
-
-.letter-container.dark-theme .content-card .card-footer .signature {
-  color: #777;
-}
-</style>
+<style lang="scss" scoped src="./letter.scss" />

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { CommentVO } from "@/api/data-contracts";
+import type { DtoCommentVO } from "@/api/data-contracts";
 import { caculateTimeago } from "./index";
 import { Emoji } from "@/utils/tags"; // 引入获取标签图标的方法
 
 type Props = {
-  data: CommentVO;
+  data: DtoCommentVO;
 };
 const props = defineProps<Props>();
 

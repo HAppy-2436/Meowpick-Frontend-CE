@@ -1,30 +1,26 @@
 <template>
-  <view v-if="visible" class="modal-overlay" @click="close">
-    <view class="modal-card feedback-card" :class="themeStore.themeClass" @click.stop>
-      <view class="modal-header">
-        <text class="modal-title">反馈</text>
-        <view class="modal-close" @click="close">×</view>
+  <view v-if="visible" class="feedback-overlay mwp-fade-in" @click="close">
+    <view class="feedback-card mwp-bounce-in" :class="themeStore.themeClass" @click.stop>
+      <view class="feedback-header">
+        <text class="feedback-title">反馈</text>
+        <view class="feedback-close mwp-pressable" @click="close">×</view>
       </view>
 
-      <view class="modal-body feedback-body">
-        <text class="feedback-desc">遇到问题或有建议？点击下方框即可复制对应联系方式：</text>
+      <view class="feedback-body">
+        <text class="feedback-desc">遇到问题或有建议？点击下方框即可复制对应联系方式</text>
 
-        <!-- QQ群反馈 - 点击复制群号 -->
-        <view class="feedback-section" @click="copyQQNumber">
-          <view class="feedback-label-row">
-            <text class="feedback-label">QQ 群</text>
+        <view
+          v-for="item in contactItems"
+          :key="item.key"
+          class="feedback-section mwp-stagger-item"
+          :style="{ animationDelay: `${item.delay}ms` }"
+          @click="handleCopy(item)"
+        >
+          <view class="feedback-section-header">
+            <text class="feedback-label">{{ item.label }}</text>
             <text class="feedback-hint">点击复制</text>
           </view>
-          <view class="feedback-value">群号 {{ CONTACT_INFO.qqGroup.number }}</view>
-        </view>
-
-        <!-- 邮件反馈 - 点击复制邮箱 -->
-        <view class="feedback-section" @click="copyEmail">
-          <view class="feedback-label-row">
-            <text class="feedback-label">邮箱</text>
-            <text class="feedback-hint">点击复制</text>
-          </view>
-          <view class="feedback-value">{{ CONTACT_INFO.email.address }}</view>
+          <view class="feedback-value">{{ item.value }}</view>
         </view>
       </view>
     </view>
@@ -32,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
 import { useThemeStore } from '@/config';
 import { CONTACT_INFO, copyToClipboard } from '@/utils/contact-info';
 
@@ -41,87 +36,141 @@ const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>();
 
 const themeStore = useThemeStore();
 
-watch(
-  () => props.visible,
-  (val) => {
-    // 控制弹窗显隐
-  }
-);
+interface ContactItem {
+  key: string;
+  label: string;
+  value: string;
+  delay: number;
+}
 
-const close = () => {
-  emit('update:visible', false);
+const contactItems: ContactItem[] = [
+  { key: 'qq', label: 'QQ 群', value: `群号 ${CONTACT_INFO.qqGroup.number}`, delay: 80 },
+  { key: 'email', label: '邮箱', value: CONTACT_INFO.email.address, delay: 160 },
+];
+
+const handleCopy = (item: ContactItem) => {
+  const text = item.key === 'qq' ? CONTACT_INFO.qqGroup.number : CONTACT_INFO.email.address;
+  const msg = item.key === 'qq' ? '已复制群号' : '已复制邮箱';
+  copyToClipboard(text, msg);
 };
 
-const copyQQNumber = () => copyToClipboard(CONTACT_INFO.qqGroup.number, '已复制群号');
-const copyEmail = () => copyToClipboard(CONTACT_INFO.email.address, '已复制邮箱');
+const close = () => emit('update:visible', false);
 </script>
 
-<style scoped lang="scss">
-.modal-overlay {
+<style lang="scss" scoped>
+@import "@/styles/index.scss";
+
+.feedback-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
+  inset: 0;
+  background: $bg-overlay-light;
+  z-index: $z-modal;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40rpx;
+  padding: $space-9;
 }
 
-.modal-card {
+.feedback-card {
   width: 100%;
   max-width: 600rpx;
-  background-color: #ffffff;
-  border-radius: 24rpx;
+  background: $bg-card-light;
+  border-radius: $radius-lg;
   overflow: hidden;
+  box-shadow: $shadow-lg;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+  }
 }
 
-.modal-header {
+.feedback-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  padding: $space-7;
+  border-bottom: 1rpx solid $divider-light;
+  transition: border-color $dur-fast $ease-standard;
 
-  .modal-title {
-    font-size: 32rpx;
-    font-weight: 600;
-    color: #333;
+  .dark-theme & {
+    border-bottom-color: $divider-dark;
+  }
+}
+
+.feedback-title {
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.feedback-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-2xl;
+  color: $text-tertiary-light;
+  text-align: center;
+  line-height: 1;
+  transition: background-color $dur-fast $ease-standard, color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
   }
 
-  .modal-close {
-    font-size: 40rpx;
-    color: #999;
-    width: 48rpx;
-    height: 48rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+  &:active {
+    background: $bg-muted-light;
+    color: $text-secondary-light;
+    .dark-theme & {
+      background: $bg-muted-dark;
+      color: $text-secondary-dark;
+    }
   }
 }
 
 .feedback-body {
-  padding: 32rpx 40rpx;
+  padding: $space-7 $space-9;
 }
 
 .feedback-desc {
-  font-size: 30rpx;
-  color: #666;
+  font-size: $font-md;
+  color: $text-secondary-light;
   line-height: 1.6;
-  margin-bottom: 32rpx;
+  margin-bottom: $space-7;
   display: block;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
 }
 
 .feedback-section {
-  margin-bottom: 32rpx;
-  transition: opacity 0.15s;
+  margin-bottom: $space-7;
+  padding: $space-5;
+  background: $bg-muted-light;
+  border-radius: $radius-md;
+  border: 2rpx solid transparent;
+  transition: all $dur-fast $ease-standard;
+  cursor: pointer;
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+  }
 
   &:active {
-    opacity: 0.6;
+    transform: scale($press-scale-md);
+    border-color: $brand-red;
   }
 
   &:last-child {
@@ -129,49 +178,61 @@ const copyEmail = () => copyToClipboard(CONTACT_INFO.email.address, '已复制�
   }
 }
 
-.feedback-label-row {
+.feedback-section-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 14rpx;
+  margin-bottom: $space-3;
 }
 
 .feedback-label {
-  font-size: 30rpx;
-  color: #333;
-  font-weight: 600;
-  display: block;
+  font-size: $font-md;
+  font-weight: $weight-semibold;
+  color: $text-primary-light;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
 }
 
 .feedback-hint {
-  font-size: 22rpx;
-  color: #999;
-  font-weight: 400;
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  text-align: right;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
 }
 
 .feedback-value {
-  font-size: 32rpx;
-  color: #1a1a1a;
-  background-color: #f5f5f5;
-  padding: 28rpx;
-  border-radius: 14rpx;
+  font-size: $font-lg;
+  color: $text-primary-light;
   font-family: monospace;
-  font-weight: 500;
+  font-weight: $weight-medium;
   letter-spacing: 1rpx;
   text-align: center;
-  border: 2rpx solid transparent;
-  transition: border-color 0.15s, background-color 0.15s;
+  padding: $space-5;
+  background: $bg-card-light;
+  border-radius: $radius-sm;
+  word-break: break-all;
+  transition: background-color $dur-fast $ease-standard, color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+    background: $bg-card-dark;
+  }
 }
-</style>
 
-<style lang="scss">
-.modal-card.dark-theme { background-color: #1e1e1e; }
-.modal-card.dark-theme .modal-header { border-color: #333; .modal-title { color: #e0e0e0; } .modal-close { color: #888; } }
-
-.modal-card.dark-theme.feedback-card {
-  .feedback-desc { color: #aaa; }
-  .feedback-label { color: #e0e0e0; }
-  .feedback-hint { color: #888; }
-  .feedback-value { background-color: #2a2a2a; color: #e0e0e0; border-color: #3a3a3a; }
+@media (prefers-reduced-motion: reduce) {
+  .feedback-overlay,
+  .feedback-card,
+  .feedback-section {
+    animation: none;
+    transition: none;
+  }
 }
 </style>

@@ -1,27 +1,25 @@
 <template>
-  <view class="home-view-container" :class="themeStore.themeClass">
+  <view class="home-view-container" :class="themeStore.themeClass" :style="{ height: L.container + 'px', padding: L.paddingTop + 'px 40rpx 0' }">
     <!-- 顶部欢迎语区域 -->
-    <view class="header-welcome">
+    <view class="header-welcome" :style="{ marginBottom: L.gap + 'px' }">
       <view class="welcome-Line">
-        <text class="hello-text">Hello,</text>
-        <text class="name-text">{{ userName }}</text>
+        <text class="hello-text" :style="{ fontSize: L.helloSize + 'px' }">Hello,</text>
+        <text class="name-text" :style="{ fontSize: L.nameSize + 'px' }">{{ greetingText() }}</text>
       </view>
-      <!-- Logo 图片超级放大，居中 -->
-      <image src="/src/images/logo.png" mode="heightFix" class="brand-logo" />
+      <image src="/src/images/logo.png" mode="heightFix" class="brand-logo" :style="{ height: L.logoHeight + 'px', marginTop: L.gap + 'px' }" />
     </view>
     
     <!-- 搜索区域 -->
-    <view class="search-section" hover-class="search-hover" @click="goToSearch">
-      <view class="search-box">
+    <view class="search-section" hover-class="search-hover" @click="goToSearch" :style="{ marginBottom: L.gap + 'px' }">
+      <view class="search-box" :style="{ height: L.searchHeight + 'px' }">
         <text class="search-icon">🔍</text>
         <text class="search-placeholder">搜索课程、老师或吐槽...</text>
       </view>
     </view>
 
-    <!-- 功能区域 (原 ToolBox) -->
-    <view class="toolbox-section">
-      <!-- 左侧：信件与日志 -->
-      <view class="left-group">
+    <!-- 功能区域 -->
+    <view class="toolbox-section" :style="{ height: L.toolboxHeight + 'px', gap: L.cardGap + 'px', padding: '0 10rpx' }">
+      <view class="left-group" :style="{ gap: L.cardGap + 'px' }">
         <view
           class="card-item letter-card"
           hover-class="card-hover"
@@ -33,67 +31,61 @@
           <view v-if="showNewIcon" class="new-tag">NEW</view>
         </view>
 
-<view
+        <view
           class="card-item log-card"
           hover-class="card-hover"
-          @click="goToUpdate"
+          @click="goToProposalFeed"
         >
-          <text class="card-title">更新日志</text>
-          <text class="card-subtitle">Update Logs</text>
-          <text class="card-bg-icon">📝</text>
+          <text class="card-title">提议广场</text>
+          <text class="card-subtitle">Proposals</text>
+          <text class="card-bg-icon">📋</text>
         </view>
       </view>
 
-      <!-- 右侧：吐槽统计 -->
       <view class="right-group">
         <view class="stat-card">
           <view class="stat-title">已收录吐槽</view>
-          <view class="stat-number">{{ totalComment }}</view>
+          <view class="stat-number" :style="{ fontSize: L.statNumSize + 'px' }">{{ totalComment }}</view>
           <view class="stat-unit">条</view>
         </view>
       </view>
-    </view>
-
-    <!-- 底部反馈入口 -->
-    <view class="feedback-entry" @click="openFeedback">
-      <text class="feedback-entry-text">我要反馈</text>
     </view>
 
     <!-- 反馈弹窗（共用组件） -->
     <feedback-modal v-model:visible="showFeedback" />
 
     <!-- 首次使用引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
+    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="onGuideDismiss">
       <view class="guide-content" @click.stop>
         <view class="guide-header">
-          <text class="guide-title">欢迎使用选课猫 🎉</text>
-          <text class="guide-subtitle">华东师范大学选课经验分享平台</text>
+          <text class="guide-title">欢迎来到选课猫</text>
+          <text class="guide-subtitle">华东师范大学课程评价社区</text>
         </view>
-        <view class="guide-sections">
-          <view class="guide-section">
-            <view class="section-icon">💬</view>
-            <view class="section-text">
-              <text class="section-title">吐槽课程</text>
-              <text class="section-desc">搜索已开设的课程，了解学长评价，选择心仪的选修课</text>
+        <view class="guide-steps">
+          <view class="guide-step">
+            <view class="step-icon">🔍</view>
+            <view class="step-body">
+              <text class="step-title">搜索课程，查看评价</text>
+              <text class="step-desc">在首页搜索框输入课程名或教师名，查看同学们的真实评价</text>
             </view>
           </view>
-          <view class="guide-section">
-            <view class="section-icon">📝</view>
-            <view class="section-text">
-              <text class="section-title">提议新课程</text>
-              <text class="section-desc">搜索不到想要的课？发起提议，让大家一起投票支持</text>
+          <view class="guide-step">
+            <view class="step-icon">✏️</view>
+            <view class="step-body">
+              <text class="step-title">发布吐槽，分享体验</text>
+              <text class="step-desc">选过课后，在课程详情页发布你的课程体验，帮助学弟学妹</text>
             </view>
           </view>
-          <view class="guide-section">
-            <view class="section-icon">🏫</view>
-            <view class="section-text">
-              <text class="section-title">闵行 & 普陀</text>
-              <text class="section-desc">两个校区的课程都有收录，搜索时可按校区筛选</text>
+          <view class="guide-step">
+            <view class="step-icon">📝</view>
+            <view class="step-body">
+              <text class="step-title">提议新课，投票支持</text>
+              <text class="step-desc">搜索不到想要的课？发起提议让大家投票，通过后将收录进数据库</text>
             </view>
           </view>
         </view>
         <view class="guide-footer">
-          <button class="start-btn" @click="hideGuide">我知道了</button>
+          <button class="guide-btn guide-btn--auth" @click="onGuideDismiss">我知道了</button>
         </view>
       </view>
     </view>
@@ -101,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http, useThemeStore } from '@/config';
@@ -112,7 +104,56 @@ const themeStore = useThemeStore();
 const totalComment = ref(0);
 const showNewIcon = ref(true);
 const userName = ref('同学');
+const isAdmin = ref(false);
 const showFeedback = ref(false);
+
+// ===== 比例布局计算 =====
+const L = reactive({
+  container: 600,
+  paddingTop: 50,
+  gap: 10,
+  logoHeight: 150,
+  helloSize: 16,
+  nameSize: 32,
+  searchHeight: 48,
+  toolboxHeight: 300,
+  statNumSize: 36,
+  cardGap: 8,
+});
+
+const calcLayout = () => {
+  const sys = uni.getSystemInfoSync();
+  const h = sys.windowHeight;
+  const pxPerRpx = sys.windowWidth / 750;
+  const safeBottom = sys.safeAreaInsets?.bottom || 0;
+  // 有小白条用真实安全区，没有的补 24rpx 让视觉间距一致
+  const tabBarH = Math.round(100 * pxPerRpx) + safeBottom + (safeBottom > 0 ? 0 : Math.round(24 * pxPerRpx));
+  const available = h - tabBarH;
+  const r = Math.min(available / 762, 1.2);
+
+  L.container = available;
+  L.paddingTop = Math.round(60 * r);
+  L.gap = Math.round(36 * r);
+  L.logoHeight = Math.min(Math.round(180 * r), 220);
+  L.helloSize = Math.min(Math.round(28 * r), 34);
+  L.nameSize = Math.min(Math.round(36 * r), 44);
+  L.searchHeight = Math.min(Math.round(56 * r), 66);
+  L.statNumSize = Math.min(Math.round(40 * r), 48);
+  L.cardGap = Math.round(Math.max(L.gap * 0.5, 8));
+
+  const helloArea = Math.round(30 * r);
+  const nameArea = Math.round(40 * r);
+  const logoArea = L.logoHeight;
+  const headerH = helloArea + nameArea + logoArea + L.gap * 2;
+  const toolboxH = available - L.paddingTop - headerH - L.gap * 2 - L.searchHeight - Math.round(L.gap * 0.5);
+  L.toolboxHeight = Math.max(toolboxH, 100);
+};
+
+const greetingText = () => {
+  const suffix = isAdmin.value ? '管理员' : '同学';
+  if (userName.value && userName.value !== '同学') return userName.value + ' ' + suffix;
+  return suffix;
+};
 
 const openFeedback = () => {
   showFeedback.value = true;
@@ -122,15 +163,61 @@ const openFeedback = () => {
 const showGuide = ref(false);
 const GUIDE_KEY = 'meowpick_guide_seen';
 
-// 生命周期
-onMounted(async () => {
-  await waitForLogin();
-  fetchTotalComment();
-
+const loadUserInfo = () => {
   const storedUser = uni.getStorageSync('userInfo');
   if (storedUser && storedUser.nickName) {
-      userName.value = storedUser.nickName;
+    userName.value = storedUser.nickName;
+  } else {
+    applyDefaults();
   }
+};
+
+const detectAdmin = async () => {
+  try {
+    const res: any = await http.AuthController.authIsAdminList();
+    isAdmin.value = !!(res.data?.data?.isAdmin ?? res.data?.isAdmin ?? false);
+  } catch {
+    const tempAdmin = uni.getStorageSync('meowpick_temp_admin');
+    isAdmin.value = !!tempAdmin;
+  }
+};
+
+// ===== 引导弹窗 =====
+const onGuideDismiss = () => {
+  applyDefaults();
+  showGuide.value = false;
+  uni.setStorageSync(GUIDE_KEY, true);
+};
+
+const generateDefaultName = () => {
+  return '华师喵' + Math.floor(1000 + Math.random() * 9000);
+};
+
+const applyDefaults = () => {
+  const stored = uni.getStorageSync('userInfo');
+  if (!stored || !stored.nickName) {
+    const info = {
+      nickName: generateDefaultName(),
+    };
+    uni.setStorageSync('userInfo', info);
+    userName.value = info.nickName;
+  }
+};
+
+// 生命周期
+onMounted(async () => {
+  calcLayout();
+  uni.onWindowResize(() => calcLayout());
+  // PC 开发者工具拖动窗口时触发
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', () => calcLayout());
+  }
+  await waitForLogin();
+  fetchTotalComment();
+  loadUserInfo();
+  detectAdmin();
+  // 监听授权成功事件，实时更新昵称
+  uni.$on('userInfoUpdated', loadUserInfo);
 
   const hasReadLetter = uni.getStorageSync('hasReadLetter');
   showNewIcon.value = !hasReadLetter;
@@ -142,6 +229,16 @@ onMounted(async () => {
   }
 });
 
+onShow(() => {
+  loadUserInfo();
+  detectAdmin();
+});
+
+onUnmounted(() => {
+  uni.offWindowResize(() => calcLayout());
+  uni.$off('userInfoUpdated', loadUserInfo);
+});
+
 const fetchTotalComment = () => {
   http.CommentController.searchTotalList().then((res: any) => {
     totalComment.value = res?.data?.data?.count || res?.data?.count || 0;
@@ -151,11 +248,6 @@ const fetchTotalComment = () => {
 };
 
 // 路由跳转
-const hideGuide = () => {
-  showGuide.value = false;
-  uni.setStorageSync(GUIDE_KEY, true);
-};
-
 const goToSearch = () => {
   // 原有逻辑：导向搜索页面
   uni.navigateTo({ url: "/pages/find/index/index" });
@@ -177,21 +269,18 @@ const goToLetter = () => {
 const goToUpdate = () => {
   uni.navigateTo({ url: "/pages/home/update-log" });
 };
+
+const goToProposalFeed = () => {
+  uni.navigateTo({ url: "/pages/proposal/list/list" });
+};
 </script>
 
 <style scoped lang="scss">
-// 变量定义
-$brand-red: #c8102e; // 更加通透的亮红色
-$brand-light-bg: #fff1f1; // 极淡的粉红背景
-$card-bg: #ffffff;
-$text-main: #2c2c2c;
+@import "@/styles/index.scss";
 
 .home-view-container {
-  min-height: 100vh;
-  padding: 120rpx 40rpx 100rpx 40rpx;
   box-sizing: border-box;
-  background-color: #f7f8fa;
-
+  background-color: $bg-page-light;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -199,64 +288,53 @@ $text-main: #2c2c2c;
   overflow: hidden;
 }
 
-.home-view-container.dark-theme {
-  background-color: #121212 !important;
+.dark-theme {
+  background-color: $bg-page-dark !important;
 }
 
 // 新增：顶部欢迎语样式
 .header-welcome {
-  margin-bottom: 60rpx; // 减少与下方的间距 (100 -> 60)
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   
   .welcome-Line {
-    margin-bottom: 40rpx; 
     display: flex;
-    flex-direction: column; // 改为上下结构，更显大气
+    flex-direction: column;
     align-items: flex-start; 
     justify-content: flex-start; 
     padding-left: 20rpx; 
-    opacity: 1; // 移除透明度，颜色更实
   }
 
   .hello-text {
-    font-size: 56rpx;
     font-weight: 300;
-    color: #999;
+    color: $text-tertiary-light;
     font-family: sans-serif;
     font-style: normal;
-    margin-bottom: 10rpx;
   }
 
   .name-text {
-    font-size: 72rpx;
     font-weight: 900;
-    color: #333;
+    color: $text-primary-light;
     letter-spacing: -2rpx;
   }
 
   .brand-logo {
-    margin-top: 40rpx; 
-    height: 360rpx;   // Logo 继续加大，撑满上半场
     width: auto;
-    // 最大宽度限制，防止在窄屏手机上溢出
     max-width: 80%;
     object-fit: contain;
-
     display: block;
     align-self: center; 
-    // 投影加重，让它浮起来
-    filter: drop-shadow(0 20rpx 40rpx rgba(183, 0, 48, 0.2)); 
-    // 增加一点缩放动画，吸引眼球
+    filter: $shadow-logo; 
     transform: scale(1.05); 
   }
 }
 
-.home-view-container.dark-theme .header-welcome {
-  .hello-text { color: #666; }
-  .name-text { color: #e0e0e0; }
+.dark-theme .header-welcome {
+  .hello-text { color: $text-secondary-light; }
+  .name-text { color: $text-primary-dark; }
 }
 
 // 1. Logo 区域
@@ -278,7 +356,7 @@ $text-main: #2c2c2c;
 
 // 2. 搜索框区域 - 悬浮胶囊
 .search-section {
-  margin-bottom: 50rpx;
+  flex-shrink: 0;
   position: relative;
   z-index: 2;
   padding: 0 10rpx;
@@ -286,18 +364,15 @@ $text-main: #2c2c2c;
   .search-box {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
-    height: 110rpx;
+    background-color: $bg-card-light;
     border-radius: 40rpx;
     padding: 0 30rpx;
 
-    box-shadow:
-      0 10rpx 30rpx -10rpx rgba(200, 16, 46, 0.15),
-      0 4rpx 10rpx rgba(0,0,0,0.02);
-    border: 2rpx solid #fff;
+    box-shadow: $shadow-brand-md;
+    border: none;
 
     .search-icon {
-      font-size: 36rpx;
+      font-size: $font-xl;
       margin-right: 24rpx;
       opacity: 0.4;
       line-height: 1;
@@ -305,24 +380,24 @@ $text-main: #2c2c2c;
 
     .search-placeholder {
       flex: 1;
-      font-size: 32rpx;
-      color: #bbbbbb;
+      font-size: $font-lg;
+      color: $text-tertiary-light;
       letter-spacing: 1rpx;
       font-weight: 400;
     }
   }
 
   &:active {
-      transform: scale(0.94);
+      transform: scale($press-scale-md);
   }
 }
 
-.home-view-container.dark-theme .search-section {
+.dark-theme .search-section {
   .search-box {
-    background-color: #2a2a2a;
-    border-color: #3a3a3a;
-    box-shadow: 0 10rpx 30rpx -10rpx rgba(0,0,0,0.3), 0 4rpx 10px rgba(0,0,0,0.1);
-    .search-placeholder { color: #666; }
+    background-color: $bg-muted-dark;
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-lg;
+    .search-placeholder { color: $text-secondary-light; }
   }
 }
 
@@ -330,57 +405,55 @@ $text-main: #2c2c2c;
 // 优化：右侧统计卡片不再是简单的色块，而是精细的数据面板
 .toolbox-section {
   display: grid;
-  grid-template-columns: 1fr 1fr; // 左右等宽
-  grid-template-rows: auto auto; 
-  gap: 24rpx;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  flex-shrink: 0;
   
   position: relative;
   z-index: 2;
 
-  // 左侧两个功能按钮
   .left-group {
       grid-column: 1 / 2;
-      grid-row: 1 / 3; // 占据两行高度
       display: flex;
       flex-direction: column;
-      gap: 24rpx;
   }
   
-  // 右侧统计展示
   .right-group {
       grid-column: 2 / 3;
-      grid-row: 1 / 3; // 占据两行高度
+      display: flex;
+      flex-direction: column;
   }
 }
 
 // 通用卡片 - 面板风格
 .card-item {
-  background-color: #ffffff;
+  background-color: $bg-card-light;
   border-radius: 36rpx;
   padding: 30rpx;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
-  border: 1rpx solid rgba(0,0,0,0.03);
+  box-shadow: $shadow-comp-glow;
+  border: 1rpx solid rgba(178, 0, 53, 0.04);
 
-  height: 180rpx;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   transition: all 0.1s;
 
   .card-title {
-    font-size: 30rpx;
+    font-size: $font-md;
     font-weight: 700;
-    color: $text-main;
+    color: $text-primary-light;
     margin-bottom: 2rpx;
     z-index: 2;
     display: block;
   }
 
   .card-subtitle {
-    font-size: 20rpx;
-    color: #999;
+    font-size: $font-xs;
+    color: $text-tertiary-light;
     letter-spacing: 1rpx;
     text-transform: uppercase;
     z-index: 2;
@@ -400,26 +473,26 @@ $text-main: #2c2c2c;
   }
 
   &:active {
-      transform: scale(0.97);
+      transform: scale($press-scale-sm);
   }
 
   &.letter-card {
-      background: linear-gradient(135deg, #fff 0%, $brand-light-bg 100%);
+      background: linear-gradient(135deg, $pure-white 0%, $brand-red-tint 100%);
       .card-title { color: $brand-red; }
   }
 }
 
-.home-view-container.dark-theme .card-item {
-  background-color: #2a2a2a;
-  border-color: #3a3a3a;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.1);
+.dark-theme .card-item {
+  background-color: $bg-muted-dark;
+  border-color: $bg-muted-darker;
+  box-shadow: $shadow-sm-dark;
 
-  .card-title { color: #e0e0e0; }
-  .card-subtitle { color: #888; }
+  .card-title { color: $text-primary-dark; }
+  .card-subtitle { color: $text-tertiary-light; }
 }
 
-.home-view-container.dark-theme .letter-card {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+.dark-theme .letter-card {
+  background: linear-gradient(135deg, $bg-muted-dark 0%, $text-primary-light 100%);
   .card-title { color: $brand-red !important; }
 }
 
@@ -427,9 +500,9 @@ $text-main: #2c2c2c;
   position: absolute;
   top: 16rpx;
   right: 16rpx;
-  background: linear-gradient(135deg, #b20035, #ff4d6a);
-  color: #fff;
-  font-size: 20rpx;
+  background: linear-gradient(135deg, $brand-red, $brand-red-soft);
+  color: $pure-white;
+  font-size: $font-xs;
   font-weight: 700;
   padding: 4rpx 12rpx;
   border-radius: 20rpx;
@@ -438,23 +511,24 @@ $text-main: #2c2c2c;
 
 // 统计卡片：纵向大卡片
 .stat-card {
-  height: 100% !important;
-  background-color: #ffffff;
+  flex: 1;
+  min-height: 0;
+  background-color: $bg-card-light;
   border: 1rpx solid rgba(0,0,0,0.03);
-  color: $text-main;
+  color: $text-primary-light;
   border-radius: 36rpx;
   padding: 40rpx;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
+  box-shadow: $shadow-comp-glow;
 
   .stat-title {
-      font-size: 30rpx;
+      font-size: $font-md;
       font-weight: 700;
       opacity: 1;
-      color: #999;
+      color: $text-tertiary-light;
   }
 
   .stat-number {
@@ -468,9 +542,9 @@ $text-main: #2c2c2c;
   }
 
   .stat-unit {
-      font-size: 24rpx;
+      font-size: $font-sm;
       opacity: 0.5;
-      color: #999;
+      color: $text-tertiary-light;
       align-self: flex-end;
   }
 
@@ -482,21 +556,22 @@ $text-main: #2c2c2c;
       left: 0;
       width: 100%;
       height: 12rpx;
-      background: linear-gradient(90deg, #fff 0%, $brand-light-bg 100%);
+      background: linear-gradient(90deg, $pure-white 0%, $brand-red-tint 100%);
       display: none;
   }
 }
 
-.home-view-container.dark-theme .stat-card {
-  background-color: #2a2a2a;
-  border-color: #3a3a3a;
-  .stat-title { color: #888; }
+.dark-theme .stat-card {
+  background-color: $bg-muted-dark;
+  border-color: $bg-muted-darker;
+  box-shadow: $shadow-sm-dark;
+  .stat-title { color: $text-tertiary-light; }
   .stat-number { color: $brand-red; }
-  .stat-unit { color: #666; }
+  .stat-unit { color: $text-secondary-light; }
 }
 
-.home-view-container.dark-theme .feedback-entry {
-  .feedback-entry-text { color: #555; &:active { color: #ff6b8a; } }
+.dark-theme .feedback-entry {
+  .feedback-entry-text { color: $text-tertiary-light; &:active { color: $brand-red-soft; } }
 }
 
 /* 底部"我要反馈"小字入口 - 紧贴内容末尾 */
@@ -507,139 +582,186 @@ $text-main: #2c2c2c;
   padding: 120rpx 0 20rpx;
 
   .feedback-entry-text {
-    font-size: 28rpx;
-    color: #bbb;
+    font-size: $font-base;
+    color: $text-tertiary-light;
     text-decoration: underline;
     transition: color 0.15s;
 
     &:active {
-      color: #b20035;
+      color: $brand-red;
     }
   }
 }
 </style>
 
+
 <style lang="scss">
+@import "@/styles/index.scss";
+
+// ===== 引导弹窗 =====
+
 .guide-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.60);
+  z-index: $z-modal + 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40rpx;
+  padding: $space-9;
   box-sizing: border-box;
+  animation: mwp-fade-in 280ms $ease-standard both;
 }
-
-.home-view-container.dark-theme .guide-overlay {
-  background-color: rgba(0, 0, 0, 0.45);
-}
-
-.home-view-container.dark-theme .guide-content {
-  background-color: #2a2a2a;
-}
-
-.home-view-container.dark-theme .guide-header .guide-title { color: #e0e0e0; }
-.home-view-container.dark-theme .guide-header .guide-subtitle { color: #888; }
-.home-view-container.dark-theme .guide-section .section-icon { background-color: #2a2a2a; }
-.home-view-container.dark-theme .guide-section .section-title { color: #e0e0e0; }
-.home-view-container.dark-theme .guide-section .section-desc { color: #888; }
 
 .guide-content {
   width: 100%;
   max-width: 600rpx;
-  background-color: #ffffff;
-  border-radius: 32rpx;
-  padding: 48rpx 40rpx;
-  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+  background: $bg-card-light;
+  border-radius: $radius-2xl;
+  padding: $space-10 $space-8;
+  box-shadow: $shadow-xl;
+  animation: mwp-bounce-in 480ms $ease-spring both;
+  transition: background-color $dur-medium $ease-standard;
 }
 
 .guide-header {
   text-align: center;
-  margin-bottom: 48rpx;
+  margin-bottom: $space-10;
 
   .guide-title {
     display: block;
-    font-size: 44rpx;
-    font-weight: 800;
-    color: #1a1a1a;
-    margin-bottom: 16rpx;
+    font-size: $font-3xl;
+    font-weight: $weight-black;
+    color: $text-primary-light;
+    margin-bottom: $space-4;
+    text-align: center;
   }
 
   .guide-subtitle {
     display: block;
-    font-size: 26rpx;
-    color: #999;
+    font-size: $font-sm + 2rpx;
+    color: $text-tertiary-light;
+    text-align: center;
   }
 }
 
-.guide-sections {
-  margin-bottom: 48rpx;
+.guide-steps {
+  margin-bottom: $space-10;
 }
 
-.guide-section {
+.guide-step {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 36rpx;
+  margin-bottom: $space-8;
+  gap: $space-5;
 
   &:last-child {
     margin-bottom: 0;
   }
 
-  .section-icon {
-    width: 80rpx;
-    height: 80rpx;
-    background-color: #fff5f7;
-    border-radius: 20rpx;
+  .step-icon {
+    width: 64rpx;
+    height: 64rpx;
+    background: $brand-red-tint;
+    border-radius: $radius-lg;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 40rpx;
-    margin-right: 24rpx;
+    font-size: $font-2xl;
     flex-shrink: 0;
   }
 
-  .section-text {
+  .step-body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: $space-2;
   }
 
-  .section-title {
-    font-size: 30rpx;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8rpx;
+  .step-title {
+    font-size: $font-md;
+    font-weight: $weight-semibold;
+    color: $text-primary-light;
+    display: block;
   }
 
-  .section-desc {
-    font-size: 24rpx;
-    color: #888;
+  .step-desc {
+    font-size: $font-sm;
+    color: $text-tertiary-light;
     line-height: 1.5;
+    display: block;
   }
 }
 
 .guide-footer {
-  .start-btn {
+  .guide-btn {
     width: 100%;
     height: 88rpx;
     line-height: 88rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
-    color: #fff;
-    font-size: 32rpx;
-    font-weight: 600;
-    border-radius: 44rpx;
+    border-radius: $radius-pill;
+    font-size: $font-lg;
+    font-weight: $weight-semibold;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
 
-    &:active {
-      transform: scale(0.98);
-      opacity: 0.9;
+    &--auth {
+      background: $gradient-brand;
+      color: $pure-white;
+      box-shadow: $shadow-brand-md;
+
+      &:active {
+        transform: scale($press-scale-sm);
+        opacity: 0.92;
+      }
     }
+
+    &--skip {
+      background: transparent;
+      color: $text-secondary-light;
+      font-size: $font-base;
+      font-weight: $weight-medium;
+      height: 72rpx;
+      line-height: 72rpx;
+      margin-top: $space-3;
+    }
+  }
+
+  .guide-dont-ask {
+    text-align: center;
+    font-size: $font-xs;
+    color: $text-tertiary-light;
+    padding: $space-3 0;
+    margin-top: $space-2;
+  }
+}
+
+// 暗色模式（统一 .dark-theme 嵌套）
+.dark-theme {
+  .guide-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+  .guide-content {
+    background: $bg-card-dark;
+  }
+  .guide-header .guide-title { color: $text-primary-dark; }
+  .guide-header .guide-subtitle { color: $text-tertiary-dark; }
+  .guide-step {
+    .step-title { color: $text-primary-dark; }
+    .step-desc { color: $text-tertiary-dark; }
+  }
+  .guide-btn--skip { color: $text-secondary-dark; }
+  .guide-dont-ask { color: $text-tertiary-dark; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-overlay,
+  .guide-content,
+  .guide-btn {
+    animation: none;
+    transition: none;
   }
 }
 </style>

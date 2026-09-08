@@ -5,6 +5,7 @@
         type="text"
         class="search-input"
         :placeholder="placeholder"
+        placeholder-class="mwp-placeholder"
         v-model="localKeyword"
         @input="handleInput"
         @focus="handleFocus"
@@ -112,7 +113,7 @@ const handleSelect = (option: string) => {
 .search-input {
   width: 100%;
   height: 10vw;
-  border: 1px solid #e5e5e5;
+  border: $border-light;
   border-radius: 2vw;
   padding: 0 10vw 0 3vw;
   box-sizing: border-box;
@@ -139,8 +140,8 @@ const handleSelect = (option: string) => {
   top: 11vw;
   left: 0;
   width: 100%;
-  background-color: #fff;
-  border: 1px solid #e5e5e5;
+  background-color: $pure-white;
+  border: $border-light;
   border-radius: 2vw;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -156,7 +157,7 @@ const handleSelect = (option: string) => {
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: $bg-muted-light;
   }
 }
 </style>

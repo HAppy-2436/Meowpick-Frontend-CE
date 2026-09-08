@@ -24,7 +24,7 @@ export function useCourseComment(p: Props) {
       query.value = true;
     }
     if (query.value) {
-      http.CommentController.commentQueryList({ id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
+      http.CommentController.commentQueryList({ courseId: id, page: pageNum, pageSize: DEFAULT_PAGE_SIZE }).then((res) => {
         const data = res.data as HandlerResponseDtoListCourseCommentsResp;
         const comments = data?.data?.comments || [];
         const total = data?.data?.total || 0;
@@ -32,9 +32,9 @@ export function useCourseComment(p: Props) {
           list.value[comment.id!] = {
             ...comment,
             tags: comment.tags && comment.tags.length > 0 ? comment.tags : ['硬核', '推荐'],
-            score: comment.score || 4,
-            like: comment.like ?? comment.relation?.like ?? false,
-            likeCnt: comment.likeCnt ?? comment.relation?.likeCnt ?? comment.relation?.like_cnt ?? 0
+            score: 4,
+            like: comment.like ?? false,
+            likeCnt: comment.likeCnt ?? 0
           };
         });
         query.value = Object.values(list.value).length < total;

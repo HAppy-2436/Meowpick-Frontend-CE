@@ -1,0 +1,129 @@
+@import "@/styles/index.scss";
+
+.timeline-container {
+  padding: $space-7 $space-7 0;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  padding-bottom: $space-9;
+  animation: mwp-fade-up 380ms $ease-decelerate both;
+}
+
+.timeline-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48rpx;
+  margin-right: $space-6;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 20rpx;
+  height: 20rpx;
+  background-color: $brand-red;
+  border-radius: 50%;
+  margin-top: 36rpx;
+  box-shadow: 0 0 0 6rpx rgba(178, 0, 53, 0.15);
+  z-index: 2;
+  position: relative;
+}
+
+.line {
+  width: 4rpx;
+  background-color: $divider-light;
+  position: absolute;
+  top: 56rpx;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background-color: $divider-dark;
+  }
+
+  &--last {
+    background: linear-gradient(to bottom, $divider-light 0%, transparent 100%);
+    .dark-theme & {
+      background: linear-gradient(to bottom, $divider-dark 0%, transparent 100%);
+    }
+  }
+}
+
+.content-card {
+  flex: 1;
+  background: $bg-card-light;
+  border-radius: $radius-lg;
+  padding: $space-7;
+  box-shadow: $shadow-card;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard,
+              transform $dur-fast $ease-emphasized;
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-md);
+  }
+}
+
+.header-row {
+  margin-bottom: $space-5;
+}
+
+.version-title {
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.content-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.content-row {
+  display: flex;
+}
+
+.content-text {
+  flex: 1;
+  font-size: $font-base;
+  color: $text-secondary-light;
+  line-height: 1.6;
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-item,
+  .dot,
+  .content-card {
+    animation: none;
+    transition: none;
+  }
+}

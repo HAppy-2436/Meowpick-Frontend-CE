@@ -29,14 +29,4 @@ onShow(() => {
 });
 </script>
 
-<style scoped>
-.find-page {
-  width: 100%;
-  height: 100vh;
-  background-color: #f7f8fa;
-}
-
-.find-page.dark-theme {
-  background-color: #121212;
-}
-</style>
+<style lang="scss" scoped src="./_style.scss" />

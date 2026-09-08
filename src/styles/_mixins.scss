@@ -1,0 +1,188 @@
+// =====================================================================
+// Mixins：阴影 / 卡片 / 触觉反馈 / 长按省略 / 玻璃毛玻璃 / iOS 安全区
+// 依赖：tokens.scss
+// 注：使用 @import 平铺模式（而非 @use），以避免与 nutui 等外部库的变量冲突
+// =====================================================================
+@import "./tokens";
+
+// ---------- 触觉按压反馈 ----------
+// 给任何"按钮感"元素加这个类即可：按下时缩放、阴影加深
+@mixin pressable($scale: 0.96, $shadow: null) {
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-base $ease-standard;
+  will-change: transform;
+  &:active {
+    transform: scale($scale);
+    @if $shadow {
+      box-shadow: $shadow;
+    }
+  }
+}
+
+// 弹性回弹（用于点赞 / 收藏图标）
+@mixin bounce-on-tap($scale: 1.18) {
+  transition: transform $dur-base $ease-spring;
+  &:active {
+    transform: scale($scale);
+  }
+}
+
+// ---------- 玻璃毛玻璃 ----------
+@mixin glass($bg: rgba(255, 255, 255, 0.72)) {
+  background: $bg;
+  -webkit-backdrop-filter: blur(24rpx) saturate(180%);
+  backdrop-filter: blur(24rpx) saturate(180%);
+}
+
+@mixin glass-dark {
+  background: rgba(30, 30, 30, 0.72);
+  -webkit-backdrop-filter: blur(24rpx) saturate(180%);
+  backdrop-filter: blur(24rpx) saturate(180%);
+}
+
+// ---------- 文本省略 ----------
+@mixin ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ---------- 渐变品牌按钮 ----------
+@mixin brand-button($bg: $gradient-brand) {
+  background: $bg;
+  color: #fff;
+  border: none;
+  box-shadow: $shadow-brand-sm;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-base $ease-standard,
+              opacity $dur-fast $ease-standard;
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: $shadow-brand-md;
+  }
+
+  &[disabled],
+  &.disabled {
+    background: #cccccc;
+    color: #ffffff;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+// ---------- 卡片容器 ----------
+@mixin card($radius: $radius-lg, $padding: $space-7) {
+  background: $bg-card-light;
+  border-radius: $radius;
+  padding: $padding;
+  box-shadow: $shadow-card;
+  transition: transform $dur-base $ease-emphasized,
+              box-shadow $dur-base $ease-standard;
+}
+
+@mixin card-dark($radius: $radius-lg, $padding: $space-7) {
+  background: $bg-card-dark;
+  border-radius: $radius;
+  padding: $padding;
+  box-shadow: $shadow-sm-dark;
+  transition: transform $dur-base $ease-emphasized,
+              box-shadow $dur-base $ease-standard;
+}
+
+// ---------- 主题感知容器（自动响应 .dark-theme 祖先）----------
+// 用法：@include surface($bg: var(--bg-card)) {}
+@mixin surface($bg) {
+  background: $bg;
+}
+
+// ---------- 文本主色（自动响应主题）----------
+@mixin text-primary {
+  color: $text-primary-light;
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+@mixin text-secondary {
+  color: $text-secondary-light;
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+@mixin text-tertiary {
+  color: $text-tertiary-light;
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+// ---------- iOS 安全区底部 ----------
+@mixin safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// ---------- 胶囊按钮 ----------
+@mixin pill($bg: $bg-muted-light, $fg: $text-secondary-light) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  padding: 0 $space-7;
+  background: $bg;
+  color: $fg;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  font-weight: $weight-medium;
+  border: 1rpx solid transparent;
+  transition: all $dur-fast $ease-standard;
+}
+
+// ---------- 渐变文字 ----------
+@mixin text-gradient($from: $brand-red, $to: $brand-red-soft) {
+  background: linear-gradient(135deg, $from 0%, $to 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+// ---------- 焦点环（可访问性）----------
+@mixin focus-ring($color: rgba(178, 0, 53, 0.35)) {
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4rpx $color;
+  }
+}
+
+// ---------- 加载中 shimmer（用于骨架屏）----------
+@mixin shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@mixin shimmer-dark {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}

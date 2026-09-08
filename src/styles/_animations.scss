@@ -1,0 +1,237 @@
+// =====================================================================
+// 动画库：keyframes + 公共 class
+// 命名空间：mwp-* （meowpick）
+// =====================================================================
+
+// ---------- 关键帧 ----------
+@keyframes mwp-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24rpx, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes mwp-fade-down {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -24rpx, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes mwp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mwp-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mwp-slide-up {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes mwp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mwp-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+@keyframes mwp-heart-beat {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.30); }
+  40%  { transform: scale(0.95); }
+  60%  { transform: scale(1.12); }
+  80%  { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+@keyframes mwp-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes mwp-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes mwp-pop {
+  0%   { transform: scale(0); opacity: 0; }
+  70%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes mwp-float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8rpx) scale(1.02);
+  }
+}
+
+@keyframes mwp-glow {
+  0%, 100% { box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25); }
+  50%      { box-shadow: 0 12rpx 32rpx rgba(178, 0, 53, 0.45); }
+}
+
+@keyframes mwp-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6rpx); }
+  40%, 80% { transform: translateX(6rpx); }
+}
+
+// ---------- 公共类（直接挂载即可生效）----------
+.mwp-fade-up      { animation: mwp-fade-up 320ms cubic-bezier(0, 0, 0.2, 1) both; }
+.mwp-fade-down    { animation: mwp-fade-down 320ms cubic-bezier(0, 0, 0.2, 1) both; }
+.mwp-fade-in      { animation: mwp-fade-in 300ms ease both; }
+.mwp-scale-in     { animation: mwp-scale-in 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.mwp-slide-up     { animation: mwp-slide-up 360ms cubic-bezier(0, 0, 0.2, 1) both; }
+.mwp-bounce-in    { animation: mwp-bounce-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.mwp-pop          { animation: mwp-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+// 列表项 stagger：配合 style="animation-delay: ${i * 60}ms" 使用
+.mwp-stagger-item {
+  animation: mwp-fade-up 360ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+// 加载 spinner（双圈）
+.mwp-spinner {
+  display: inline-block;
+  width: 64rpx;
+  height: 64rpx;
+  border: 4rpx solid rgba(178, 0, 53, 0.18);
+  border-top-color: #b20035;
+  border-radius: 50%;
+  animation: mwp-spin 800ms linear infinite;
+}
+
+.mwp-spinner-sm {
+  width: 40rpx;
+  height: 40rpx;
+  border-width: 3rpx;
+}
+
+// 骨架屏 shimmer
+.mwp-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8rpx;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: mwp-shimmer 1.4s linear infinite;
+  }
+
+  .dark-theme & {
+    background: rgba(255, 255, 255, 0.06);
+    &::after {
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.10) 50%,
+        transparent 100%
+      );
+    }
+  }
+}
+
+// 心动
+.mwp-heart {
+  display: inline-block;
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &.is-active {
+    animation: mwp-heart-beat 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+// 触觉按压（最常用）
+.mwp-pressable {
+  transition: transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// 减弱动画（用户系统设置 prefers-reduced-motion）
+@media (prefers-reduced-motion: reduce) {
+  .mwp-fade-up,
+  .mwp-fade-down,
+  .mwp-fade-in,
+  .mwp-scale-in,
+  .mwp-slide-up,
+  .mwp-bounce-in,
+  .mwp-pop,
+  .mwp-stagger-item,
+  .mwp-spinner,
+  .mwp-skeleton::after,
+  .mwp-heart.is-active {
+    animation: none !important;
+  }
+  .mwp-pressable:active {
+    transform: none;
+  }
+}
+
+// ---------- 全局 placeholder 颜色（深色模式友好） ----------
+// 用法：<input placeholder-class="mwp-placeholder" />
+.mwp-placeholder {
+  color: #cccccc;
+  font-weight: 400;
+}
+.dark-theme .mwp-placeholder {
+  color: #555555;
+}

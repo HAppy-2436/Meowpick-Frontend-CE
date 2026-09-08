@@ -1,36 +1,26 @@
-$card: #ffffffb3;
-$main: #191919;
-$second: #818181;
+// 全局样式入口
+@import "./styles/tokens.scss";
+@import "./styles/animations.scss";
+
+// 移除 NutUI TabPane 内部 padding（全局覆盖）
 .nut-tab-pane {
   padding: 0 !important;
   background-color: transparent !important;
 }
-.top-bar {
-  position: absolute;
-  top: 0;
-  background-color: #b20035;
-  width: 100vw;
-  height: 26vw;
-  z-index: 2;
-  .go-back {
-    position: absolute;
-    top: 15vw;
-    left: 5vw;
-    width: 100vw;
-    display: flex;
-    flex-direction: row;
-    .txt {
-      color: #ffffff;
-      width: 100vw;
-      font-size: 5vw;
-      margin-left: 2vw;
-      margin-top: 0.5vw;
-      letter-spacing: 0.2vw;
-      font-weight: bold;
-    }
-    .icon {
-      width: 5vw;
-      height: 8.53vw;
-    }
-  }
+
+// 全局可访问性：所有可点击元素在移动端移除点击高亮
+view,
+text,
+button,
+scroll-view,
+swiper,
+swiper-item {
+  -webkit-tap-highlight-color: transparent;
+}
+
+// 滚动条样式（仅 web 端生效）
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }

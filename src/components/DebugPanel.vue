@@ -95,17 +95,17 @@ const setLaneInputEditable = (isTrue: boolean) => {
 .button {
   padding: 2vw 4vw;
   border-radius: 2vw;
-  color: #000000;
+  color: $pure-black;
   position: fixed;
   left: 5vw;
   bottom: 15vw;
 
   &.green {
-    background-color: #45bb76;
+    background-color: $success;
   }
 
   &.orange {
-    background-color: #da8b28;
+    background-color: $warning;
   }
 }
 
@@ -117,16 +117,16 @@ const setLaneInputEditable = (isTrue: boolean) => {
   box-sizing: border-box;
   bottom: 25vw;
   width: 96vw;
-  background-color: #222222;
-  color: #cccccc;
+  background-color: $bg-card-dark;
+  color: $text-tertiary-light;
 
   .clickable {
-    background-color: #222222;
+    background-color: $bg-card-dark;
     border-radius: 2vw;
     padding: 1vw 2vw;
 
     &:active {
-      background-color: #333333;
+      background-color: $text-primary-light;
       z-index: 20;
     }
   }
@@ -151,7 +151,7 @@ const setLaneInputEditable = (isTrue: boolean) => {
 
   .env {
     .toggle {
-      border: 1px solid #888888;
+      border: 1px solid $text-tertiary-dark;
       height: 8vw;
       width: fit-content;
       padding: 2vw;
@@ -160,18 +160,18 @@ const setLaneInputEditable = (isTrue: boolean) => {
       margin-right: 2vw;
 
       &.current {
-        background-color: #888888;
+        background-color: $text-tertiary-dark;
 
-        color: #000000;
+        color: $pure-black;
 
         &.green {
-          background-color: #45bb76;
-          border: 1px solid #45bb76;
+          background-color: $success;
+          border: 1px solid $success;
         }
 
         &.orange {
-          background-color: #da8b28;
-          border: 1px solid #da8b28;
+          background-color: $warning;
+          border: 1px solid $warning;
         }
       }
     }
@@ -191,7 +191,7 @@ const setLaneInputEditable = (isTrue: boolean) => {
       border-radius: 2vw;
 
       &.editable {
-        background-color: #333333;
+        background-color: $text-primary-light;
       }
     }
   }

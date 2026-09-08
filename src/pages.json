@@ -4,7 +4,9 @@
     "navigationBarTitleText": "",
     "navigationStyle": "custom",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#F8F8F8",
+    "animationType": "fade-in",
+    "animationDuration": 220
   },
   "pages": [
     {
@@ -51,7 +53,7 @@
       }
     },
     {
-      "path": "pages/proposal/feed/feed",
+      "path": "pages/proposal/list/list",
       "style": {
         "navigationStyle": "custom"
       }

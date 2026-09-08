@@ -40,10 +40,10 @@
           </view>
           
           <view class="course-row-middle">
-               <view class="course-info-item" v-if="props.data?.teacherList?.length">
+               <view class="course-info-item" v-if="teacherDisplayList.length">
                     <image src="@/images/teacher-icon.png" class="info-icon" />
                     <text class="teacher-name-list">
-                      {{ props.data.teacherList.map((t: any) => t.name).join(' / ') }}
+                      {{ teacherDisplayList.join(' / ') }}
                     </text>
                </view>
                <view class="course-info-item">
@@ -73,10 +73,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"; // Import computed
+import { computed, ref } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { getTop3List } from "@/utils/tags";
 import { http } from "@/config";
+import { teachersToStrings } from "@/utils/teacher-display";
 
 // Extend type locally
 type MixedResult = CourseVO & {
@@ -101,6 +102,16 @@ const isProposal = computed(() => {
     return props.data?.resultType === 'proposal';
 });
 
+const teacherDisplayList = computed<string[]>(() => {
+  if (props.data?.teacherList?.length) {
+    return teachersToStrings(props.data.teacherList as Array<string | TeacherVO>);
+  }
+  if (Array.isArray(props.data?.teachers) && props.data!.teachers!.length) {
+    return teachersToStrings(props.data!.teachers as Array<string | TeacherVO>);
+  }
+  return [];
+});
+
 const isLiked = ref(props.data?.isLiked || false);
 const likeCount = ref(props.data?.likeCnt || props.data?.voteCount || props.data?.agreeCount || 0);
 
@@ -123,234 +134,4 @@ const handleLike = async () => {
 };
 </script>
 
-<style lang="scss" scoped>
-.search-result-box {
-  margin-top: 10rpx;
-  /* Make box transparent or white as base */
-  background-color: transparent; 
-  /* Move shadow and radius to individual cards if they differ, or keep here */
-  /* If cards have their own backgrounds, this wrapper should just layout */
-}
-
-.proposal-card {
-  /* This has shadow and radius too? No, it inherits or redefined? */
-  background: linear-gradient(145deg, #ffffff 0%, #fff5f6 100%);
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03); 
-  padding: 24rpx;
-
-  .proposal-content {
-      display: flex;
-      flex-direction: column;
-
-      .proposal-row-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20rpx;
-
-          .proposal-name {
-               font-size: 32rpx; /* Slightly larger title */
-               font-weight: 700;
-               color: #333; 
-               line-height: 1.4;
-               flex: 1;
-          }
-      }
-
-      .proposal-row-middle {
-          display: flex;
-          flex-direction: row; 
-          flex-wrap: wrap; 
-          align-items: center;
-          margin-bottom: 24rpx; /* Increased spacing */
-          
-          .proposal-info-item {
-               display: flex;
-               align-items: center;
-               font-size: 26rpx; /* Larger text */
-               color: #555; /* Darker grey */
-               margin-right: 32rpx; 
-
-               .info-icon {
-                    width: 30rpx; /* Larger icon */
-                    height: 30rpx;
-                    margin-right: 10rpx;
-                    opacity: 0.8; 
-               }
-          }
-      }
-
-      .proposal-row-bottom {
-          display: flex;
-          justify-content: space-between; /* Space out badge and vote */
-          align-items: center;
-          
-           .proposal-badge {
-             font-size: 22rpx;
-             color: #b20035;
-             background: rgba(178, 0, 53, 0.08);
-             padding: 6rpx 12rpx;
-             border-radius: 8rpx;
-             white-space: nowrap;
-             font-weight: 500;
-         }
-
-           .vote-count-box {
-                display: flex;
-                align-items: center;
-                /* Removed background for cleaner look or keep if desired, let's keep it minimal */
-                /* background: rgba(178, 0, 53, 0.05); */
-
-                &.is-liked {
-                    .vote-icon { opacity: 1; }
-                    .vote-num { color: #b20035; }
-                    .vote-label { color: #b20035; }
-                }
-
-                .vote-icon {
-                     width: 28rpx;
-                     height: 28rpx;
-                     margin-right: 8rpx;
-                     opacity: 0.6;
-                }
-               .vote-num {
-                    font-size: 28rpx;
-                    font-weight: 600;
-                    color: #b20035;
-                    margin-right: 4rpx;
-               }
-               .vote-label {
-                    font-size: 22rpx;
-                    color: #999;
-                    margin-top: 4rpx; /* Align baseline */
-               }
-          }
-      }
-  }
-}
-
-.search-result {
-  background-color: #ffffff;
-  width: 100%; 
-  box-sizing: border-box;
-  /* Add card styling to course card */
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03); 
-  padding: 24rpx;
-  display: flex;
-  flex-direction: column;
-
-  .course-content {
-      /* Removed inner padding to avoid double padding */
-      /* padding: 24rpx; */
-      display: flex;
-      flex-direction: column;
-
-      .course-row-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start; /* Changed from center to flex-start to align top */
-          margin-bottom: 20rpx;
-
-          .course-name {
-               font-size: 32rpx;
-               font-weight: 700;
-               color: #333; 
-               line-height: 1.4;
-               flex: 1;
-               margin-right: 16rpx;
-               
-               display: -webkit-box;
-               -webkit-line-clamp: 2; /* Limit to 2 lines */
-               -webkit-box-orient: vertical;
-               overflow: hidden;
-          }
-          .course-category {
-               font-size: 22rpx;
-               color: #666;
-               background: #f0f0f0;
-               padding: 6rpx 12rpx;
-               border-radius: 8rpx;
-               white-space: nowrap;
-               margin-top: 6rpx; /* Slight margin top to align visually with text baseline if multi-line */
-               flex-shrink: 0; /* Prevent shrinking */
-          }
-      }
-
-      .course-row-middle {
-          display: flex;
-          flex-direction: row; 
-          flex-wrap: wrap; 
-          align-items: center;
-          margin-bottom: 24rpx; 
-          
-          .course-info-item {
-               display: flex;
-               align-items: center;
-               font-size: 26rpx; 
-               color: #555; 
-               margin-right: 32rpx; 
-
-               .info-icon {
-                    width: 30rpx; 
-                    height: 30rpx;
-                    margin-right: 10rpx;
-                    opacity: 0.8; 
-               }
-               
-               .teacher-name-list {
-                    max-width: 300rpx;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-               }
-          }
-      }
-
-      .course-row-bottom {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        
-        .tag-item {
-          display: flex;
-          align-items: center;
-          background: #fffcfc; /* Consistent with light theme */
-          border: 1px solid #ffebeb;
-          padding: 4rpx 12rpx;
-          border-radius: 12rpx;
-          margin-right: 16rpx;
-          margin-bottom: 8rpx;
-
-          .emoji-text {
-            font-size: 22rpx;
-            margin-right: 8rpx;
-            color: #444;
-          }
-
-          .tag-count {
-            font-size: 22rpx;
-            color: #b20035;
-            font-weight: 500;
-          }
-        }
-      }
-      
-      .desc {
-        width: 100%;
-        margin-top: 10rpx;
-        font-size: 24rpx;
-        color: #999;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2; 
-        line-clamp: 2;
-        overflow: hidden;
-      }
-  }
-}
-</style>
-<style scoped lang="scss">
-@import "@/components/choose/choose-course/style.scss";
-</style>
+<style lang="scss" scoped src="@/components/choose/choose-course/style.scss" />

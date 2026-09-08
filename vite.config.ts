@@ -17,9 +17,17 @@ export default defineConfig(({ command, mode }) => {
         plugins: [require("tailwindcss"), require("autoprefixer")]
       },
       preprocessorOptions: {
-        scss: {
-          additionalData: '@import "nutui-uniapp/styles/variables.scss";'
-        }
+        scss: (() => {
+          const p = require('path');
+          const t = p.resolve(__dirname, 'src/styles/_tokens.scss').replace(/\\\\/g, '/');
+          const m = p.resolve(__dirname, 'src/styles/_mixins.scss').replace(/\\\\/g, '/');
+          const a = p.resolve(__dirname, 'src/styles/_animations.scss').replace(/\\\\/g, '/');
+          return {
+            additionalData: `@import "nutui-uniapp/styles/variables.scss"; @import "${t}"; @import "${m}"; @import "${a}";`,
+            loadPaths: ['src', 'node_modules'],
+            includePaths: ['src', 'node_modules']
+          };
+        })()
       }
     },
     plugins: [

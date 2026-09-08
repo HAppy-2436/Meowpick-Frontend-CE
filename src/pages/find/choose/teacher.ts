@@ -17,14 +17,16 @@ export function useChoose() {
   function search(pageNum: number) {
     if (keyword.value.length > 0) {
       loading.value = true;
+      // swagger v2.0 的 DtoListCoursesReq 只有 page/pageSize，keyword/type 是后端实际支持但未声明
       http.CoursesController.searchCreate({
         keyword: keyword.value,
         type: "teacher",
         page: pageNum,
         pageSize: TEACHER_SEARCH_PAGE_SIZE
       }).then((res) => {
-        const courses = res.data?.data?.courses || [];
-        rows.value = [...rows.value, ...courses.map((course) => ({
+        const data = res.data as any;
+        const courses = data?.data?.courses || data?.courses || [];
+        rows.value = [...rows.value, ...courses.map((course: any) => ({
           ...course,
           teacherList: course.teachers || [],
           tagCount: course.tagCount || {}

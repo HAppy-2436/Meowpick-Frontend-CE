@@ -39,17 +39,11 @@
               <text class="course-category" v-if="props.data?.category">{{ props.data?.category }}</text>
           </view>
 
-          <view class="course-row-middle">
-               <view class="course-info-item" v-if="props.data?.teacherList?.length">
+           <view class="course-row-middle">
+               <view class="course-info-item" v-if="teacherDisplayList.length">
                     <image src="@/images/teacher-icon.png" class="info-icon" />
                     <text class="teacher-name-list">
-                      {{ props.data.teacherList.map((t: any) => t.name).join(' / ') }}
-                    </text>
-               </view>
-               <view class="course-info-item" v-else-if="props.data?.teachers?.length">
-                    <image src="@/images/teacher-icon.png" class="info-icon" />
-                    <text class="teacher-name-list">
-                      {{ props.data.teachers.join(' / ') }}
+                      {{ teacherDisplayList.join(' / ') }}
                     </text>
                </view>
                <view class="course-info-item">
@@ -85,6 +79,7 @@ import { computed, ref, defineProps } from "vue"; // Import computed
 import type { CourseVO, TeacherVO } from "@/api/data-contracts";
 import { Emoji, getTop3List } from "@/utils/tags";
 import { http, useThemeStore } from "@/config";
+import { joinTeachers, teachersToStrings } from "@/utils/teacher-display";
 const themeStore = useThemeStore();
 
 // Extend type locally
@@ -104,6 +99,16 @@ type MixedResult = CourseVO & {
 };
 
 const props = defineProps<{ data: MixedResult }>();
+
+const teacherDisplayList = computed<string[]>(() => {
+  if (props.data?.teacherList?.length) {
+    return teachersToStrings(props.data.teacherList as Array<string | TeacherVO>);
+  }
+  if (Array.isArray(props.data?.teachers) && props.data!.teachers!.length) {
+    return teachersToStrings(props.data!.teachers as Array<string | TeacherVO>);
+  }
+  return [];
+});
 
 const isProposal = computed(() => {
     return props.data?.resultType === 'proposal';
@@ -131,308 +136,5 @@ const handleLike = async () => {
 };
 </script>
 
-<style lang="scss" scoped>
-.search-result-box {
-  margin-top: 20rpx;
-  background-color: transparent;
-}
+<style lang="scss" scoped src="./style.scss" />
 
-.proposal-card {
-  background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
-  border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06);
-  padding: 32rpx;
-  border: 1px solid rgba(178, 0, 53, 0.15);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.12s ease;
-
-  &:active {
-    transform: scale(0.96);
-    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.04);
-  }
-
-  .proposal-content {
-      display: flex;
-      flex-direction: column;
-
-      .proposal-row-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 24rpx;
-
-          .proposal-name {
-               font-size: 36rpx;
-               font-weight: 700;
-               color: #1a1a1a;
-               line-height: 1.4;
-               flex: 1;
-               margin-right: 20rpx;
-               letter-spacing: 1rpx;
-          }
-      }
-
-      .proposal-row-middle {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          align-items: center;
-          margin-bottom: 32rpx;
-          background: rgba(255, 255, 255, 0.8);
-          padding: 20rpx 24rpx;
-          border-radius: 16rpx;
-          border: 1px solid rgba(178, 0, 53, 0.08);
-          box-shadow: inset 0 2rpx 8rpx rgba(0,0,0,0.01);
-
-          .proposal-info-item {
-               display: flex;
-               align-items: center;
-               font-size: 26rpx;
-               color: #555;
-               margin-right: 40rpx;
-               font-weight: 500;
-
-               .info-icon {
-                    width: 30rpx;
-                    height: 30rpx;
-                    margin-right: 12rpx;
-                    opacity: 0.8;
-               }
-          }
-      }
-
-      .proposal-row-bottom {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-top: 1px dashed rgba(178, 0, 53, 0.15);
-          padding-top: 24rpx;
-
-           .proposal-badge {
-             font-size: 24rpx;
-             color: #b20035;
-             background: linear-gradient(90deg, rgba(178, 0, 53, 0.1), rgba(178, 0, 53, 0.1));
-             padding: 10rpx 20rpx;
-             border-radius: 30rpx;
-             font-weight: 600;
-             border: 1px solid rgba(178, 0, 53, 0.05);
-         }
-
-           .vote-count-box {
-                display: flex;
-                align-items: center;
-                background: linear-gradient(90deg, #fff0f2, #fff5f6);
-                padding: 10rpx 24rpx;
-                border-radius: 30rpx;
-                border: 1px solid rgba(178, 0, 53, 0.05);
-
-                &.is-liked {
-                    background: linear-gradient(90deg, #b20035, #ff4d6a);
-                    .vote-icon { opacity: 1; }
-                    .vote-num { color: #fff; }
-                    .vote-label { color: #fff; }
-                }
-
-                .vote-icon {
-                     width: 30rpx;
-                     height: 30rpx;
-                     margin-right: 12rpx;
-                     opacity: 0.8;
-                }
-               .vote-num {
-                    font-size: 32rpx;
-                    font-weight: 800;
-                    color: #b20035;
-                    margin-right: 6rpx;
-               }
-               .vote-label {
-                    font-size: 24rpx;
-                    color: #b20035;
-                    opacity: 0.9;
-                    font-weight: 500;
-               }
-          }
-      }
-  }
-}
-
-.search-result {
-  background-color: #ffffff;
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05);
-  padding: 32rpx;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #f0f0f0;
-  transition: all 0.12s ease;
-  overflow: hidden;
-
-  &:active {
-    transform: scale(0.96);
-    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
-  }
-
-  .course-content {
-      display: flex;
-      flex-direction: column;
-
-      .course-row-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 24rpx;
-
-          .course-name {
-               font-size: 34rpx;
-               font-weight: 600;
-               color: #2c3e50;
-               line-height: 1.5;
-               flex: 1;
-               margin-right: 20rpx;
-
-               display: -webkit-box;
-               -webkit-line-clamp: 2;
-               -webkit-box-orient: vertical;
-               overflow: hidden;
-          }
-          .course-category {
-               font-size: 24rpx;
-               color: #0066cc;
-               background: rgba(0, 102, 204, 0.08);
-               padding: 8rpx 16rpx;
-               border-radius: 30rpx;
-               white-space: nowrap;
-               font-weight: 500;
-          }
-      }
-
-      .course-row-middle {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          align-items: center;
-          margin-bottom: 28rpx;
-
-          .course-info-item {
-               display: flex;
-               align-items: center;
-               font-size: 26rpx;
-               color: #666;
-               margin-right: 40rpx;
-
-               .info-icon {
-                    width: 28rpx;
-                    height: 28rpx;
-                    margin-right: 12rpx;
-                    opacity: 0.7;
-               }
-
-               .teacher-name-list {
-                    max-width: 300rpx;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-               }
-          }
-      }
-
-      .course-row-bottom {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        background: #f8f9fa;
-        padding: 16rpx 20rpx;
-        border-radius: 12rpx;
-
-        .tag-item {
-          display: flex;
-          align-items: center;
-          background: #ffffff;
-          border: 1px solid #eee;
-          padding: 6rpx 16rpx;
-          border-radius: 30rpx;
-          margin-right: 16rpx;
-          box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
-
-          .emoji-icon {
-            width: 32rpx;
-            height: 32rpx;
-            margin-right: 8rpx;
-            display: block;
-          }
-
-          .emoji-text {
-            font-size: 26rpx;
-            margin-right: 10rpx;
-          }
-
-          .tag-count {
-            font-size: 24rpx;
-            color: #b20035;
-            font-weight: 600;
-          }
-        }
-      }
-
-      .desc {
-        width: 100%;
-        margin-top: 20rpx;
-        font-size: 26rpx;
-        color: #888;
-        line-height: 1.6;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        overflow: hidden;
-        background: #fcfcfc;
-        padding: 16rpx;
-        border-radius: 12rpx;
-        border-left: 6rpx solid #eee;
-      }
-  }
-}
-</style>
-
-<style lang="scss">
-$brand-red: #b20035;
-
-.search-result-box.dark-theme {
-  background-color: #121212;
-}
-
-.search-result-box.dark-theme .proposal-card {
-  background: linear-gradient(135deg, #1e1e1e 0%, #2a1a1e 100%) !important;
-  border: 1px solid rgba(178,0,53,0.2) !important;
-  border-radius: 24rpx !important;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15) !important;
-  .proposal-name { color: #e0e0e0 !important; }
-  .proposal-info-item { color: #888 !important; .info-icon { opacity: 0.6 !important; } }
-  .proposal-row-middle { background: rgba(30,30,30,0.9) !important; border-color: rgba(178,0,53,0.1) !important; border-radius: 16rpx !important; }
-  .proposal-row-bottom { border-color: rgba(178,0,53,0.2) !important; }
-  .proposal-badge { color: $brand-red !important; }
-  .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e) !important; }
-  .vote-count-box .vote-num { color: $brand-red !important; }
-  .vote-count-box .vote-label { color: $brand-red !important; }
-  .vote-count-box.is-liked { background: linear-gradient(90deg, #b20035, #ff4d6a) !important; }
-  .vote-count-box.is-liked .vote-icon { opacity: 1 !important; }
-  .vote-count-box.is-liked .vote-num { color: #fff !important; }
-  .vote-count-box.is-liked .vote-label { color: #fff !important; }
-}
-
-.search-result-box.dark-theme .search-result {
-  background-color: #1e1e1e !important;
-  border-color: #333 !important;
-  border-radius: 24rpx !important;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1) !important;
-  .course-name { color: #d5d5d5 !important; }
-  .course-category { color: #7fc4ff !important; background: rgba(0, 102, 204, 0.15) !important; }
-  .teacher-name-list { color: #b0b0b0 !important; }
-  .course-info-item { color: #999 !important; }
-  .course-row-bottom { background: #2a2a2a !important; border-radius: 12rpx !important; .tag-item { background: #333 !important; border-color: #444 !important; .emoji-text { color: #ccc !important; } .tag-count { color: $brand-red !important; } } }
-  .desc { background: #252525 !important; color: #999 !important; border-color: #333 !important; }
-}
-</style>

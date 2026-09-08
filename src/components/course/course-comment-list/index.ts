@@ -35,11 +35,13 @@ export function useCourseComment(p: Props) {
             ...comment,
             tags: comment.tags && comment.tags.length > 0 ? comment.tags : ['硬核', '推荐'],
             score: (comment as any).score || 4,
-            like: comment.relation?.like ?? false,
-            likeCnt: comment.relation?.likeCnt ?? 0
+            like: comment.like ?? false,
+            likeCnt: comment.likeCnt ?? 0
           };
         });
         query.value = Object.values(list.value).length < total;
+      }).catch((err) => {
+        console.error('[course-comment-list] fetch error:', err);
       });
     }
   }

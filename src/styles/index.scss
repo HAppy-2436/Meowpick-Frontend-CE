@@ -1,0 +1,9 @@
+// =====================================================================
+// 入口文件：把 tokens / mixins / animations 一次性导入
+// 在 SFC 中：@use "@/styles/index.scss" as *;
+// 注：使用 @import 平铺模式（而非 @use/forward），以避免与 nutui 等外部库的变量冲突
+// =====================================================================
+
+@import "./tokens";
+@import "./mixins";
+@import "./animations";

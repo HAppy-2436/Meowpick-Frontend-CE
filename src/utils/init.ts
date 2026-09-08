@@ -67,6 +67,9 @@ async function handleLogin(code: string) {
         tokenStore.setUserId(responseData.data.userId);
       }
     }
+    // 尝试获取微信用户信息（昵称+头像）
+    // 注：新版微信已废弃 getUserInfo，需通过 chooseAvatar + type="nickname" 组件获取
+    // 此处仅做兼容：如用户已授权过则读取缓存
   } catch (err: any) {
     console.error('[handleLogin] Login request failed:', err);
   } finally {

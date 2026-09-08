@@ -1,40 +1,80 @@
 <template>
   <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
-    <!-- 底层：用户信息（顶部，约 1/4 视口） -->
-    <view class="user-info-layer">
-      <view class="avatar-circle">
-        <text class="avatar-emoji">👤</text>
+    <!-- 头像层：sticky 固定在视觉位置，不随内容滚动 -->
+    <view class="user-info-sticky" :style="{ top: topReservedHeight + 'px' }">
+      <button class="sticky-avatar-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+        <default-avatar v-if="!avatarUrl" />
+        <image v-else :src="avatarUrl" class="sticky-avatar-img" mode="aspectFill" />
+      </button>
+      <view class="sticky-avatar-meta">
+        <text class="sticky-avatar-name" @click="openNicknameModal">{{ userName }}</text>
+        <text class="sticky-avatar-contrib">贡献值：{{ contribution }}</text>
       </view>
-      <view class="user-meta">
-        <text class="user-nickname">{{ userName || '同学' }}</text>
-        <text class="user-contribution">贡献值：{{ contribution || 0 }}</text>
-      </view>
+      <!-- 更多按钮 -->
       <view class="user-more-btn" @click="toggleMoreMenu">
         <view class="line"></view>
         <view class="line"></view>
         <view class="line"></view>
-
-        <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass" @click.stop>
-          <view class="menu-item" @click="handleMenuClick('theme')">切换深色模式</view>
-          <view class="menu-item" @click="handleMenuClick('feed')">提议广场</view>
-          <view class="menu-item" @click="handleMenuClick('nickname')">修改昵称</view>
-          <view class="menu-item" @click="handleMenuClick('feedback')">反馈</view>
-        </view>
       </view>
-
-      <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false"></view>
     </view>
 
-    <!-- "我的发布"圆角矩形（作为粘性容器，滚到顶部时停住） -->
+    <!-- 更多菜单弹出层 -->
+    <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false" />
+    <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass">
+      <view class="menu-item" @click="handleMenuClick('theme')">
+        <text class="menu-icon">{{ themeStore.isDark ? '☀️' : '🌙' }}</text>
+        <text class="menu-text">{{ themeStore.isDark ? '浅色模式' : '深色模式' }}</text>
+      </view>
+      <view class="menu-item" @click="handleMenuClick('nickname')">
+        <text class="menu-icon">✏️</text>
+        <text class="menu-text">更改昵称</text>
+      </view>
+      <view class="menu-item" @click="handleMenuClick('feed')">
+        <text class="menu-icon">📋</text>
+        <text class="menu-text">提议广场</text>
+      </view>
+      <view class="menu-item" @click="handleMenuClick('feedback')">
+        <text class="menu-icon">💬</text>
+        <text class="menu-text">我要反馈</text>
+      </view>
+      <!-- 管理员专属菜单 -->
+      <template v-if="isAdmin">
+        <view class="menu-item" @click="handleMenuClick('admin')">
+          <text class="menu-icon">{{ adminMode ? '✅' : '❌' }}</text>
+          <text class="menu-text">管理员{{ adminMode ? '' : '(已关闭)' }}</text>
+        </view>
+        <template v-if="adminMode">
+          <view class="menu-item" @click="handleMenuClick('logs')">
+            <text class="menu-icon">📑</text>
+            <text class="menu-text">提案日志</text>
+          </view>
+          <view class="menu-item" @click="handleMenuClick('test')">
+            <text class="menu-icon">🧪</text>
+            <text class="menu-text" :class="{ 'text-danger': testMode }">测试模式{{ testMode ? '(已开启)' : '' }}</text>
+          </view>
+        </template>
+      </template>
+      <!-- 非管理员显示更新日志 -->
+      <view v-if="!isAdmin" class="menu-item" @click="handleMenuClick('changelog')">
+        <text class="menu-icon">📝</text>
+        <text class="menu-text">更新日志</text>
+      </view>
+    </view>
+
+    <!-- "我的发布"（position: relative，z-index 高于头像层，滚动时覆盖） -->
     <view class="my-publish-card">
       <!-- 标题 -->
-      <view class="my-publish-header" :style="myPublishHeaderStyle">
+      <view class="my-publish-header">
         <text class="page-title">我的发布</text>
-        <text class="sub-title">{{ loading ? '加载中...' : (filteredList.length + ' 条记录') }}</text>
       </view>
 
-      <!-- 筛选胶囊（sticky，滚到顶部时停住） -->
-      <view class="sticky-bar" :style="{ top: topReservedHeight + 'px' }">
+      <!-- 筛选胶囊（sticky，与系统胶囊居中对齐时停住） -->
+      <view class="sticky-bar" :style="{ top: filterCenterTop + 'px' }">
+        <!-- 左侧：条数胶囊（与系统胶囊视觉对称） -->
+        <view class="count-pill">
+          <text>{{ loading ? '...' : filteredList.length }}条</text>
+        </view>
+        <!-- 居中：筛选胶囊 -->
         <view class="filter-row-wrapper">
           <view class="filter-pill"
             :class="{ active: currentFilter === 'all' }"
@@ -79,7 +119,7 @@
           :key="item.id"
           class="list-item"
           @click="onItemClick(item)"
-          @longpress="onLongPress(item)"
+          @longpress="onCardMenu(item)"
         >
           <view v-if="item.type === 'comment'" class="card comment-card">
             <view class="card-main">
@@ -98,6 +138,9 @@
                 <view class="likes-box">
                   <image src="@/images/like-icon.png" class="like-icon" />
                   <text class="likes-text">{{ item.likes || 0 }}</text>
+                </view>
+                <view class="card-more-btn" @click.stop="onCardMenu(item)">
+                  <text>⋯</text>
                 </view>
               </view>
             </view>
@@ -122,57 +165,61 @@
                   <text class="vote-num">{{ item.voteCount || 0 }}</text>
                   <text class="vote-label">支持</text>
                 </view>
-                <text
-                  class="status-badge"
-                  :class="{
-                    'status-approved': item.status === 'approved',
-                    'status-rejected': item.status === 'rejected',
-                    'status-pending': item.status === 'pending'
-                  }"
-                >
-                  {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
-                </text>
+                <view class="footer-right">
+                  <text
+                    class="status-badge"
+                    :class="{
+                      'status-approved': item.status === 'approved',
+                      'status-rejected': item.status === 'rejected',
+                      'status-pending': item.status === 'pending'
+                    }"
+                  >
+                    {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
+                  </text>
+                  <view class="card-more-btn" @click.stop="onCardMenu(item)">
+                    <text>⋯</text>
+                  </view>
+                </view>
               </view>
             </view>
           </view>
         </view>
 
+        <view v-if="filteredList.length > 0 && !loading" class="end-hint">
+          <text>—— 到底了 ——</text>
+        </view>
         <view style="height: 160rpx;"></view>
       </view>
     </view>
 
     <!-- 引导弹窗 -->
-    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass" @click="hideGuide">
+    <view v-if="showGuide" class="guide-overlay" :class="themeStore.themeClass">
       <view class="guide-content" @click.stop>
         <view class="guide-header">
-          <text class="guide-title">欢迎来到"我的发布" 🎉</text>
-          <text class="guide-subtitle">管理你的吐槽和提议</text>
+          <text class="guide-title">个性化你的主页</text>
+          <text class="guide-subtitle">选择头像和昵称，展现你的个性</text>
         </view>
-        <view class="guide-sections">
-          <view class="guide-section">
-            <view class="section-icon">💬</view>
-            <view class="section-text">
-              <text class="section-title">吐槽课程</text>
-              <text class="section-desc">搜索已开设的课程，了解学长评价，选择心仪的选修课</text>
+        <view class="guide-steps">
+          <view class="guide-step">
+            <view class="step-icon">🎨</view>
+            <view class="step-body">
+              <text class="step-title">选择头像</text>
+              <text class="step-desc">从微信头像中选择，或使用默认猫咪头像</text>
             </view>
           </view>
-          <view class="guide-section">
-            <view class="section-icon">📝</view>
-            <view class="section-text">
-              <text class="section-title">提议新课程</text>
-              <text class="section-desc">搜索不到想要的课？发起提议，让大家一起投票支持</text>
-            </view>
-          </view>
-          <view class="guide-section">
-            <view class="section-icon">🏫</view>
-            <view class="section-text">
-              <text class="section-title">闵行 & 普陀</text>
-              <text class="section-desc">两个校区的课程都有收录，搜索时可按校区筛选</text>
+          <view class="guide-step">
+            <view class="step-icon">✏️</view>
+            <view class="step-body">
+              <text class="step-title">设置昵称</text>
+              <text class="step-desc">使用微信昵称或自定义，发布提议时作为贡献记录</text>
             </view>
           </view>
         </view>
         <view class="guide-footer">
-          <button class="start-btn" @click="hideGuide">我知道了</button>
+          <button class="avatar-btn" open-type="chooseAvatar" @chooseavatar="onGuideChooseAvatar">
+            选择头像
+          </button>
+          <view class="guide-skip" @click="onGuideSkip">跳过，使用默认</view>
         </view>
       </view>
     </view>
@@ -183,21 +230,29 @@
     <view class="plus-icon">+</view>
   </view>
 
+  <!-- 点击空白关闭菜单 -->
+  <view v-if="activeMenuId" class="action-overlay" @click="activeMenuId = ''" />
+
   <!-- Nickname Edit Modal -->
   <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
     <view class="modal-card" :class="themeStore.themeClass" @click.stop>
       <view class="modal-header">
-        <text class="modal-title">修改昵称</text>
+        <text class="modal-title">设置你的昵称</text>
         <view class="modal-close" @click="closeNicknameModal">×</view>
       </view>
 
       <view class="modal-body">
-        <text class="field-label">昵称</text>
+        <view class="nickname-avatar-preview">
+          <default-avatar v-if="!avatarUrl" size="120rpx" />
+          <image v-else :src="avatarUrl" class="preview-avatar" mode="aspectFill" />
+        </view>
+        <text class="field-label">输入昵称（点击输入框可获取微信昵称建议）</text>
         <input
           class="nickname-input"
           v-model="newNickname"
+          type="nickname"
           :maxlength="20"
-          placeholder="请输入新昵称"
+          placeholder="请输入昵称"
         />
         <text class="word-count">{{ newNickname.length }}/20</text>
       </view>
@@ -224,25 +279,56 @@ import FeedbackModal from '@/components/feedback/feedback-modal.vue';
 import { useRouteStore } from '@/config';
 const themeStore = useThemeStore();
 
+const props = defineProps<{
+  scrollTop?: number;
+}>();
+
 // 胶囊位置信息（顶部留白计算用）
 const sysInfo = uni.getSystemInfoSync();
 let menuButtonInfo = {
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
-    height: 32
+    height: 32,
+    width: 87
 };
 try {
     const res = uni.getMenuButtonBoundingClientRect();
     if (res && res.top) {
-        menuButtonInfo = { top: res.top, height: res.height };
+        menuButtonInfo = { top: res.top, height: res.height, width: res.width };
     }
 } catch (e) {}
 
 // 顶部预留：胶囊底部 + 胶囊下方间距
 const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height);
 
-// 用户信息（mock 占位）
-const userName = ref('华师喵');
-const contribution = ref(128);
+// 筛选胶囊与系统胶囊居中对齐的 top 值
+// 胶囊高度64rpx，换算为px
+const filterCapsuleHeightPx = 64 * (sysInfo.windowWidth / 750);
+const filterCenterTop = computed(() => {
+  const capsuleCenter = menuButtonInfo.top + menuButtonInfo.height / 2;
+  return capsuleCenter - filterCapsuleHeightPx / 2;
+});
+
+// 用户信息
+const userName = ref('同学');
+const avatarUrl = ref('');
+const contribution = ref(0);
+
+const generateDefaultName = () => {
+    return '华师喵' + Math.floor(1000 + Math.random() * 9000);
+};
+
+const loadUserInfo = () => {
+    const stored = uni.getStorageSync('userInfo');
+    if (stored) {
+        if (stored.nickName) userName.value = stored.nickName;
+        if (stored.avatarUrl) avatarUrl.value = stored.avatarUrl;
+        if (stored.contribution !== undefined) contribution.value = stored.contribution;
+    }
+    if (!userName.value || userName.value === '同学') {
+        userName.value = generateDefaultName();
+    }
+
+};
 
 // ===== 核心数据 =====
 const listData = ref<any[]>([]);
@@ -285,12 +371,45 @@ const hideGuide = () => {
     uni.setStorageSync(GUIDE_KEY, true);
 };
 
+const onGuideChooseAvatar = (e: any) => {
+    const avatarUrlRes = e.detail?.avatarUrl;
+    if (avatarUrlRes) {
+        avatarUrl.value = avatarUrlRes;
+        const stored = uni.getStorageSync('userInfo') || {};
+        stored.avatarUrl = avatarUrlRes;
+        uni.setStorageSync('userInfo', stored);
+    }
+    // 头像选完后打开昵称输入（type="nickname" 会自动建议微信昵称）
+    showGuide.value = false;
+    nextTick(() => openNicknameModal());
+};
+
+const onGuideSkip = () => {
+    showGuide.value = false;
+    // 不标记 GUIDE_KEY，下次进入"我的"还会弹
+};
+
 const checkGuide = () => {
-    const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
-    if (!hasSeenGuide) {
+    // 首次进入"我的"页时显示引导
+    const hasSeen = uni.getStorageSync(GUIDE_KEY);
+    if (!hasSeen) {
         showGuide.value = true;
     }
 };
+
+// ===== 头像选择（微信官方组件触发） =====
+const onChooseAvatar = (e: any) => {
+    const url = e.detail?.avatarUrl;
+    if (url) {
+        avatarUrl.value = url;
+        const stored = uni.getStorageSync('userInfo') || {};
+        stored.avatarUrl = url;
+        uni.setStorageSync('userInfo', stored);
+        uni.$emit('userInfoUpdated');
+    }
+};
+
+// ===== 首次引导已合并到首页 home-view =====
 
 // ===== Modals =====
 const showNicknameModal = ref(false);
@@ -317,17 +436,55 @@ const confirmNicknameChange = async () => {
     }
     submittingNickname.value = true;
     try {
-        uni.showLoading({ title: '提交中' });
-        await new Promise(resolve => setTimeout(resolve, 500));
-        uni.hideLoading();
+        const stored = uni.getStorageSync('userInfo') || {};
+        stored.nickName = trimmed;
+        uni.setStorageSync('userInfo', stored);
+        userName.value = trimmed;
+        uni.$emit('userInfoUpdated');
         uni.showToast({ title: '修改成功', icon: 'success' });
         closeNicknameModal();
     } catch (err) {
-        uni.hideLoading();
         uni.showToast({ title: '修改失败，请重试', icon: 'none' });
     } finally {
         submittingNickname.value = false;
     }
+};
+
+// ===== 管理员权限 =====
+const isAdmin = ref(false);
+const adminMode = ref(true); // 管理员模式，默认开启
+const testMode = ref(false); // 测试模式，默认关闭（一次性）
+
+const detectAdmin = async () => {
+    try {
+        const res: any = await http.AuthController.authIsAdminList();
+        const flag = res.data?.data?.isAdmin ?? res.data?.isAdmin ?? false;
+        isAdmin.value = !!flag;
+    } catch {
+        isAdmin.value = false;
+    }
+    // 临时管理员（长按"我的" tab 10秒 + 密码验证）
+    if (!isAdmin.value) {
+        const tempAdmin = uni.getStorageSync('meowpick_temp_admin');
+        if (tempAdmin) isAdmin.value = true;
+    }
+    if (isAdmin.value) {
+        // 读取上次管理员模式状态，默认开启
+        const saved = uni.getStorageSync('meowpick_admin_mode');
+        adminMode.value = saved !== false;
+    }
+};
+
+const toggleAdminMode = () => {
+    adminMode.value = !adminMode.value;
+    uni.setStorageSync('meowpick_admin_mode', adminMode.value);
+    if (!adminMode.value) {
+        testMode.value = false; // 关闭管理员模式时同步关闭测试模式
+    }
+};
+
+const toggleTestMode = () => {
+    testMode.value = !testMode.value;
 };
 
 // ===== More Menu (⋯ 按钮) =====
@@ -337,20 +494,36 @@ const toggleMoreMenu = () => {
     showMoreMenu.value = !showMoreMenu.value;
 };
 
-const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback') => {
-    showMoreMenu.value = false;
+const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback' | 'changelog' | 'admin' | 'logs' | 'test') => {
     switch (action) {
         case 'theme':
             themeStore.toggleTheme();
             break;
         case 'feed':
-            uni.navigateTo({ url: '/pages/proposal/feed/feed' });
+            showMoreMenu.value = false;
+            uni.navigateTo({ url: '/pages/proposal/list/list' });
             break;
         case 'nickname':
+            showMoreMenu.value = false;
             openNicknameModal();
             break;
         case 'feedback':
+            showMoreMenu.value = false;
             showFeedbackModal.value = true;
+            break;
+        case 'changelog':
+            showMoreMenu.value = false;
+            uni.navigateTo({ url: '/pages/home/update-log' });
+            break;
+        case 'admin':
+            toggleAdminMode();
+            break;
+        case 'logs':
+            showMoreMenu.value = false;
+            uni.navigateTo({ url: '/pages/proposal/list/list?tab=logs' });
+            break;
+        case 'test':
+            toggleTestMode();
             break;
     }
 };
@@ -412,28 +585,29 @@ const onItemClick = (item: ListItem) => {
     }
 };
 
-const onLongPress = (item: ListItem) => {
-    const itemList: string[] = [];
-    if (item.type === 'proposal') {
-        if (item.voteCount === undefined || item.voteCount === 0) {
-            itemList.push('修改', '删除');
-        } else {
-            itemList.push('查看详情', '修改 (清空票数)', '删除');
-        }
-    } else {
-        itemList.push('查看详情', '修改', '删除');
-    }
+// ===== 长按/三点按钮菜单 =====
+let actionTarget: ListItem | null = null;
+
+const onCardMenu = (item: ListItem) => {
+    actionTarget = item;
+    const itemList = item.type === 'proposal'
+        ? ['查看详情', '修改', '删除']
+        : ['查看详情', '修改', '删除'];
 
     uni.showActionSheet({
-        itemList: itemList,
+        itemList,
         success: (res) => {
-            const action = itemList[res.tapIndex || 0];
-            if (action.includes('删除')) {
-                deleteItem(item);
-            } else if (action.includes('修改')) {
-                uni.showToast({ title: '功能正在开发中', icon: 'none' });
-            } else if (action.includes('查看')) {
+            const action = itemList[res.tapIndex];
+            if (action === '查看详情') {
                 onItemClick(item);
+            } else if (action === '修改') {
+                if (item.type === 'proposal') {
+                    uni.navigateTo({ url: `/pages/proposal/propose/propose?editProposalId=${item.id}` });
+                } else {
+                    uni.showToast({ title: '功能正在开发中', icon: 'none' });
+                }
+            } else if (action === '删除') {
+                deleteItem(item);
             }
         }
     });
@@ -468,11 +642,8 @@ const onAddClick = () => {
     uni.showActionSheet({
         itemList: ['新增吐槽', '新增提议'],
         success: (res) => {
-            if (res.tapIndex === 0) {
-                uni.navigateTo({ url: '/pages/find/index/index?mode=add-comment' });
-            } else if (res.tapIndex === 1) {
-                uni.navigateTo({ url: '/pages/proposal/propose/propose' });
-            }
+            if (res.tapIndex === 0) uni.navigateTo({ url: '/pages/find/index/index?mode=add-comment' });
+            else if (res.tapIndex === 1) uni.navigateTo({ url: '/pages/proposal/propose/propose' });
         }
     });
 };
@@ -480,11 +651,16 @@ const onAddClick = () => {
 // ===== 生命周期 =====
 onMounted(async () => {
     await waitForLogin();
+    loadUserInfo();
+    detectAdmin();
     loadData();
     checkGuide();
+    // 监听首页授权成功事件
+    uni.$on('userInfoUpdated', loadUserInfo);
 });
 
 onShow(() => {
+    loadUserInfo();
     if (listData.value.length > 0) {
         loadData();
     }
@@ -496,8 +672,8 @@ onShow(() => {
     position: relative;
     padding: 0 40rpx;
     box-sizing: border-box;
-    background-color: #f7f8fa;
-    min-height: 110vh; /* 强制超出 viewport 让 scroll-view 滚动 */
+    background-color: $bg-page-light;
+    min-height: 100%;
     overflow: visible;
 }
 
@@ -506,7 +682,7 @@ onShow(() => {
     left: 0;
     right: 0;
     top: 0;
-    background-color: #f7f8fa;
+    background-color: $bg-page-light;
     z-index: 99;
     pointer-events: none;
 }
@@ -519,7 +695,7 @@ onShow(() => {
     display: flex;
     align-items: center;
     gap: 28rpx;
-    background-color: #f7f8fa;
+    background-color: $bg-page-light;
     z-index: 1;
     position: relative;
 }
@@ -528,12 +704,12 @@ onShow(() => {
     width: 136rpx;
     height: 136rpx;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ffe2e8 0%, #ffd4d4 100%);
+    background: linear-gradient(135deg, $brand-red-tint 0%, #ffd4d4 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 6rpx 20rpx rgba(178, 0, 53, 0.18);
+    box-shadow: $shadow-brand-sm;
 }
 
 .avatar-emoji {
@@ -552,14 +728,14 @@ onShow(() => {
 .user-nickname {
     font-size: 56rpx;
     font-weight: 800;
-    color: #1f1f1f;
+    color: $text-primary-light;
     letter-spacing: -2rpx;
     line-height: 1.2;
 }
 
 .user-contribution {
     font-size: 32rpx;
-    color: #999;
+    color: $text-tertiary-light;
     font-weight: 400;
 }
 
@@ -572,7 +748,7 @@ onShow(() => {
     justify-content: center;
     align-items: center;
     gap: 7rpx;
-    background-color: #ffffff;
+    background-color: $bg-card-light;
     border-radius: 100rpx;
     box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.06);
     flex-shrink: 0;
@@ -586,7 +762,7 @@ onShow(() => {
     .line {
         width: 30rpx;
         height: 3rpx;
-        background-color: #666;
+        background-color: $text-secondary-light;
         border-radius: 2rpx;
         display: block;
         transition: background-color 0.15s;
@@ -601,161 +777,260 @@ onShow(() => {
     min-height: 0;
 }
 
+.user-info-sticky {
+    position: sticky;
+    z-index: 2;
+    padding: 0 0 24rpx;
+    display: flex;
+    align-items: center;
+    gap: 28rpx;
+    background-color: $bg-page-light;
+}
+
+.sticky-avatar-btn {
+    width: 108rpx;
+    height: 108rpx;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffe2e8 0%, #ffd4d4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: $shadow-brand-sm;
+    border: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+
+    .dark-theme & {
+        background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%);
+        box-shadow: $shadow-md-dark;
+    }
+}
+
+.sticky-avatar-circle {
+    width: 108rpx;
+    height: 108rpx;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffe2e8 0%, #ffd4d4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+        background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%);
+        box-shadow: $shadow-md-dark;
+    }
+}
+
+.sticky-avatar-emoji {
+    font-size: 76rpx;
+    line-height: 1;
+}
+
+.sticky-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.sticky-avatar-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10rpx;
+    min-width: 0;
+}
+
+.sticky-avatar-name {
+    font-size: 40rpx;
+    font-weight: 800;
+    color: $text-primary-light;
+    letter-spacing: -1rpx;
+    line-height: 1.2;
+
+    .dark-theme & {
+        color: #e0e0e0;
+    }
+}
+
+.sticky-avatar-contrib {
+    font-size: 32rpx;
+    color: $text-tertiary-light;
+    font-weight: 400;
+
+    &--unauth {
+        color: $brand-red;
+        font-weight: 500;
+    }
+
+    .dark-theme & {
+        color: #888;
+        &--unauth { color: $brand-red-soft; }
+    }
+}
+
 .my-publish-card {
     display: block;
-    min-height: 70vh;
-    background-color: #ffffff;
+    flex: 1;
+    min-height: 0;
+    background-color: $bg-card-light;
     border-radius: 36rpx 36rpx 0 0;
-    box-shadow: 0 -4rpx 24px rgba(0, 0, 0, 0.08), 0 -1px 0 rgba(0, 0, 0, 0.04);
+    box-shadow: $shadow-md;
     margin: 0 -40rpx;
     padding-top: 32rpx;
-    /* 关键：sticky 元素相对于外层 scroll-view 滚动 */
-    /* top: <user-info-layer 高度> + topReservedHeight */
-    /* 当 user-info-layer 滚出屏幕时，my-publish-card 停住 */
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 5;
 }
 
 .my-publish-header {
-    padding: 0 40rpx 16rpx;
+    padding: 8rpx 40rpx 20rpx;
+    text-align: center;
 
     .page-title {
-        font-size: 44rpx;
+        font-size: 52rpx;
         font-weight: 800;
-        color: #1f1f1f;
+        color: $text-primary-light;
         letter-spacing: -1rpx;
         display: block;
     }
 
     .sub-title {
         font-size: 24rpx;
-        color: #999;
+        color: $text-tertiary-light;
         margin-top: 4rpx;
         display: block;
     }
 }
 
-/* 1. Header (已迁移至 my-publish-header) */
-
-/* 2. Filter Bar: 在 my-publish-card 内部，普通 block 布局 */
+/* 2. Filter Bar: sticky，筛选胶囊居中，条数胶囊左侧 */
 .sticky-bar {
     position: sticky;
     top: 0;
     z-index: 10;
-    padding: 16rpx 40rpx 8rpx;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12rpx);
-    -webkit-backdrop-filter: blur(12rpx);
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-    /* sticky 需要可滚动父容器，所以需要让 my-publish-card 内部可滚动 */
-    /* 这里让 sticky 元素是 my-publish-card 的子元素 */
-    /* my-publish-card 必须 overflow scroll 才能让 sticky 生效 */
+    padding: 0 40rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    .filter-row-wrapper {
+/* 左侧条数胶囊：absolute 定位，与系统胶囊视觉对称 */
+.count-pill {
+    position: absolute;
+    left: 40rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 24rpx;
+    border-radius: 60rpx;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: $pure-white;
+    height: 64rpx;
+    line-height: 64rpx;
+    box-sizing: border-box;
+    background: $gradient-brand;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+        box-shadow: $shadow-brand-md;
+    }
+}
+
+.filter-row-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 64rpx;
+    background-color: $bg-card-light;
+    border-radius: 60rpx;
+    box-shadow: $shadow-sm;
+    padding: 0 6rpx;
+}
+
+.filter-pill {
+    padding: 0 24rpx;
+    border-radius: 60rpx;
+    font-size: 28rpx;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-sizing: border-box;
+    height: 64rpx;
+    line-height: 64rpx;
+
+    &.active {
+        background: $gradient-brand;
+        color: $pure-white;
+        font-weight: 600;
+        box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3);
+    }
+}
+
+.more-menu-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+}
+
+.more-menu-popover {
+    position: fixed;
+    top: 280rpx;
+    right: 24rpx;
+    background-color: $bg-card-light;
+    border-radius: 24rpx;
+    box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+    padding: 12rpx 0;
+    z-index: 1500;
+    min-width: 280rpx;
+    overflow: hidden;
+
+    .menu-item {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
-        padding: 0;
-    }
-
-    .filter-row {
-        display: inline-flex;
-        align-items: center;
-        background: #fff;
-        border-radius: 100rpx;
-        padding: 0 6rpx;
-        box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
-    }
-
-    .filter-pill {
-        padding: 0 24rpx;
-        border-radius: 60rpx;
+        gap: 20rpx;
+        padding: 24rpx 32rpx;
         font-size: 28rpx;
-        font-weight: 500;
-        color: #666;
-        transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-sizing: border-box;
-        height: 64rpx;
-        line-height: 64rpx;
-
-        &.active {
-            background: linear-gradient(135deg, #b20035, #ff4d6a);
-            color: #fff;
-            font-weight: 600;
-            box-shadow: 0 6rpx 16rpx rgba(183, 0, 48, 0.3);
-        }
-    }
-
-    /* ⋯ 按钮 - 与筛选胶囊同一行，胶囊风格完全一致 */
-    .more-btn-pill {
-        position: relative; /* 让 popover 相对此按钮定位 */
-        width: 64rpx;
-        height: 64rpx;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 7rpx;
-        background: #fff;
-        border-radius: 100rpx;
-        box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
-        transition: transform 0.12s, box-shadow 0.12s;
-        flex-shrink: 0;
+        color: #333;
+        transition: background-color 0.1s;
 
         &:active {
-            transform: scale(0.96);
-        }
-
-        .line {
-            width: 28rpx;
-            height: 3rpx;
-            background-color: #666;
-            border-radius: 2rpx;
-            display: block;
+            background-color: #f5f5f5;
         }
     }
 
-    /* Popover - 固定在 ⋯ 按钮位置（页面层级） */
-    .more-menu-popover {
-        position: fixed;
-        top: 180rpx;
-        right: 24rpx;
-        background-color: #ffffff;
-        border-radius: 24rpx;
-        box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
-        padding: 12rpx 0;
-        z-index: 1500;
-        min-width: 240rpx;
-        overflow: hidden;
-
-        .menu-item {
-            padding: 24rpx 32rpx;
-            font-size: 28rpx;
-            color: #333;
-            transition: background-color 0.1s;
-
-            &:active {
-                background-color: #f5f5f5;
-            }
-        }
+    .menu-icon {
+        font-size: 36rpx;
+        line-height: 1;
+        width: 40rpx;
+        text-align: center;
+        flex-shrink: 0;
     }
 
-    /* Mask to close popover on outside tap */
-    .more-menu-mask {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 999;
+    .menu-text {
+        flex: 1;
+        font-weight: 500;
+
+        &.text-danger {
+            color: #e53935;
+        }
     }
 }
 
 .list-container {
     padding: 24rpx 40rpx 40rpx;
-    min-height: 300rpx; /* 保证列表区域足够大 */
+    min-height: 300rpx;
+}
+
+.end-hint {
+    text-align: center;
+    padding: 32rpx 0 16rpx;
+    font-size: 24rpx;
+    color: $text-tertiary-light;
 }
 
 .list-scroll {
@@ -821,7 +1096,7 @@ onShow(() => {
         }
         .time-text {
             font-size: 24rpx;
-            color: #999; 
+            color: $text-tertiary-light; 
             font-weight: 400;
             white-space: nowrap;
         }
@@ -947,7 +1222,7 @@ onShow(() => {
     bottom: 200rpx; /* Above bottom tab bar */
     width: 110rpx;
     height: 110rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
+    background: $gradient-brand;
     border-radius: 50%;
     box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.35);
     display: flex;
@@ -961,11 +1236,72 @@ onShow(() => {
     }
 
     .plus-icon {
-        color: #fff;
+        color: $pure-white;
         font-size: 60rpx;
         font-weight: 300;
-        margin-top: -8rpx;
+        line-height: 1;
+        text-align: center;
     }
+}
+
+// ===== 卡片三点按钮 =====
+.card-more-btn {
+    width: 48rpx;
+    height: 48rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: $text-tertiary-light;
+    font-size: 32rpx;
+    font-weight: bold;
+    letter-spacing: -4rpx;
+    flex-shrink: 0;
+
+    &:active {
+        background-color: $bg-muted-light;
+    }
+
+    .dark-theme & {
+        color: #888;
+        &:active { background-color: #333; }
+    }
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+}
+
+// ===== 自定义操作菜单弹窗（气泡） =====
+.card-more-btn {
+    width: 48rpx;
+    height: 48rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: $text-tertiary-light;
+    font-size: 32rpx;
+    font-weight: bold;
+    letter-spacing: -4rpx;
+    flex-shrink: 0;
+
+    &:active {
+        background-color: $bg-muted-light;
+    }
+
+    .dark-theme & {
+        color: #888;
+        &:active { background-color: #333; }
+    }
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
 }
 
 // 加载状态
@@ -1014,7 +1350,7 @@ onShow(() => {
     }
 
     .retry-btn {
-        background: linear-gradient(135deg, #b20035, #ff4d6a);
+        background: $gradient-brand;
         color: white;
         border-radius: 24rpx;
         font-size: 28rpx;
@@ -1046,28 +1382,29 @@ onShow(() => {
 
 .modal-card {
     width: 100%;
-    max-width: 600rpx;
-    background-color: #ffffff;
-    border-radius: 24rpx;
+    max-width: 680rpx;
+    background-color: $bg-card-light;
+    border-radius: 32rpx;
     overflow: hidden;
+    box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.15);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 32rpx;
+    padding: 36rpx;
     border-bottom: 1rpx solid #f0f0f0;
 
     .modal-title {
-        font-size: 32rpx;
-        font-weight: 600;
+        font-size: 36rpx;
+        font-weight: 700;
         color: #333;
     }
 
     .modal-close {
         font-size: 40rpx;
-        color: #999;
+        color: $text-tertiary-light;
         width: 48rpx;
         height: 48rpx;
         display: flex;
@@ -1078,7 +1415,21 @@ onShow(() => {
 }
 
 .modal-body {
-    padding: 32rpx;
+    padding: 36rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nickname-avatar-preview {
+    margin-bottom: 24rpx;
+}
+
+.preview-avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 50%;
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
 }
 
 .field-label {
@@ -1086,22 +1437,30 @@ onShow(() => {
     color: #666;
     margin-bottom: 16rpx;
     display: block;
+    font-weight: 500;
 }
 
 .nickname-input {
     width: 100%;
-    height: 80rpx;
+    height: 96rpx;
     background-color: #f5f5f5;
-    border-radius: 12rpx;
-    padding: 0 24rpx;
-    font-size: 28rpx;
+    border-radius: 16rpx;
+    padding: 0 28rpx;
+    font-size: 32rpx;
     color: #333;
     box-sizing: border-box;
+    border: 2rpx solid transparent;
+    transition: border-color 0.2s;
+
+    &:focus {
+        border-color: $brand-red;
+        background-color: #fff;
+    }
 }
 
 .word-count {
     font-size: 22rpx;
-    color: #999;
+    color: $text-tertiary-light;
     text-align: right;
     margin-top: 8rpx;
     display: block;
@@ -1157,9 +1516,10 @@ onShow(() => {
 .profile-container.dark-theme .user-more-btn { background-color: #2a2a2a; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } &:active { background-color: #3a3a3a; } }
 
 /* My publish card dark mode */
-.profile-container.dark-theme .my-publish-card { background-color: #1e1e1e; box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.3); }
+.profile-container.dark-theme .my-publish-card { background-color: #1e1e1e; box-shadow: $shadow-md-dark; }
 
-/* Sticky bar dark mode (now transparent background) */
+/* Sticky bar dark mode */
+.profile-container.dark-theme .sticky-bar .filter-row-wrapper { background-color: rgba(30, 30, 30, 0.95); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3); }
 .profile-container.dark-theme .sticky-bar .filter-row { background: #2a2a2a; }
 .profile-container.dark-theme .sticky-bar .filter-pill { color: #888; }
 .profile-container.dark-theme .list-container { padding: 24rpx 32rpx 40rpx; }
@@ -1169,7 +1529,7 @@ onShow(() => {
 .profile-container.dark-theme .card .course-row-top .course-name { color: #e0e0e0; }
 .profile-container.dark-theme .card .course-row-top .time-text { color: #666; }
 .profile-container.dark-theme .card .course-row-middle { background: #2a2a2a !important; }
-.profile-container.dark-theme .card .course-row-middle .course-info-item { color: #999; }
+.profile-container.dark-theme .card .course-row-middle .course-info-item { color: $text-tertiary-light; }
 .profile-container.dark-theme .card .content-text { color: #ccc; }
 .profile-container.dark-theme .card .footer-row { border-color: rgba(255,255,255,0.05); }
 .profile-container.dark-theme .card .footer-row .likes-text { color: #888; }
@@ -1189,12 +1549,11 @@ onShow(() => {
 .guide-overlay.dark-theme .guide-content { background-color: #2a2a2a; }
 .guide-overlay.dark-theme .guide-header .guide-title { color: #e0e0e0; }
 .guide-overlay.dark-theme .guide-header .guide-subtitle { color: #888; }
-.guide-overlay.dark-theme .guide-section .section-icon { background-color: #2a2a2a; }
-.guide-overlay.dark-theme .guide-section .section-title { color: #e0e0e0; }
-.guide-overlay.dark-theme .guide-section .section-desc { color: #888; }
+.guide-overlay.dark-theme .guide-step .step-title { color: #e0e0e0; }
+.guide-overlay.dark-theme .guide-step .step-desc { color: #888; }
 .dark-theme .guide-overlay.dark-theme .guide-footer .start-btn { opacity: 0.85; }
 
-.profile-container.dark-theme .sticky-bar .filter-pill.active { color: #fff; }
+.profile-container.dark-theme .sticky-bar .filter-pill.active { color: $pure-white; }
 .profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
@@ -1203,6 +1562,7 @@ onShow(() => {
 .profile-container.dark-theme .more-menu-popover { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); }
 .profile-container.dark-theme .more-menu-popover .menu-item { color: #e0e0e0; }
 .profile-container.dark-theme .more-menu-popover .menu-item:active { background-color: #3a3a3a; }
+.profile-container.dark-theme .more-menu-popover .menu-text.text-danger { color: #ff6b6b; }
 
 /* Nickname Modal Dark Mode */
 .modal-card.dark-theme { background-color: #1e1e1e; }
@@ -1230,7 +1590,7 @@ onShow(() => {
 .guide-content {
   width: 100%;
   max-width: 600rpx;
-  background-color: #ffffff;
+  background-color: $bg-card-light;
   border-radius: 32rpx;
   padding: 48rpx 40rpx;
   box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
@@ -1251,53 +1611,55 @@ onShow(() => {
   .guide-subtitle {
     display: block;
     font-size: 26rpx;
-    color: #999;
+    color: $text-tertiary-light;
   }
 }
 
-.guide-sections {
+.guide-steps {
   margin-bottom: 48rpx;
 }
 
-.guide-section {
+.guide-step {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 36rpx;
+  margin-bottom: 32rpx;
+  gap: 20rpx;
 
   &:last-child {
     margin-bottom: 0;
   }
 
-  .section-icon {
-    width: 80rpx;
-    height: 80rpx;
-    background-color: #fff5f7;
+  .step-icon {
+    width: 64rpx;
+    height: 64rpx;
+    background: $brand-red-tint;
     border-radius: 20rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 40rpx;
-    margin-right: 24rpx;
+    font-size: 36rpx;
     flex-shrink: 0;
   }
 
-  .section-text {
+  .step-body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 8rpx;
   }
 
-  .section-title {
+  .step-title {
     font-size: 30rpx;
     font-weight: 600;
     color: #333;
-    margin-bottom: 8rpx;
+    display: block;
   }
 
-  .section-desc {
+  .step-desc {
     font-size: 24rpx;
     color: #888;
     line-height: 1.5;
+    display: block;
   }
 }
 
@@ -1306,8 +1668,8 @@ onShow(() => {
     width: 100%;
     height: 88rpx;
     line-height: 88rpx;
-    background: linear-gradient(135deg, #b20035, #ff4d6a);
-    color: #fff;
+    background: $gradient-brand;
+    color: $pure-white;
     font-size: 32rpx;
     font-weight: 600;
     border-radius: 44rpx;
@@ -1318,6 +1680,27 @@ onShow(() => {
       transform: scale(0.98);
       opacity: 0.9;
     }
+  }
+
+  .avatar-btn {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: $gradient-brand;
+    color: $pure-white;
+    font-size: 32rpx;
+    font-weight: 600;
+    border-radius: 44rpx;
+    border: none;
+    box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
+    text-align: center;
+  }
+
+  .guide-skip {
+    text-align: center;
+    font-size: 28rpx;
+    color: $text-tertiary-light;
+    padding: 24rpx 0 0;
   }
 }
 </style>

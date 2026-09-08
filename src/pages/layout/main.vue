@@ -13,23 +13,21 @@
       <swiper-item>
         <scroll-view scroll-y class="scroll-view">
           <home-view />
-          <!-- 底部占位，防止被悬浮导航栏遮挡 -->
-          <view class="tab-bar-placeholder"></view>
         </scroll-view>
       </swiper-item>
 
       <!-- 我的 -->
       <swiper-item>
-        <scroll-view scroll-y class="scroll-view">
-          <profile-view />
-          <!-- 底部占位 -->
-          <view class="tab-bar-placeholder"></view>
+        <scroll-view scroll-y class="scroll-view" @scroll="onMyScroll">
+          <profile-view :scroll-top="myScrollTop" />
         </scroll-view>
       </swiper-item>
     </swiper>
 
+    <!-- 头像层已移至 profile-view 内部（sticky 实现覆盖效果） -->
+
 <!-- 底部导航栏 -->
-    <view class="bottom-tab-bar safe-area-bottom" :class="themeStore.themeClass">
+    <view class="bottom-tab-bar safe-area-bottom" :class="themeStore.themeClass" :style="safeBottom === 0 ? { paddingBottom: '24rpx' } : {}">
 
       <!-- 文字容器 -->
       <view class="tabs-container">
@@ -44,6 +42,9 @@
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
           @click="switchTab(1)"
+          @touchstart="onTabTouchStart"
+          @touchend="onTabTouchEnd"
+          @touchcancel="onTabTouchEnd"
         >
           我的
         </view>
@@ -61,6 +62,31 @@
 
     <!-- Popover 由 profile-view 触发 -->
 
+    <!-- 临时管理员验证弹窗 -->
+    <view v-if="showAdminVerify" class="admin-verify-overlay" @click="showAdminVerify = false">
+      <view class="admin-verify-card" :class="themeStore.themeClass" @click.stop>
+        <view class="admin-verify-header">
+          <text class="admin-verify-title">管理员验证</text>
+          <view class="admin-verify-close" @click="showAdminVerify = false">×</view>
+        </view>
+        <view class="admin-verify-body">
+          <text class="admin-verify-label">请输入管理员密码</text>
+          <input
+            class="admin-verify-input"
+            v-model="adminPassword"
+            type="text"
+            password
+            placeholder="请输入密码"
+            @confirm="verifyAdminPassword"
+          />
+        </view>
+        <view class="admin-verify-footer">
+          <view class="admin-verify-btn admin-verify-btn--cancel" @click="showAdminVerify = false">取消</view>
+          <view class="admin-verify-btn admin-verify-btn--confirm" @click="verifyAdminPassword">确认</view>
+        </view>
+      </view>
+    </view>
+
   </view>
 </template>
 
@@ -75,25 +101,11 @@ const themeStore = useThemeStore();
 const currentIndex = ref(0);
 const indicatorLeft = ref(25); // 初始值 25%
 let windowWidth = 0;
-let menuButtonTopRpx = 0; // rpx 单位
-let menuButtonHeightRpx = 0; // rpx 单位
 
-// 胶囊位置计算（px → rpx 转换，确保单位统一）
-const sysInfoForMenu = uni.getSystemInfoSync();
-const screenWidth = sysInfoForMenu.windowWidth || 375;
-const PX_TO_RPX = 750 / screenWidth; // px → rpx 转换比例
-
-try {
-  const res = uni.getMenuButtonBoundingClientRect();
-  if (res && res.top) {
-    menuButtonTopRpx = res.top * PX_TO_RPX;
-    menuButtonHeightRpx = res.height * PX_TO_RPX;
-  } else {
-    menuButtonTopRpx = (sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48) * PX_TO_RPX;
-  }
-} catch (e) {
-  menuButtonTopRpx = (sysInfoForMenu.statusBarHeight ? sysInfoForMenu.statusBarHeight + 4 : 48) * PX_TO_RPX;
-}
+// 菜单栏底部补偿：有小白条用 CSS safe-area，没有的补 24rpx
+const sys = uni.getSystemInfoSync();
+const pxPerRpx = sys.windowWidth / 750;
+const safeBottom = sys.safeAreaInsets?.bottom || 0;
 
 // ⋯ 按钮已迁回 profile-view 内部，与筛选胶囊同步滚动
 // showMoreMenu / toggleMoreMenu / handleMenuClick 在 profile-view 中定义
@@ -101,11 +113,51 @@ try {
 onLoad(() => {
   const sysInfo = uni.getSystemInfoSync();
   windowWidth = sysInfo.windowWidth;
+  // 清除上次的临时管理员身份
+  uni.removeStorageSync('meowpick_temp_admin');
 });
 
 onShow(() => {
   try { uni.hideTabBar(); } catch (e) {}
 });
+
+// ===== 临时管理员验证 =====
+const showAdminVerify = ref(false);
+const adminPassword = ref('');
+let holdTimer: ReturnType<typeof setTimeout> | null = null;
+
+function onTabTouchStart() {
+  holdTimer = setTimeout(() => {
+    showAdminVerify.value = true;
+    adminPassword.value = '';
+    holdTimer = null;
+  }, 10000); // 10秒长按
+}
+
+function onTabTouchEnd() {
+  if (holdTimer) {
+    clearTimeout(holdTimer);
+    holdTimer = null;
+  }
+}
+
+function verifyAdminPassword() {
+  if (adminPassword.value === '123456') {
+    uni.setStorageSync('meowpick_temp_admin', true);
+    showAdminVerify.value = false;
+    adminPassword.value = '';
+    uni.showToast({ title: '临时管理员已激活', icon: 'success' });
+  } else {
+    uni.showToast({ title: '密码错误', icon: 'none' });
+  }
+}
+
+// "我的"页面滚动事件（传递滚动位置给 profile-view 控制覆盖遮罩）
+const myScrollTop = ref(0);
+
+function onMyScroll(e: any) {
+  myScrollTop.value = e.detail?.scrollTop ?? 0;
+}
 
 function switchTab(index: number) {
   currentIndex.value = index;
@@ -147,72 +199,24 @@ function onSwiperAnimationFinish(e: any) {
 
 <style lang="scss">
 /* Global More Button - 胶囊风格，与筛选胶囊统一 */
-.global-more-btn {
-  transition: transform 0.15s, background-color 0.15s, box-shadow 0.15s;
-
-  &:active {
-    transform: scale(0.96);
-    background-color: #f5f5f5 !important;
-  }
-}
-
-.global-more-btn.dark-theme {
-  &:active {
-    background-color: #3a3a3a !important;
-  }
-}
 
 /* Popover - 位置由 inline style 控制，紧邻 ⋯ 按钮下方 */
-.global-more-popover {
-  background-color: #ffffff;
-  border-radius: 24rpx;
-  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
-  padding: 12rpx 0;
-  z-index: 10000;
-  min-width: 240rpx;
-  overflow: hidden;
 
-  .menu-item {
-    padding: 24rpx 32rpx;
-    font-size: 28rpx;
-    color: #333;
-    transition: background-color 0.1s;
-
-    &:active {
-      background-color: #f5f5f5;
-    }
-  }
-}
-
-.global-more-popover.dark-theme {
-  background-color: #2a2a2a;
-  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5);
-
-  .menu-item {
-    color: #e0e0e0;
-
-    &:active {
-      background-color: #3a3a3a;
-    }
-  }
-}
-
-.global-more-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9998;
-}
 </style>
 
 <style lang="scss" scoped>
+@import "@/styles/index.scss";
+
 .main-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f2f3f5;
+  background-color: $bg-page-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  &.dark-theme {
+    background-color: $bg-page-dark;
+  }
 }
 
 .content-swiper {
@@ -234,33 +238,34 @@ function onSwiperAnimationFinish(e: any) {
   bottom: 0;
   left: 0;
   width: 100%;
-
   height: auto;
   min-height: 100rpx;
-
   background-color: rgba(255, 255, 255, 0.98);
-  border-top-left-radius: 40rpx;
-  border-top-right-radius: 40rpx;
-
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
-
-  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.04);
-
+  border-top-left-radius: $radius-2xl;
+  border-top-right-radius: $radius-2xl;
+  @include safe-area-bottom;
+  padding-bottom: calc(env(safe-area-inset-bottom) * 0.5);
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-
   border-top: none;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+
+  &.dark-theme {
+    background-color: rgba(30, 30, 30, 0.98);
+    box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.40);
+  }
 
   .tabs-container {
-      display: flex;
-      width: 100%;
-      height: 100rpx;
-      align-items: center;
-      margin-top: 0;
-      position: relative;
-      z-index: 2;
+    display: flex;
+    width: 100%;
+    height: 100rpx;
+    align-items: center;
+    margin-top: 0;
+    position: relative;
+    z-index: $z-base;
   }
 
   .tab-item {
@@ -269,56 +274,168 @@ function onSwiperAnimationFinish(e: any) {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: $font-lg + 2rpx;
+    color: $text-tertiary-light;
+    font-weight: $weight-medium;
+    transition: all $dur-instant $ease-emphasized;
+    cursor: pointer;
 
-    font-size: 34rpx;
-    color: #9ea1a6;
-    font-weight: 500;
-    transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
+    .dark-theme & {
+      color: $text-secondary-dark;
+
+      &.active {
+        color: $text-primary-dark;
+      }
+    }
 
     &:active {
-      transform: scale(0.94);
+      transform: scale($press-scale-md);
     }
 
     &.active {
-      font-weight: 700;
-      color: #1a1a1a;
-      font-size: 36rpx;
+      font-weight: $weight-bold;
+      color: $text-primary-light;
+      font-size: $font-xl;
     }
   }
 
   .indicator-line {
     position: absolute;
-
     top: 86rpx;
     bottom: auto;
-
     width: 48rpx;
     height: 8rpx;
-    background: linear-gradient(90deg, #b70030, #ff4d6a);
-    border-radius: 10rpx;
-
+    background: linear-gradient(90deg, $brand-red, $brand-red-soft);
+    border-radius: $radius-pill;
     transform: translateX(-50%);
-    transition: left 0.1s linear;
-    z-index: 3;
-
-    box-shadow: 0 4rpx 12rpx rgba(183, 0, 48, 0.4);
+    transition: left $dur-instant linear;
+    z-index: $z-base + 1;
+    box-shadow: $shadow-brand-sm;
   }
 }
 
-.main-container.dark-theme {
-  background-color: #121212;
+// ===== 临时管理员验证弹窗 =====
+.admin-verify-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-9;
 }
 
-.bottom-tab-bar.dark-theme {
-  background-color: rgba(30, 30, 30, 0.98);
-  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.4);
+.admin-verify-card {
+  width: 100%;
+  max-width: 600rpx;
+  background: $bg-card-light;
+  border-radius: $radius-lg;
+  overflow: hidden;
+
+  &.dark-theme {
+    background: #1e1e1e;
+  }
 }
 
-.tab-item.dark-theme {
-  color: #666;
+.admin-verify-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-7;
+  border-bottom: 1rpx solid $divider-light;
 
-  &.active {
+  .dark-theme & {
+    border-bottom-color: #333;
+  }
+}
+
+.admin-verify-title {
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+
+  .dark-theme & {
     color: #e0e0e0;
+  }
+}
+
+.admin-verify-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-2xl;
+  color: $text-tertiary-light;
+
+  .dark-theme & {
+    color: #888;
+  }
+}
+
+.admin-verify-body {
+  padding: $space-7;
+}
+
+.admin-verify-label {
+  font-size: $font-base;
+  color: $text-secondary-light;
+  display: block;
+  margin-bottom: $space-4;
+
+  .dark-theme & {
+    color: #aaa;
+  }
+}
+
+.admin-verify-input {
+  width: 100%;
+  height: 80rpx;
+  background: $bg-muted-light;
+  border-radius: $radius-sm;
+  padding: 0 $space-6;
+  font-size: $font-base;
+  color: $text-primary-light;
+  box-sizing: border-box;
+
+  .dark-theme & {
+    background: #2a2a2a;
+    color: #e0e0e0;
+  }
+}
+
+.admin-verify-footer {
+  display: flex;
+  border-top: 1rpx solid $divider-light;
+
+  .dark-theme & {
+    border-top-color: #333;
+  }
+}
+
+.admin-verify-btn {
+  flex: 1;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-md;
+  font-weight: $weight-semibold;
+
+  &--cancel {
+    color: $text-secondary-light;
+    .dark-theme & { color: #888; }
+  }
+
+  &--confirm {
+    color: $brand-red;
+    border-left: 1rpx solid $divider-light;
+    .dark-theme & { border-left-color: #333; }
+
+    &:active {
+      background: $danger-soft;
+    }
   }
 }
 </style>

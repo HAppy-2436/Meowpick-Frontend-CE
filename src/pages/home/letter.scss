@@ -1,0 +1,103 @@
+@import "@/styles/index.scss";
+
+.letter-container {
+  min-height: 100vh;
+  background-color: $bg-page-light;
+  position: relative;
+  overflow: hidden;
+  padding: 0 $space-7 $space-9;
+  box-sizing: border-box;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
+}
+
+.content-card {
+  position: relative;
+  z-index: $z-base;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: $radius-lg;
+  padding: $space-10 $space-8;
+  box-shadow: $shadow-md;
+  backdrop-filter: blur(10rpx);
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+  animation: mwp-fade-up 480ms $ease-decelerate 80ms both;
+
+  .dark-theme & {
+    background: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.30);
+  }
+}
+
+.card-body {
+  .paragraph {
+    display: block;
+    font-size: $font-md;
+    color: $text-secondary-light;
+    line-height: 1.8;
+    margin-bottom: $space-6;
+    text-align: justify;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+
+    &.highlight {
+      color: $brand-red;
+      font-weight: $weight-medium;
+
+      .dark-theme & {
+        color: $brand-red-soft;
+      }
+    }
+  }
+}
+
+.card-footer {
+  margin-top: $space-10;
+  padding-top: $space-8;
+  border-top: 2rpx dashed $divider-light;
+  text-align: center;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-top-color: $divider-dark;
+  }
+
+  .footer-text {
+    display: block;
+    font-size: $font-base;
+    color: $text-primary-light;
+    font-weight: $weight-semibold;
+    margin-bottom: $space-4;
+    text-align: center;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+
+  .signature {
+    display: block;
+    font-size: $font-sm;
+    color: $text-tertiary-light;
+    text-align: center;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-card {
+    animation: none;
+    transition: none;
+  }
+}
