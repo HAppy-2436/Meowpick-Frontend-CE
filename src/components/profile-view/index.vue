@@ -1157,7 +1157,7 @@ onShow(() => {
         .course-name {
             font-size: 36rpx; 
             font-weight: 700;
-            color: $text-near-black-light;
+            color: $text-primary-light;
             line-height: 1.4;
             flex: 1;
             margin-right: 20rpx;
@@ -1673,7 +1673,7 @@ onShow(() => {
     display: block;
     font-size: 44rpx;
     font-weight: 800;
-    color: $text-near-black-light;
+    color: $text-primary-light;
     margin-bottom: 16rpx;
   }
 

@@ -31,31 +31,31 @@ $pure-white: #ffffff;
 $pure-black: #000000;
 
 // ---------- 中性色（亮色） ----------
-$bg-page-light: #f7f8fa;
+// 全部中性（R=G=B），相邻层差肉眼可辨。规范见 docs/DESIGN_LANGUAGE.md
+$bg-page-light: #f6f6f6;
 $bg-card-light: #ffffff;
-$bg-muted-light: #f5f5f5;
+$bg-muted-light: #efefef;
 $bg-overlay-light: rgba(0, 0, 0, 0.5);
 
-$text-primary-light: #1f1f1f;
-$text-near-black-light: #1a1a1a;   // 亮色强调文本（课程名、标题等比 primary 更重）
-$text-secondary-light: #666666;
-$text-tertiary-light: #999999;
-$text-placeholder-light: #cccccc;
-$divider-light: #f0f0f0;
+$text-primary-light: #1a1a1a;
+$text-secondary-light: #595959;
+$text-tertiary-light: #767676;      // 辅助文字，白底 4.5:1
+$text-placeholder-light: #b0b0b0;
+$divider-light: #e4e4e4;
 
 // ---------- 中性色（暗色） ----------
 $bg-page-dark: #121212;
 $bg-card-dark: #1e1e1e;
-$bg-muted-dark: #2a2a2a;
-$bg-muted-darker: #3a3a3a;
+$bg-muted-dark: #282828;
+$bg-muted-darker: #333333;
 $bg-overlay-dark: rgba(0, 0, 0, 0.65);
 
-$text-primary-dark: #e0e0e0;
-$text-secondary-dark: #bbbbbb;
-$text-tertiary-dark: #888888;
-$text-placeholder-dark: #555555;
-$divider-dark: #2a2a2a;
-$divider-card-dark: #3e3e3e;        // 暗色卡片级分割线（比 $divider-dark 更浅，用于卡片内部分隔）
+$text-primary-dark: #ededed;
+$text-secondary-dark: #c4c4c4;
+$text-tertiary-dark: #9a9a9a;
+$text-placeholder-dark: #6b6b6b;
+$divider-dark: #333333;
+$divider-card-dark: #3d3d3d;        // 暗色卡片级分割线（比 $divider-dark 更浅，用于卡片内部分隔）
 
 // ---------- 圆角 ----------
 $radius-xs: 8rpx;
@@ -157,9 +157,9 @@ $gradient-header: linear-gradient(180deg, rgba(255, 245, 246, 0.95) 0%, rgba(255
 
 // ---------- 描边 ----------
 // 颜色 token：用于 border-color / outline-color 等只取颜色的场景
-$border-color-light: $divider-light;          // #f0f0f0
-$border-color-medium-light: #e5e5e5;
-$border-color-strong-light: #dddddd;          // 亮色强调边框（搜索框、输入框等）
+$border-color-light: $divider-light;          // #e4e4e4
+$border-color-medium-light: #dcdcdc;
+$border-color-strong-light: #cfcfcf;          // 亮色强调边框（搜索框、输入框等）
 $border-color-brand: rgba(178, 0, 53, 0.15);
 $border-color-dark: $divider-dark;            // #2a2a2a
 $border-color-medium-dark: $divider-card-dark; // #3e3e3e 暗色中等边框（卡片边框、表单边框）

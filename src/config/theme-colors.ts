@@ -6,15 +6,15 @@
 
 export const THEME_COLORS = {
   light: {
-    page: '#f7f8fa',
+    page: '#f6f6f6',
     card: '#ffffff',
-    textPrimary: '#1f1f1f',
-    textSecondary: '#666666',
+    textPrimary: '#1a1a1a',
+    textSecondary: '#595959',
   },
   dark: {
     page: '#121212',
     card: '#1e1e1e',
-    textPrimary: '#e0e0e0',
-    textSecondary: '#bbbbbb',
+    textPrimary: '#ededed',
+    textSecondary: '#c4c4c4',
   },
 } as const;
