@@ -44,25 +44,46 @@ const arrowStyle = computed(() => ({
   @include pressable(0.92);
 }
 
+// 圆头 chevron：两根圆角短棒绕同一顶点旋转，比「旋转方框」更精致
 .css-back-arrow {
-  width: 22rpx;
-  height: 22rpx;
-  transform: rotate(45deg);
-  margin-left: 2rpx;
-  border-bottom: 4.5rpx solid $brand-red;
-  border-left: 4.5rpx solid $brand-red;
-  border-radius: 4rpx;
-  transition: border-color $dur-fast $ease-standard;
+  position: relative;
+  width: 24rpx;
+  height: 24rpx;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 4rpx;
+    top: 10rpx;
+    width: 14rpx;
+    height: 4rpx;
+    border-radius: 4rpx;
+    background: $brand-red;
+    transform-origin: 0 50%;
+    transition: background-color $dur-fast $ease-standard;
+  }
+
+  &::before {
+    transform: rotate(-45deg);
+  }
+  &::after {
+    transform: rotate(45deg);
+  }
 
   // 暗色下品牌红对比度偏低，提亮一档
   .dark-theme & {
-    border-bottom-color: $brand-red-soft;
-    border-left-color: $brand-red-soft;
+    &::before,
+    &::after {
+      background: $brand-red-soft;
+    }
   }
 
   &.is-light {
-    border-bottom-color: $bg-card-light;
-    border-left-color: $bg-card-light;
+    &::before,
+    &::after {
+      background: $bg-card-light;
+    }
   }
 }
 </style>
