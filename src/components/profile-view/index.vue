@@ -1,10 +1,10 @@
 <template>
-  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px' }">
+  <view class="profile-container" :class="themeStore.themeClass" :style="{ paddingTop: topReservedHeight + 'px', minHeight: containerHeight + 'px' }">
     <!-- 头像层：sticky 固定在视觉位置，不随内容滚动 -->
     <view class="user-info-sticky" :style="{ top: topReservedHeight + 'px' }">
       <button class="sticky-avatar-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-        <default-avatar v-if="!avatarUrl" />
-        <image v-else :src="avatarUrl" class="sticky-avatar-img" mode="aspectFill" />
+        <image v-if="avatarUrl && avatarUrl.startsWith('http')" :src="avatarUrl" class="sticky-avatar-img" mode="aspectFill" />
+        <image v-else :src="avatarUrl || defaultCatAvatar" class="sticky-avatar-default" mode="aspectFill" />
       </button>
       <view class="sticky-avatar-meta">
         <text class="sticky-avatar-name" @click="openNicknameModal">{{ userName }}</text>
@@ -31,7 +31,7 @@
       </view>
       <view class="menu-item" @click="handleMenuClick('feed')">
         <text class="menu-icon">📋</text>
-        <text class="menu-text">提议广场</text>
+        <text class="menu-text">提案广场</text>
       </view>
       <view class="menu-item" @click="handleMenuClick('feedback')">
         <text class="menu-icon">💬</text>
@@ -92,13 +92,13 @@
             :class="{ active: currentFilter === 'proposal' }"
             @click="setFilter('proposal')"
           >
-            <text>提议</text>
+            <text>提案</text>
           </view>
         </view>
       </view>
 
       <!-- 列表（my-publish-card 用 sticky 整体悬停，列表在内部自然展开） -->
-      <view class="list-container">
+      <view class="list-container" :style="{ minHeight: listMinHeight + 'px' }">
         <view class="loading-state" v-if="loading">
           <view class="loading-spinner"></view>
           <text class="loading-text">加载中...</text>
@@ -204,14 +204,14 @@
             <view class="step-icon">🎨</view>
             <view class="step-body">
               <text class="step-title">选择头像</text>
-              <text class="step-desc">从微信头像中选择，或使用默认猫咪头像</text>
+              <text class="step-desc">从微信头像中选择，或使用随机默认头像</text>
             </view>
           </view>
           <view class="guide-step">
             <view class="step-icon">✏️</view>
             <view class="step-body">
               <text class="step-title">设置昵称</text>
-              <text class="step-desc">使用微信昵称或自定义，发布提议时作为贡献记录</text>
+              <text class="step-desc">使用微信昵称或自定义，发布提案时作为贡献记录</text>
             </view>
           </view>
         </view>
@@ -230,9 +230,6 @@
     <view class="plus-icon">+</view>
   </view>
 
-  <!-- 点击空白关闭菜单 -->
-  <view v-if="activeMenuId" class="action-overlay" @click="activeMenuId = ''" />
-
   <!-- Nickname Edit Modal -->
   <view v-if="showNicknameModal" class="modal-overlay" @click="closeNicknameModal">
     <view class="modal-card" :class="themeStore.themeClass" @click.stop>
@@ -243,8 +240,7 @@
 
       <view class="modal-body">
         <view class="nickname-avatar-preview">
-          <default-avatar v-if="!avatarUrl" size="120rpx" />
-          <image v-else :src="avatarUrl" class="preview-avatar" mode="aspectFill" />
+          <image :src="avatarUrl && avatarUrl.startsWith('http') ? avatarUrl : defaultCatAvatar" class="preview-avatar" mode="aspectFill" />
         </view>
         <text class="field-label">输入昵称（点击输入框可获取微信昵称建议）</text>
         <input
@@ -277,6 +273,14 @@ import { http, useThemeStore } from '@/config';
 import { HISTORY_PAGE_SIZE } from '@/utils/constants';
 import FeedbackModal from '@/components/feedback/feedback-modal.vue';
 import { useRouteStore } from '@/config';
+import defaultCatAvatar from '@/images/cat-emoji/cat_face.png';
+import catGrinning from '@/images/cat-emoji/grinning_cat.png';
+import catHeartEyes from '@/images/cat-emoji/heart-eyes-cat.png';
+import catGrinningEyes from '@/images/cat-emoji/grinning_cat_with_smiling_eyes.png';
+import catKissing from '@/images/cat-emoji/kissing_cat.png';
+import catCrying from '@/images/cat-emoji/crying_cat.png';
+import catPouting from '@/images/cat-emoji/pouting_cat.png';
+import catHardcore from '@/images/cat-emoji/hardcore-cat.png';
 const themeStore = useThemeStore();
 
 const props = defineProps<{
@@ -285,6 +289,8 @@ const props = defineProps<{
 
 // 胶囊位置信息（顶部留白计算用）
 const sysInfo = uni.getSystemInfoSync();
+const pxPerRpx = sysInfo.windowWidth / 750;
+const safeBottom = sysInfo.safeAreaInsets?.bottom || 0;
 let menuButtonInfo = {
     top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
     height: 32,
@@ -299,6 +305,16 @@ try {
 
 // 顶部预留：胶囊底部 + 胶囊下方间距
 const topReservedHeight = computed(() => menuButtonInfo.top + menuButtonInfo.height);
+
+// 布局计算（与 home-view 同策略：JS 算出精确高度，确保填满视口无灰色空白）
+const tabBarH = Math.round(100 * pxPerRpx) + safeBottom + (safeBottom > 0 ? 0 : Math.round(24 * pxPerRpx));
+const containerHeight = sysInfo.windowHeight - tabBarH;
+const paddingTopPx = topReservedHeight.value;
+const stickyHeaderPx = paddingTopPx + 24 * pxPerRpx;
+const cardHeaderPx = 8 * pxPerRpx + 20 * pxPerRpx + 52 * pxPerRpx;
+const filterBarPx = 16 * pxPerRpx + 64 * pxPerRpx + 8 * pxPerRpx;
+const listPaddingPx = 24 * pxPerRpx + 40 * pxPerRpx;
+const listMinHeight = Math.max(0, containerHeight - stickyHeaderPx - cardHeaderPx - filterBarPx - listPaddingPx);
 
 // 筛选胶囊与系统胶囊居中对齐的 top 值
 // 胶囊高度64rpx，换算为px
@@ -317,6 +333,20 @@ const generateDefaultName = () => {
     return '华师喵' + Math.floor(1000 + Math.random() * 9000);
 };
 
+const generateDefaultAvatar = () => {
+    const avatars = [
+        defaultCatAvatar,
+        catGrinning,
+        catHeartEyes,
+        catGrinningEyes,
+        catKissing,
+        catCrying,
+        catPouting,
+        catHardcore,
+    ];
+    return avatars[Math.floor(Math.random() * avatars.length)];
+};
+
 const loadUserInfo = () => {
     const stored = uni.getStorageSync('userInfo');
     if (stored) {
@@ -326,6 +356,8 @@ const loadUserInfo = () => {
     }
     if (!userName.value || userName.value === '同学') {
         userName.value = generateDefaultName();
+    }    if (!avatarUrl.value) {
+        avatarUrl.value = generateDefaultAvatar();
     }
 
 };
@@ -438,6 +470,9 @@ const confirmNicknameChange = async () => {
     try {
         const stored = uni.getStorageSync('userInfo') || {};
         stored.nickName = trimmed;
+        if (!stored.avatarUrl) {
+            stored.avatarUrl = generateDefaultAvatar();
+        }
         uni.setStorageSync('userInfo', stored);
         userName.value = trimmed;
         uni.$emit('userInfoUpdated');
@@ -520,7 +555,7 @@ const handleMenuClick = (action: 'theme' | 'feed' | 'nickname' | 'feedback' | 'c
             break;
         case 'logs':
             showMoreMenu.value = false;
-            uni.navigateTo({ url: '/pages/proposal/list/list?tab=logs' });
+            uni.navigateTo({ url: '/pages/proposal/log/log' });
             break;
         case 'test':
             toggleTestMode();
@@ -555,7 +590,7 @@ const loadData = async () => {
             id: p.id,
             type: 'proposal' as ItemType,
             time: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : '',
-            courseName: p.title || p.courseName || '未知提议',
+            courseName: p.title || p.courseName || '未知提案',
             reason: p.content || p.reason || '',
             voteCount: p.likeCnt || p.agreeCount || 0,
             status: p.status === 'approved' ? 'approved' : p.status === 'rejected' ? 'rejected' : 'pending'
@@ -640,7 +675,7 @@ const onAddClick = () => {
     }
 
     uni.showActionSheet({
-        itemList: ['新增吐槽', '新增提议'],
+        itemList: ['新增吐槽', '新增提案'],
         success: (res) => {
             if (res.tapIndex === 0) uni.navigateTo({ url: '/pages/find/index/index?mode=add-comment' });
             else if (res.tapIndex === 1) uni.navigateTo({ url: '/pages/proposal/propose/propose' });
@@ -672,8 +707,8 @@ onShow(() => {
     position: relative;
     padding: 0 40rpx;
     box-sizing: border-box;
-    background-color: $bg-page-light;
-    min-height: 100%;
+    background-color: $bg-card-light;
+    height: 100%;
     overflow: visible;
 }
 
@@ -784,7 +819,7 @@ onShow(() => {
     display: flex;
     align-items: center;
     gap: 28rpx;
-    background-color: $bg-page-light;
+    background-color: $bg-card-light;
 }
 
 .sticky-avatar-btn {
@@ -802,6 +837,7 @@ onShow(() => {
     margin: 0;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
+    @include pressable($press-scale-lg);
 
     .dark-theme & {
         background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%);
@@ -837,6 +873,13 @@ onShow(() => {
     border-radius: 50%;
 }
 
+.sticky-avatar-default {
+    width: 82%;
+    height: 82%;
+    border-radius: 50%;
+    margin-top: -10%;
+}
+
 .sticky-avatar-meta {
     flex: 1;
     display: flex;
@@ -851,9 +894,15 @@ onShow(() => {
     color: $text-primary-light;
     letter-spacing: -1rpx;
     line-height: 1.2;
+    transition: opacity $dur-fast $ease-standard, transform $dur-fast $ease-emphasized;
+
+    &:active {
+        opacity: 0.6;
+        transform: scale(0.97);
+    }
 
     .dark-theme & {
-        color: #e0e0e0;
+        color: $text-primary-dark;
     }
 }
 
@@ -868,13 +917,14 @@ onShow(() => {
     }
 
     .dark-theme & {
-        color: #888;
+        color: $text-tertiary-dark;
         &--unauth { color: $brand-red-soft; }
     }
 }
 
 .my-publish-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-height: 0;
     background-color: $bg-card-light;
@@ -954,7 +1004,7 @@ onShow(() => {
     border-radius: 60rpx;
     font-size: 28rpx;
     font-weight: 500;
-    color: #666;
+    color: $text-secondary-light;
     transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-sizing: border-box;
     height: 64rpx;
@@ -995,11 +1045,11 @@ onShow(() => {
         gap: 20rpx;
         padding: 24rpx 32rpx;
         font-size: 28rpx;
-        color: #333;
+        color: $text-primary-light;
         transition: background-color 0.1s;
 
         &:active {
-            background-color: #f5f5f5;
+            background-color: $bg-muted-light;
         }
     }
 
@@ -1024,6 +1074,7 @@ onShow(() => {
 .list-container {
     padding: 24rpx 40rpx 40rpx;
     min-height: 300rpx;
+    flex: 1;
 }
 
 .end-hint {
@@ -1045,14 +1096,14 @@ onShow(() => {
 }
 
 .card {
-    background: #ffffff;
+    background: $bg-card-light;
     border-radius: 24rpx;
     box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05);
     display: flex;
     overflow: hidden;
     position: relative;
     margin-bottom: 24rpx;
-    border: 1px solid #f0f0f0;
+    border: $border-light;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:active {
@@ -1088,7 +1139,7 @@ onShow(() => {
         .course-name {
             font-size: 36rpx; 
             font-weight: 700;
-            color: #1a1a1a; 
+            color: $text-near-black-light;
             line-height: 1.4;
             flex: 1;
             margin-right: 20rpx;
@@ -1108,7 +1159,7 @@ onShow(() => {
         flex-wrap: wrap; 
         align-items: center;
         margin-bottom: 32rpx;
-        background: #f8f9fa;
+        background: $bg-page-light;
         padding: 20rpx 24rpx;
         border-radius: 16rpx;
         
@@ -1116,7 +1167,7 @@ onShow(() => {
              display: flex;
              align-items: center;
              font-size: 26rpx;
-             color: #555;
+             color: $text-secondary-light;
              margin-right: 40rpx; 
              font-weight: 500;
 
@@ -1131,7 +1182,7 @@ onShow(() => {
 
     .content-text {
         font-size: 28rpx;
-        color: #333; 
+        color: $text-primary-light;
         line-height: 1.6; 
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -1160,7 +1211,7 @@ onShow(() => {
             }
             .likes-text {
                 font-size: 26rpx;
-                color: #666;
+                color: $text-secondary-light;
             }
         }
 
@@ -1263,8 +1314,8 @@ onShow(() => {
     }
 
     .dark-theme & {
-        color: #888;
-        &:active { background-color: #333; }
+        color: $text-tertiary-dark;
+        &:active { background-color: $divider-card-dark; }
     }
 }
 
@@ -1293,8 +1344,8 @@ onShow(() => {
     }
 
     .dark-theme & {
-        color: #888;
-        &:active { background-color: #333; }
+        color: $text-tertiary-dark;
+        &:active { background-color: $divider-card-dark; }
     }
 }
 
@@ -1311,7 +1362,7 @@ onShow(() => {
 
     text {
         font-size: 28rpx;
-        color: #999999;
+        color: $text-tertiary-light;
     }
 }
 
@@ -1324,15 +1375,15 @@ onShow(() => {
         width: 80rpx;
         height: 80rpx;
         margin: 0 auto 24rpx;
-        border: 4rpx solid #ddd;
-        border-top-color: #b20035;
+        border: $border-strong-light;
+        border-top-color: $brand-red;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
 
     .loading-text {
         font-size: 28rpx;
-        color: #666;
+        color: $text-secondary-light;
     }
 }
 
@@ -1394,12 +1445,12 @@ onShow(() => {
     justify-content: space-between;
     align-items: center;
     padding: 36rpx;
-    border-bottom: 1rpx solid #f0f0f0;
+    border-bottom: 1rpx solid $divider-light;
 
     .modal-title {
         font-size: 36rpx;
         font-weight: 700;
-        color: #333;
+        color: $text-primary-light;
     }
 
     .modal-close {
@@ -1434,7 +1485,7 @@ onShow(() => {
 
 .field-label {
     font-size: 28rpx;
-    color: #666;
+    color: $text-secondary-light;
     margin-bottom: 16rpx;
     display: block;
     font-weight: 500;
@@ -1443,11 +1494,11 @@ onShow(() => {
 .nickname-input {
     width: 100%;
     height: 96rpx;
-    background-color: #f5f5f5;
+    background-color: $bg-muted-light;
     border-radius: 16rpx;
     padding: 0 28rpx;
     font-size: 32rpx;
-    color: #333;
+    color: $text-primary-light;
     box-sizing: border-box;
     border: 2rpx solid transparent;
     transition: border-color 0.2s;
@@ -1468,7 +1519,7 @@ onShow(() => {
 
 .modal-footer {
     display: flex;
-    border-top: 1rpx solid #f0f0f0;
+    border-top: 1rpx solid $divider-light;
 
     .btn-cancel,
     .btn-confirm {
@@ -1482,13 +1533,13 @@ onShow(() => {
     }
 
     .btn-cancel {
-        color: #666;
+        color: $text-secondary-light;
     }
 
     .btn-confirm {
-        color: #b20035;
+        color: $brand-red;
         font-weight: 600;
-        border-left: 1rpx solid #f0f0f0;
+        border-left: 1rpx solid $divider-light;
 
         &:active {
             background-color: rgba(178, 0, 53, 0.05);
@@ -1505,40 +1556,40 @@ onShow(() => {
 </style>
 
 <style lang="scss">
-.profile-container.dark-theme { background-color: #121212 !important; }
-.profile-container.dark-theme .capsule-mask { background-color: #121212; }
+.profile-container.dark-theme { background-color: $bg-card-dark !important; }
+.profile-container.dark-theme .capsule-mask { background-color: $bg-page-dark; }
 
 /* User info layer dark mode */
-.profile-container.dark-theme .user-info-layer { background-color: #121212; }
+.profile-container.dark-theme .user-info-layer { background-color: $bg-page-dark; }
 .profile-container.dark-theme .avatar-circle { background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4); }
-.profile-container.dark-theme .user-nickname { color: #e0e0e0; }
-.profile-container.dark-theme .user-contribution { color: #888; }
-.profile-container.dark-theme .user-more-btn { background-color: #2a2a2a; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } &:active { background-color: #3a3a3a; } }
+.profile-container.dark-theme .user-nickname { color: $text-primary-dark; }
+.profile-container.dark-theme .user-contribution { color: $text-tertiary-dark; }
+.profile-container.dark-theme .user-more-btn { background-color: $bg-muted-dark; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: $text-primary-dark; } &:active { background-color: $bg-muted-darker; } }
 
 /* My publish card dark mode */
-.profile-container.dark-theme .my-publish-card { background-color: #1e1e1e; box-shadow: $shadow-md-dark; }
+.profile-container.dark-theme .my-publish-card { background-color: $bg-card-dark; box-shadow: $shadow-md-dark; }
 
 /* Sticky bar dark mode */
 .profile-container.dark-theme .sticky-bar .filter-row-wrapper { background-color: rgba(30, 30, 30, 0.95); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3); }
-.profile-container.dark-theme .sticky-bar .filter-row { background: #2a2a2a; }
-.profile-container.dark-theme .sticky-bar .filter-pill { color: #888; }
+.profile-container.dark-theme .sticky-bar .filter-row { background: $bg-muted-dark; }
+.profile-container.dark-theme .sticky-bar .filter-pill { color: $text-tertiary-dark; }
 .profile-container.dark-theme .list-container { padding: 24rpx 32rpx 40rpx; }
 .profile-container.dark-theme .list-item { background: transparent; }
-.profile-container.dark-theme .card { background: #1e1e1e !important; border-color: #333; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
+.profile-container.dark-theme .card { background: $bg-card-dark !important; border-color: $divider-card-dark; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
 .profile-container.dark-theme .card .card-main { background: transparent; }
-.profile-container.dark-theme .card .course-row-top .course-name { color: #e0e0e0; }
-.profile-container.dark-theme .card .course-row-top .time-text { color: #666; }
-.profile-container.dark-theme .card .course-row-middle { background: #2a2a2a !important; }
+.profile-container.dark-theme .card .course-row-top .course-name { color: $text-primary-dark; }
+.profile-container.dark-theme .card .course-row-top .time-text { color: $text-secondary-light; }
+.profile-container.dark-theme .card .course-row-middle { background: $bg-muted-dark !important; }
 .profile-container.dark-theme .card .course-row-middle .course-info-item { color: $text-tertiary-light; }
-.profile-container.dark-theme .card .content-text { color: #ccc; }
+.profile-container.dark-theme .card .content-text { color: $text-placeholder-light; }
 .profile-container.dark-theme .card .footer-row { border-color: rgba(255,255,255,0.05); }
-.profile-container.dark-theme .card .footer-row .likes-text { color: #888; }
+.profile-container.dark-theme .card .footer-row .likes-text { color: $text-tertiary-dark; }
 .profile-container.dark-theme .card .footer-row .likes-box { background: transparent; }
-.profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #1e1e1e 100%) !important; border-color: rgba(178,0,53,0.2); }
+.profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #{$bg-card-dark} 100%) !important; border-color: rgba(178,0,53,0.2); }
 .profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5) !important; border-color: rgba(178,0,53,0.1); }
-.profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #1e1e1e); }
-.profile-container.dark-theme .empty-tip text { color: #555; }
-.profile-container.dark-theme .loading-state .loading-text { color: #888; }
+.profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #{$bg-card-dark}); }
+.profile-container.dark-theme .empty-tip text { color: $text-placeholder-dark; }
+.profile-container.dark-theme .loading-state .loading-text { color: $text-tertiary-dark; }
 .profile-container.dark-theme .error-state .error-text { color: #ff6b6b; }
 .profile-container.dark-theme .status-badge.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
 .profile-container.dark-theme .status-badge.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
@@ -1546,29 +1597,29 @@ onShow(() => {
 
 .dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }
-.guide-overlay.dark-theme .guide-content { background-color: #2a2a2a; }
-.guide-overlay.dark-theme .guide-header .guide-title { color: #e0e0e0; }
-.guide-overlay.dark-theme .guide-header .guide-subtitle { color: #888; }
-.guide-overlay.dark-theme .guide-step .step-title { color: #e0e0e0; }
-.guide-overlay.dark-theme .guide-step .step-desc { color: #888; }
+.guide-overlay.dark-theme .guide-content { background-color: $bg-muted-dark; }
+.guide-overlay.dark-theme .guide-header .guide-title { color: $text-primary-dark; }
+.guide-overlay.dark-theme .guide-header .guide-subtitle { color: $text-tertiary-dark; }
+.guide-overlay.dark-theme .guide-step .step-title { color: $text-primary-dark; }
+.guide-overlay.dark-theme .guide-step .step-desc { color: $text-tertiary-dark; }
 .dark-theme .guide-overlay.dark-theme .guide-footer .start-btn { opacity: 0.85; }
 
 .profile-container.dark-theme .sticky-bar .filter-pill.active { color: $pure-white; }
-.profile-container.dark-theme .loading-state .loading-spinner { border-color: #333; border-top-color: #b20035; }
+.profile-container.dark-theme .loading-state .loading-spinner { border-color: $divider-card-dark; border-top-color: $brand-red; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
 /* More Menu Dark Mode - ⋯ 按钮现已在 user-info-layer 内 */
-.profile-container.dark-theme .user-more-btn { background-color: #2a2a2a; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: #e0e0e0; } &:active { background-color: #3a3a3a; } }
-.profile-container.dark-theme .more-menu-popover { background-color: #2a2a2a; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); }
-.profile-container.dark-theme .more-menu-popover .menu-item { color: #e0e0e0; }
-.profile-container.dark-theme .more-menu-popover .menu-item:active { background-color: #3a3a3a; }
+.profile-container.dark-theme .user-more-btn { background-color: $bg-muted-dark; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: $text-primary-dark; } &:active { background-color: $bg-muted-darker; } }
+.profile-container.dark-theme .more-menu-popover { background-color: $bg-muted-dark; box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.5); }
+.profile-container.dark-theme .more-menu-popover .menu-item { color: $text-primary-dark; }
+.profile-container.dark-theme .more-menu-popover .menu-item:active { background-color: $bg-muted-darker; }
 .profile-container.dark-theme .more-menu-popover .menu-text.text-danger { color: #ff6b6b; }
 
 /* Nickname Modal Dark Mode */
-.modal-card.dark-theme { background-color: #1e1e1e; }
-.modal-card.dark-theme .modal-header { border-color: #333; .modal-title { color: #e0e0e0; } .modal-close { color: #888; } }
-.modal-card.dark-theme .modal-body { .field-label { color: #aaa; } .nickname-input { background-color: #2a2a2a; color: #e0e0e0; } }
-.modal-card.dark-theme .modal-footer { border-color: #333; .btn-confirm { border-color: #333; } }
+.modal-card.dark-theme { background-color: $bg-card-dark; }
+.modal-card.dark-theme .modal-header { border-color: $divider-card-dark; .modal-title { color: $text-primary-dark; } .modal-close { color: $text-tertiary-dark; } }
+.modal-card.dark-theme .modal-body { .field-label { color: $text-secondary-dark; } .nickname-input { background-color: $bg-muted-dark; color: $text-primary-dark; } }
+.modal-card.dark-theme .modal-footer { border-color: $divider-card-dark; .btn-confirm { border-color: $divider-card-dark; } }
 
 /* Feedback Modal Dark Mode 已迁移至 components/feedback/feedback-modal.vue */
 
@@ -1604,7 +1655,7 @@ onShow(() => {
     display: block;
     font-size: 44rpx;
     font-weight: 800;
-    color: #1a1a1a;
+    color: $text-near-black-light;
     margin-bottom: 16rpx;
   }
 
@@ -1651,13 +1702,13 @@ onShow(() => {
   .step-title {
     font-size: 30rpx;
     font-weight: 600;
-    color: #333;
+    color: $text-primary-light;
     display: block;
   }
 
   .step-desc {
     font-size: 24rpx;
-    color: #888;
+    color: $text-tertiary-light;
     line-height: 1.5;
     display: block;
   }
