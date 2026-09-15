@@ -186,6 +186,7 @@ $deco-glow-color: rgba(178, 0, 53, 0.08); // 品牌光晕
 $deco-divider-dash: 1rpx dashed $divider-light;         // 中性虚线分隔
 $deco-divider-dash-brand: 1rpx dashed rgba(178, 0, 53, 0.18); // 品牌虚线分隔
 $deco-quote: 6rpx solid rgba(178, 0, 53, 0.20);         // 引用/说明块左侧品牌条
+$deco-dashed-box-brand: 1rpx dashed rgba(178, 0, 53, 0.30); // 品牌虚线框（如“添加”按钮）
 
 // 图标底板（彩色圆角底 + 图标）
 $tile-blue: rgba(52, 152, 219, 0.10);

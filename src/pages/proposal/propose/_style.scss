@@ -410,7 +410,7 @@
     background: rgba(178, 0, 53, 0.06);
     color: $brand-red;
     border-radius: $radius-sm;
-    border: 1rpx dashed rgba(178, 0, 53, 0.30);
+    border: $deco-dashed-box-brand;
     font-size: $font-base;
     @include mwp-transition($dur-fast, $ease-standard);
 
