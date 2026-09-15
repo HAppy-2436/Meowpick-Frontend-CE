@@ -722,75 +722,18 @@ onShow(() => {
 </script>
 
 <style scoped lang="scss">
+// 底色：页面级灰（基层），“我的发布”卡片以白底 + 阴影浮于其上
 .profile-container {
     position: relative;
     padding: 0 40rpx;
     box-sizing: border-box;
-    background-color: $bg-card-light;
+    background-color: $bg-page-light;
     height: 100%;
     overflow: visible;
-}
 
-.capsule-mask {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    background-color: $bg-page-light;
-    z-index: 99;
-    pointer-events: none;
-}
-
-/* 底层：用户信息层（占据视口约 1/3，确保位置精确） */
-.user-info-layer {
-    margin-top: 0;
-    padding: 48rpx 0 60rpx;
-    min-height: 200rpx;
-    display: flex;
-    align-items: center;
-    gap: 28rpx;
-    background-color: $bg-page-light;
-    z-index: 1;
-    position: relative;
-}
-
-.avatar-circle {
-    width: 136rpx;
-    height: 136rpx;
-    border-radius: 50%;
-    background: linear-gradient(135deg, $brand-red-tint 0%, #ffd4d4 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: $shadow-brand-sm;
-}
-
-.avatar-emoji {
-    font-size: 76rpx;
-    line-height: 1;
-}
-
-.user-meta {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10rpx;
-    min-width: 0;
-}
-
-.user-nickname {
-    font-size: 56rpx;
-    font-weight: 800;
-    color: $text-primary-light;
-    letter-spacing: -2rpx;
-    line-height: 1.2;
-}
-
-.user-contribution {
-    font-size: 32rpx;
-    color: $text-tertiary-light;
-    font-weight: 400;
+    .dark-theme & {
+        background-color: $bg-page-dark;
+    }
 }
 
 .user-more-btn {
@@ -838,7 +781,11 @@ onShow(() => {
     display: flex;
     align-items: center;
     gap: 28rpx;
-    background-color: $bg-card-light;
+    background-color: $bg-page-light;
+
+    .dark-theme & {
+        background-color: $bg-page-dark;
+    }
 }
 
 .sticky-avatar-btn {
@@ -947,12 +894,17 @@ onShow(() => {
     flex: 1;
     min-height: 0;
     background-color: $bg-card-light;
-    border-radius: 36rpx 36rpx 0 0;
+    border-radius: $radius-2xl $radius-2xl 0 0;
     box-shadow: $shadow-md;
     margin: 0 -40rpx;
-    padding-top: 32rpx;
+    padding-top: $space-7;
     position: relative;
     z-index: 5;
+
+    .dark-theme & {
+        background-color: $bg-card-dark;
+        box-shadow: $shadow-md-dark;
+    }
 }
 
 .my-publish-header {
@@ -1581,18 +1533,7 @@ onShow(() => {
 </style>
 
 <style lang="scss" scoped>
-.profile-container.dark-theme { background-color: $bg-card-dark; }
-.profile-container.dark-theme .capsule-mask { background-color: $bg-page-dark; }
-
-/* User info layer dark mode */
-.profile-container.dark-theme .user-info-layer { background-color: $bg-page-dark; }
-.profile-container.dark-theme .avatar-circle { background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4); }
-.profile-container.dark-theme .user-nickname { color: $text-primary-dark; }
-.profile-container.dark-theme .user-contribution { color: $text-tertiary-dark; }
 .profile-container.dark-theme .user-more-btn { background-color: $bg-muted-dark; box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3); .line { background-color: $text-primary-dark; } &:active { background-color: $bg-muted-darker; } }
-
-/* My publish card dark mode */
-.profile-container.dark-theme .my-publish-card { background-color: $bg-card-dark; box-shadow: $shadow-md-dark; }
 
 /* Sticky bar dark mode */
 .profile-container.dark-theme .sticky-bar .filter-row-wrapper { background-color: rgba(30, 30, 30, 0.95); box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3); }
