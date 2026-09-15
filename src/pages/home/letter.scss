@@ -17,18 +17,17 @@
   position: relative;
   z-index: $z-base;
   margin-top: $space-8;
-  background: rgba(255, 255, 255, 0.95);
+  background: $bg-card-light;
   border-radius: $radius-card;
   padding: $space-10 $space-8;
   box-shadow: $shadow-md;
-  backdrop-filter: blur(10rpx);
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard;
   animation: mwp-fade-up $motion-heart $ease-decelerate $dur-instant both;
 
   .dark-theme & {
-    background: rgba(30, 30, 30, 0.95);
-    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.30);
+    background: $bg-card-dark;
+    box-shadow: $shadow-md-dark;
   }
 }
 

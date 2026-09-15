@@ -17,7 +17,6 @@
   z-index: $z-navbar;
   background: $bg-card-light;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
-  @include glass;
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard;
 

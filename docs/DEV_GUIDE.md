@@ -52,7 +52,6 @@ src/styles/
 
 ```scss
 @include pressable($press-scale-md);   // 触觉按压
-@include glass;                         // 玻璃毛玻璃
 @include card;                          // 卡片容器
 @include ellipsis(2);                   // 2 行省略
 @include text-gradient;                 // 渐变文字

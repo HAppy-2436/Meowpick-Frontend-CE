@@ -168,7 +168,7 @@
 | 组件 | 用途 | Props | 事件 |
 |------|------|-------|------|
 | Button | 通用按钮（5 tone / 3 size / loading） | tone, size, block, disabled, loading, icon | click |
-| TopNavBar | 顶部导航栏（毛玻璃背景） | title, subtitle, showBack, forceLight | back |
+| TopNavBar | 顶部导航栏（实色背景） | title, subtitle, showBack, forceLight | back |
 | BackBtn | 返回按钮（CSS箭头） | customStyle, color | click |
 | StatusBadge | 状态徽标 | status, tone, label, pill, dot | — |
 | EmptyState | 空/错状态 | title, desc, emoji, tone, compact | click |

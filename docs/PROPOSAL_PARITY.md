@@ -39,7 +39,7 @@
 
 **视觉对比**：
 - feature/proposal：无顶部装饰条、无 token、无 dark theme、无 stagger
-- 我的版本：玻璃毛玻璃 token 化、暗色完整、列表 stagger、400ms 内每个结果依次出现
+- 我的版本：实色扁平 token 化、暗色完整、列表 stagger、400ms 内每个结果依次出现
 
 ### 2. `src/components/common/RejectModal.vue`
 
@@ -52,7 +52,7 @@
 - 200 字字数限制 + 实时计数
 - 自动焦点 textarea
 - 必填校验（空 reason 禁用提交）
-- 完整 dark theme + 玻璃毛玻璃
+- 完整 dark theme + 实色扁平
 
 ### 3. `src/components/common/TeacherListModal.vue`
 
@@ -76,7 +76,7 @@
 - 搜索结果 stagger 动画
 - loading 状态统一 spinner
 - 必填校验（缺姓名/院系 toast 提示）
-- 完整 dark theme + 玻璃毛玻璃
+- 完整 dark theme + 实色扁平
 
 ### 5. `src/pages/proposal/list/list.vue`（**新增页面**）
 

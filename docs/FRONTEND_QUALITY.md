@@ -30,14 +30,13 @@
 - **阴影**：xs/sm/md/lg/xl 五档 + 品牌发光阴影
 - **动画曲线**：5 条精心挑选的 cubic-bezier
 - **时长**：100/150/200/300/450/600ms
-- **渐变**：品牌渐变、玻璃背景、品牌柔色背景
+- **渐变**：品牌渐变、品牌柔色背景
 - **z-index 层级**：base/sticky/tabbar/navbar/popover/modal/toast
 
 ### 2.2 混入 Mixins（`src/styles/_mixins.scss`）
 
 - `@include pressable($scale)`：触觉按压（按钮/卡片）
 - `@include bounce-on-tap($scale)`：弹性回弹（图标）
-- `@include glass` / `@include glass-dark`：iOS 玻璃毛玻璃
 - `@include ellipsis($lines)`：1 行 / N 行文本省略
 - `@include brand-button`：品牌按钮通用样式
 - `@include card` / `@include card-dark`：卡片容器
@@ -84,7 +83,7 @@
 | `StatusBadge.vue` | 状态徽标 | tone（success/warning/danger/info/neutral）+ 可选 dot pulse |
 | `EmptyState.vue` | 空/错状态 | emoji + title + desc + action slot |
 | `SkeletonCard.vue` | 卡片骨架屏 | shimmer 动画 |
-| `TopNavBar.vue` | 顶部导航栏 | 玻璃背景、自适应胶囊、可附 subtitle |
+| `TopNavBar.vue` | 顶部导航栏 | 实色背景、自适应胶囊、可附 subtitle |
 | `BackBtn.vue` | 返回按钮 | 颜色可定制、触觉反馈 |
 
 ### 抽出 composable（`src/composables/useMenuButton.ts`）
@@ -120,7 +119,7 @@ const { menuButtonInfo, navBarHeight, contentSpacerHeight } = useMenuButton();
 ### 4.2 `proposal/feed/feed.vue` 提案广场
 
 - ✅ 样式抽到 `_style.scss`
-- ✅ 玻璃毛玻璃顶部导航
+- ✅ 实色扁平顶部导航
 - ✅ 列表项 stagger 入场（`animation-delay: ${i*60}ms`）
 - ✅ 状态筛选 Tab 弹性按压反馈
 - ✅ 统一 `mwp-spinner` / `EmptyState` 替换散落样式

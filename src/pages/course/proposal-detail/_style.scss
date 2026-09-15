@@ -20,7 +20,6 @@ $bg-gradient-top: $brand-red-tint;
   width: 100%;
   z-index: $z-navbar;
   background: linear-gradient(to bottom, $bg-gradient-top, $bg-card-light);
-  @include glass;
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard;
 
