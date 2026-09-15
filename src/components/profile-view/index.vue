@@ -908,6 +908,10 @@ onShow(() => {
         color: $text-primary-light;
         letter-spacing: -1rpx;
         display: block;
+
+        .dark-theme & {
+            color: $text-primary-dark;
+        }
     }
 
     .sub-title {
@@ -915,6 +919,10 @@ onShow(() => {
         color: $text-tertiary-light;
         margin-top: 4rpx;
         display: block;
+
+        .dark-theme & {
+            color: $text-tertiary-dark;
+        }
     }
 }
 
@@ -1048,6 +1056,10 @@ onShow(() => {
     padding: 32rpx 0 16rpx;
     font-size: 24rpx;
     color: $text-tertiary-light;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
 }
 
 .list-scroll {
@@ -1407,6 +1419,10 @@ onShow(() => {
     text-align: right;
     margin-top: 8rpx;
     display: block;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
 }
 
 .modal-footer {
@@ -1469,6 +1485,8 @@ onShow(() => {
 .profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #{$bg-card-dark} 100%); border-color: rgba(178,0,53,0.2); }
 .profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); }
 .profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #{$bg-card-dark}); }
+.profile-container.dark-theme .card.proposal-card .vote-count-box .vote-num,
+.profile-container.dark-theme .card.proposal-card .vote-count-box .vote-label { color: $brand-red-soft; }
 
 .dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }
@@ -1493,7 +1511,7 @@ onShow(() => {
 .modal-card.dark-theme { background-color: $bg-card-dark; }
 .modal-card.dark-theme .modal-header { border-color: $divider-card-dark; .modal-title { color: $text-primary-dark; } .modal-close { color: $text-tertiary-dark; } }
 .modal-card.dark-theme .modal-body { .field-label { color: $text-secondary-dark; } .nickname-input { background-color: $bg-muted-dark; color: $text-primary-dark; } }
-.modal-card.dark-theme .modal-footer { border-color: $divider-card-dark; .btn-confirm { border-color: $divider-card-dark; } }
+.modal-card.dark-theme .modal-footer { border-color: $divider-card-dark; .btn-cancel { color: $text-secondary-dark; } .btn-confirm { border-color: $divider-card-dark; } }
 
 /* Feedback Modal Dark Mode 已迁移至 components/feedback/feedback-modal.vue */
 
