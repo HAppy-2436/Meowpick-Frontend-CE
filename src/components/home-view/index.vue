@@ -11,7 +11,7 @@
     
     <!-- 搜索区域 -->
     <view class="search-section mwp-fade-down" @click="goToSearch" :style="{ marginBottom: L.gap + 'px' }">
-      <view class="search-box mwp-pressable" :style="{ height: L.searchHeight + 'px' }">
+      <view class="search-box mwp-pressable" hover-class="search-hover" :style="{ height: L.searchHeight + 'px' }">
         <text class="search-icon">🔍</text>
         <text class="search-placeholder">搜索课程、老师或吐槽...</text>
       </view>
@@ -21,7 +21,8 @@
     <view class="toolbox-section" :style="{ height: L.toolboxHeight + 'px', gap: L.cardGap + 'px', padding: '0 10rpx' }">
       <view class="left-group" :style="{ gap: L.cardGap + 'px' }">
         <view
-          class="card-item log-card mwp-pressable mwp-stagger-item"
+          class="card-item log-card mwp-pressable mwp-fade-in"
+          hover-class="card-hover"
           @click="goToProposalFeed"
           :style="{ animationDelay: '60ms' }"
         >
@@ -31,7 +32,8 @@
         </view>
 
         <view
-          class="card-item letter-card mwp-pressable mwp-stagger-item"
+          class="card-item letter-card mwp-pressable mwp-fade-in"
+          hover-class="card-hover"
           @click="goToLetter"
           :style="{ animationDelay: '120ms' }"
         >
@@ -373,6 +375,7 @@ const goToProposalFeed = () => {
     background-color: $bg-card-light;
     border-radius: $radius-control;
     padding: 0 $space-7;
+    @include mwp-transition($dur-fast, $ease-emphasized);
 
     box-shadow: $shadow-brand-md;
     border: none;
@@ -487,6 +490,12 @@ const goToProposalFeed = () => {
       background: linear-gradient(135deg, $pure-white 0%, $brand-red-tint 100%);
       .card-title { color: $brand-red; }
   }
+}
+
+// hover-class 按压态：小程序 `view` 用 hover-class 比 `:active` 更可靠
+.card-hover,
+.search-hover {
+  transform: scale($press-scale-sm);
 }
 
 .dark-theme .card-item {

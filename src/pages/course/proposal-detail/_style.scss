@@ -84,7 +84,7 @@ $bg-gradient-top: $brand-red-tint;
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard,
               transform $dur-base $ease-standard;
-  animation: mwp-fade-up $motion-bounce $ease-decelerate backwards;
+  animation: mwp-fade-in $motion-bounce $ease-decelerate backwards;
 
   &:active {
     transform: scale($press-scale-sm);

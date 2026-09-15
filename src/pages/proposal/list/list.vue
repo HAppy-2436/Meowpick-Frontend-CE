@@ -125,7 +125,7 @@
 
       <!-- 提案列表 -->
       <view v-else class="result-section">
-        <view v-for="(item, idx) in proposals" :key="item.id" class="result-card" :style="{ animationDelay: `${Math.min(idx * 60, 300)}ms` }" @click="goToDetail(item)">
+        <view v-for="(item, idx) in proposals" :key="item.id" class="result-card" hover-class="result-hover" :style="{ animationDelay: `${Math.min(idx * 60, 300)}ms` }" @click="goToDetail(item)">
           <view class="result-card-wrapper proposal-card">
             <view class="proposal-content">
               <view class="proposal-row-top">

@@ -113,7 +113,7 @@
           v-else
           v-for="(item, index) in filteredList"
           :key="item.id"
-          class="list-item mwp-pressable mwp-fade-up"
+          class="list-item mwp-pressable mwp-fade-in" hover-class="result-hover"
           :style="{ animationDelay: Math.min(index * 60, 300) + 'ms' }"
           @click="onItemClick(item)"
           @longpress="onCardMenu(item)"
@@ -1628,5 +1628,10 @@ onShow(() => {
     padding: 24rpx 0 0;
     @include pressable($press-scale-sm);
   }
+}
+
+// hover-class 按压态
+.result-hover {
+    transform: scale($press-scale-md);
 }
 </style>

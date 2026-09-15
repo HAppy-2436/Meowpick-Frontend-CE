@@ -599,7 +599,7 @@
   border-radius: $radius-card;
   overflow: hidden;
   transition: transform $dur-fast $ease-emphasized;
-  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
+  animation: mwp-fade-in $motion-enter $ease-decelerate backwards;
 
   &:active { transform: scale($press-scale-md); }
 }
@@ -826,4 +826,9 @@
     animation: none;
     transition: none;
   }
+}
+
+// hover-class 按压态
+.result-hover {
+  transform: scale($press-scale-md);
 }

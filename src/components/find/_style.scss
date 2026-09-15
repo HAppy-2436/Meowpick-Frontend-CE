@@ -918,7 +918,7 @@
   border-radius: $radius-card;
   transition: transform $dur-fast $ease-emphasized;
   cursor: pointer;
-  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
+  animation: mwp-fade-in $motion-enter $ease-decelerate backwards;
 
   &:last-child {
     margin-bottom: 0;
@@ -1120,7 +1120,7 @@
   border-radius: $radius-md;
   @include mwp-transition($dur-fast, $ease-emphasized);
   cursor: pointer;
-  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
+  animation: mwp-fade-in $motion-enter $ease-decelerate backwards;
   box-shadow: $shadow-xs;
 
   .dark-theme & {
@@ -1287,4 +1287,9 @@
     animation: none;
     transition: none;
   }
+}
+
+// hover-class 按压态
+.result-hover {
+  transform: scale($press-scale-md);
 }

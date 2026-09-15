@@ -160,7 +160,7 @@
         <view v-else class="list-content">
                 <!-- Courses Section -->
                 <view class="group-section" v-if="groupedRows.courses.length">
-                    <view v-for="(item, idx) in groupedRows.courses" :key="item.id" class="result-card" @click="onResultClick(item)">
+                    <view v-for="(item, idx) in groupedRows.courses" :key="item.id" class="result-card" hover-class="result-hover" @click="onResultClick(item)">
                         <view class="result-card-wrapper course-card">
                             <choose-course :data="item" variant="course" />
                         </view>
@@ -188,7 +188,7 @@
                     </view>
                     <view class="group-section" v-if="groupedRows.proposals.length">
                         <view class="group-title">提案</view>
-                        <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" @click="onResultClick(item)">
+                        <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" hover-class="result-hover" @click="onResultClick(item)">
                             <view class="result-card-wrapper proposal-card">
                                 <choose-course :data="item" variant="proposal" />
                             </view>
@@ -239,7 +239,7 @@
             <view
               v-for="(name, index) in guessList"
               :key="index"
-              class="recommend-item"
+              class="recommend-item" hover-class="result-hover"
               @click="clickRecommend(name)"
             >
               <view class="recommend-icon">

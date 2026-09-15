@@ -41,7 +41,7 @@
     margin-bottom: $space-7;
     box-shadow: $shadow-card;
     @include mwp-transition($dur-base, $ease-standard);
-    animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
+    animation: mwp-fade-in $motion-enter-lg $ease-decelerate backwards;
 
     &:active {
         transform: scale($press-scale-sm);
