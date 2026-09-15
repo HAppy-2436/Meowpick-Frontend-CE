@@ -339,7 +339,7 @@
   position: relative;
   z-index: $z-sticky + 3;
   background: $bg-card-light;
-  border-radius: 0 0 $radius-lg $radius-lg;
+  border-radius: 0 0 $radius-card $radius-card;
   box-shadow: $shadow-md;
   display: flex;
   flex-direction: column;
@@ -915,7 +915,7 @@
 
 .result-card {
   margin-bottom: $space-6;
-  border-radius: $radius-lg;
+  border-radius: $radius-card;
   transition: transform $dur-fast $ease-emphasized;
   cursor: pointer;
   animation: mwp-fade-up $motion-enter $ease-decelerate both;
@@ -1211,7 +1211,7 @@
   width: 100%;
   max-width: 560rpx;
   background: $bg-card-light;
-  border-radius: $radius-lg;
+  border-radius: $radius-card;
   padding: $space-9 $space-7;
   box-shadow: $shadow-lg;
   transition: background-color $dur-medium $ease-standard;

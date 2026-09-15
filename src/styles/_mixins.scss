@@ -165,7 +165,7 @@
 }
 
 // ---------- 卡片容器 ----------
-@mixin card($radius: $radius-lg, $padding: $space-7) {
+@mixin card($radius: $radius-card, $padding: $space-7) {
   background: $bg-card-light;
   border-radius: $radius;
   padding: $padding;
@@ -174,7 +174,7 @@
               box-shadow $dur-base $ease-standard;
 }
 
-@mixin card-dark($radius: $radius-lg, $padding: $space-7) {
+@mixin card-dark($radius: $radius-card, $padding: $space-7) {
   background: $bg-card-dark;
   border-radius: $radius;
   padding: $padding;

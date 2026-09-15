@@ -47,7 +47,7 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
 
 .skeleton-card {
   padding: $space-7;
-  border-radius: $radius-lg;
+  border-radius: $radius-card;
   background: $bg-card-light;
   box-shadow: $shadow-card;
   transition: background-color $dur-medium $ease-standard,

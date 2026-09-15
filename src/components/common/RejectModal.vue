@@ -92,7 +92,7 @@ const handleConfirm = () => {
 .reject-modal__sheet {
   width: 100%;
   background: $bg-card-light;
-  border-radius: $radius-lg $radius-lg 0 0;
+  border-radius: $radius-card $radius-card 0 0;
   padding-bottom: calc(#{$space-7} + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;

@@ -1072,7 +1072,7 @@ onShow(() => {
 
 .card {
     background: $bg-card-light;
-    border-radius: $radius-xl;
+    border-radius: $radius-card;
     box-shadow: $shadow-card;
     display: flex;
     overflow: hidden;

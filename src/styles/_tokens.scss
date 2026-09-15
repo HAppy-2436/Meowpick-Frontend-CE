@@ -72,9 +72,10 @@ $radius-xl: 28rpx;
 $radius-2xl: 36rpx;
 $radius-pill: 999rpx;
 
-// 控件圆角：搜索框/输入框等“圆角矩形”，与相邻卡片观感一致；
-// 遵循「圆角与面积成正比」，不得使用 pill（见 docs/DESIGN_LANGUAGE.md）。
-$radius-control: $radius-xl;
+// 语义圆角：卡片与长条控件统一用大圆角（与底部 Tab 栏 36rpx 同级），
+// 遵循「大 R 角是形状语言」，避免整页显得过方（见 docs/DESIGN_LANGUAGE.md）。
+$radius-card: $radius-2xl;      // 卡片 / 弹窗 / 面板
+$radius-control: $radius-2xl;   // 搜索框 / 输入框等长条控件（禁止 pill）
 
 // ---------- 间距（8 像素阶梯） ----------
 $space-1: 4rpx;

@@ -114,8 +114,9 @@
 
 ### 圆角规则
 
-- 圆角与面积成正比：卡片 `$radius-xl(28rpx)`、chip/tag/按钮 `$radius-pill`、内嵌块 `$radius-md(16rpx)`、小图标 `$radius-xs/sm`。
-- **搜索框 / 输入框用 `$radius-control(28rpx)`**：中等圆角矩形，与相邻卡片观感一致；**禁止做成 pill**——pill 属于按钮/tag 的极端表达，用在长条搜索框上会显得过软、失去与内容模块的一致性。
+- 卡片 / 弹窗 / 面板用 `$radius-card(36rpx)`，**与底部 Tab 栏同级**，保证整页的大 R 角观感统一、不显方。
+- **搜索框 / 输入框用 `$radius-control(36rpx)`**：与相邻卡片观感一致；**禁止做成 pill**——pill 属于按钮/tag 的极端表达，用在长条搜索框上会显得过软。
+- chip / tag / 按钮 / 徽标用 `$radius-pill`；内嵌小块 `$radius-md(16rpx)`；小图标 `$radius-xs/sm`。
 - 禁止 `2vw`、`60rpx`、`24rpx` 这类脱离 token 的散值。
 
 ### 动效规则

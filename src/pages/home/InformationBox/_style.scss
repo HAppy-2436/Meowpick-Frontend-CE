@@ -62,7 +62,7 @@
 .content-card {
   flex: 1;
   background: $bg-card-light;
-  border-radius: $radius-lg;
+  border-radius: $radius-card;
   padding: $space-7;
   box-shadow: $shadow-card;
   transition: background-color $dur-medium $ease-standard,

@@ -434,7 +434,7 @@ const goToProposalFeed = () => {
 // 通用卡片 - 面板风格
 .card-item {
   background-color: $bg-card-light;
-  border-radius: $radius-xl;
+  border-radius: $radius-card;
   padding: $space-7;
   position: relative;
   overflow: hidden;
@@ -522,7 +522,7 @@ const goToProposalFeed = () => {
   background-color: $bg-card-light;
   border: 1rpx solid rgba(0,0,0,0.03);
   color: $text-primary-light;
-  border-radius: $radius-xl;
+  border-radius: $radius-card;
   padding: $space-8;
   display: flex;
   flex-direction: column;

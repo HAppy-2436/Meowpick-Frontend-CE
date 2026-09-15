@@ -314,7 +314,7 @@ function onSwiperAnimationFinish(e: any) {
   width: 100%;
   max-width: 600rpx;
   background: $bg-card-light;
-  border-radius: $radius-lg;
+  border-radius: $radius-card;
   overflow: hidden;
 
   &.dark-theme {
