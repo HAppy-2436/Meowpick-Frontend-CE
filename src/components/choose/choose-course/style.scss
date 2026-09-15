@@ -1,11 +1,11 @@
 
 .search-result-box {
-  margin-top: $space-5;
+  margin-top: 0;
   background-color: transparent;
 }
 
 // ============================================================
-// 提案卡片（左下角的"提议新增"）
+// 提案卡片（左下角的"提案新增"）
 // ============================================================
 .proposal-card {
   position: relative;
@@ -14,7 +14,7 @@
   border-radius: $radius-lg;
   background: $gradient-brand-soft;
   border: 1rpx solid rgba(178, 0, 53, 0.15);
-  box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06);
+  box-shadow: $shadow-comp-glow;
   transition: transform $dur-base $ease-emphasized,
               box-shadow $dur-base $ease-standard,
               border-color $dur-base $ease-standard;
@@ -198,10 +198,12 @@
   background: $bg-card-light;
   border-radius: $radius-lg;
   border: 1rpx solid $divider-light;
-  box-shadow: $shadow-card;
+  box-shadow: $shadow-comp;
   overflow: hidden;
   position: relative;
   will-change: transform;
+  transition: box-shadow $dur-base $ease-standard,
+              border-color $dur-base $ease-standard;
 
   // 顶部 1px 高光线（仅亮色）
   &::before {
@@ -337,7 +339,7 @@
 
   .dark-theme & {
     background: $bg-card-dark;
-    border-color: #444;
+    border-color: $border-medium-dark;
   }
 
   .emoji-icon {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Init } from "@/utils/init";
 import { useThemeStore } from "@/config";
+import { THEME_COLORS } from "@/config/theme-colors";
 const themeStore = useThemeStore();
 
 onLaunch(() => {
@@ -18,17 +19,17 @@ watch(
 );
 
 function applyThemeToNativeBar(mode: "light" | "dark") {
-  const isDark = mode === "dark";
+  const colors = THEME_COLORS[mode];
   try {
     uni.setNavigationBarColor({
-      frontColor: isDark ? "#ffffff" : "#000000",
-      backgroundColor: isDark ? "#1e1e1e" : "#F8F8F8",
+      frontColor: mode === "dark" ? "#ffffff" : "#000000",
+      backgroundColor: colors.card,
       animation: { duration: 0, timingFunc: "linear" }
     });
     uni.setBackgroundColor?.({
-      backgroundColor: isDark ? "#121212" : "#F8F8F8",
-      backgroundColorTop: isDark ? "#121212" : "#F8F8F8",
-      backgroundColorBottom: isDark ? "#121212" : "#F8F8F8"
+      backgroundColor: colors.page,
+      backgroundColorTop: colors.page,
+      backgroundColorBottom: colors.page
     });
   } catch (e) {}
 }
