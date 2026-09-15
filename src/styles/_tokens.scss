@@ -25,8 +25,6 @@ $danger-light: #ff7875;
 $info: #0066cc;
 $info-soft: rgba(0, 102, 204, 0.10);
 $info-deep: #1565c0;
-$neutral-light: #f5f5f5;
-$neutral-mid: #999999;
 
 // 纯白与纯黑（语义）
 $pure-white: #ffffff;
@@ -39,6 +37,7 @@ $bg-muted-light: #f5f5f5;
 $bg-overlay-light: rgba(0, 0, 0, 0.5);
 
 $text-primary-light: #1f1f1f;
+$text-near-black-light: #1a1a1a;   // 亮色强调文本（课程名、标题等比 primary 更重）
 $text-secondary-light: #666666;
 $text-tertiary-light: #999999;
 $text-placeholder-light: #cccccc;
@@ -52,10 +51,11 @@ $bg-muted-darker: #3a3a3a;
 $bg-overlay-dark: rgba(0, 0, 0, 0.65);
 
 $text-primary-dark: #e0e0e0;
-$text-secondary-dark: #aaaaaa;
+$text-secondary-dark: #bbbbbb;
 $text-tertiary-dark: #888888;
 $text-placeholder-dark: #555555;
 $divider-dark: #2a2a2a;
+$divider-card-dark: #3e3e3e;        // 暗色卡片级分割线（比 $divider-dark 更浅，用于卡片内部分隔）
 
 // ---------- 圆角 ----------
 $radius-xs: 8rpx;
@@ -158,8 +158,10 @@ $gradient-header: linear-gradient(180deg, rgba(255, 245, 246, 0.95) 0%, rgba(255
 // ---------- 描边 ----------
 $border-light: 1px solid #f0f0f0;
 $border-medium: 1px solid #e5e5e5;
+$border-strong-light: 1px solid #dddddd;  // 亮色强调边框（搜索框、输入框等）
 $border-brand: 1px solid rgba(178, 0, 53, 0.15);
 $border-dark: 1px solid #2a2a2a;
+$border-medium-dark: 1px solid #3e3e3e;  // 暗色中等边框（卡片边框、表单边框）
 
 // ---------- z-index 层级 ----------
 $z-base: 1;

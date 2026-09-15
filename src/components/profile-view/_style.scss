@@ -380,7 +380,7 @@
     width: 80rpx;
     height: 80rpx;
     margin: 0 auto $space-6;
-    border: 4rpx solid $neutral-light;
+    border: 4rpx solid $bg-muted-light;
     border-top-color: $brand-red;
     border-radius: 50%;
     animation: mwp-spin 800ms linear infinite;
@@ -444,7 +444,7 @@
 }
 
 // =====================================================
-// 卡片（吐槽 + 提议通用）
+// 卡片（吐槽 + 提案通用）
 // =====================================================
 .card {
   background-color: $bg-card-light;
