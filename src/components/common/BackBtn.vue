@@ -49,6 +49,8 @@ const arrowStyle = computed(() => ({
 .css-back-arrow {
   width: 40rpx;
   height: 40rpx;
+  // chevron 的视觉重心偏右，向左微调使其在热区中视觉居中
+  margin-left: -3rpx;
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;
