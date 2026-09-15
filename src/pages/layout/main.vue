@@ -206,10 +206,21 @@ function onSwiperAnimationFinish(e: any) {
 .content-swiper {
   flex: 1;
   height: 100%;
+  // swiper 默认白底，暗色下会露出一圈白边，显式跟随主题
+  background-color: $bg-page-light;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
 }
 
 .scroll-view {
   height: 100%;
+  background-color: $bg-page-light;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
 }
 
 .tab-bar-placeholder {

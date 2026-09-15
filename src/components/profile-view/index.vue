@@ -793,8 +793,14 @@ onShow(() => {
     padding: 0;
     margin: 0;
     overflow: hidden;
+    line-height: 1;
     -webkit-tap-highlight-color: transparent;
     @include pressable($press-scale-lg);
+
+    // 去掉原生 button 默认的 ::after 边框圈
+    &::after {
+      border: none;
+    }
 
     .dark-theme & {
         background: linear-gradient(135deg, #4a2828 0%, #6a3838 100%);
@@ -1638,6 +1644,10 @@ onShow(() => {
     border: none;
     box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
     text-align: center;
+
+    &::after {
+      border: none;
+    }
   }
 
   .guide-skip {
