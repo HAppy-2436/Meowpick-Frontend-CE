@@ -615,7 +615,7 @@ const goToProposalFeed = () => {
   justify-content: center;
   padding: $space-9;
   box-sizing: border-box;
-  animation: mwp-fade-in 280ms $ease-standard both;
+  animation: mwp-fade-in $motion-enter-sm $ease-standard both;
 }
 
 .guide-content {
@@ -625,7 +625,7 @@ const goToProposalFeed = () => {
   border-radius: $radius-2xl;
   padding: $space-10 $space-8;
   box-shadow: $shadow-xl;
-  animation: mwp-bounce-in 480ms $ease-spring both;
+  animation: mwp-bounce-in $motion-heart $ease-spring both;
   transition: background-color $dur-medium $ease-standard;
 }
 

@@ -146,7 +146,7 @@
     .vote-label { color: $bg-card-light; }
 
     .vote-num {
-      animation: mwp-heart-beat 480ms $ease-spring;
+      animation: mwp-heart-beat $motion-heart $ease-spring;
     }
   }
 }

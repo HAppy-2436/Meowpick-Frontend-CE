@@ -191,7 +191,7 @@ const handleClose = () => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: mwp-fade-in 240ms $ease-standard both;
+  animation: mwp-fade-in $motion-pop $ease-standard both;
 }
 
 .search-modal__sheet {
@@ -202,7 +202,7 @@ const handleClose = () => {
   padding: $space-7;
   display: flex;
   flex-direction: column;
-  animation: mwp-slide-up 360ms $ease-decelerate both;
+  animation: mwp-slide-up $motion-enter-lg $ease-decelerate both;
   transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {
@@ -359,7 +359,7 @@ const handleClose = () => {
   border: 4rpx solid rgba(178, 0, 53, 0.20);
   border-top-color: $brand-red;
   border-radius: 50%;
-  animation: mwp-spin 800ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 }
 
 .search-modal__loading-text {

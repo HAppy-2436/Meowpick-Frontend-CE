@@ -160,7 +160,7 @@ const formatTime = (iso?: string) => {
   border: 4rpx solid rgba(178, 0, 53, 0.20);
   border-top-color: $brand-red;
   border-radius: 50%;
-  animation: mwp-spin 800ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 }
 
 .loading-text {
@@ -393,7 +393,7 @@ const formatTime = (iso?: string) => {
   padding-top: $space-5;
   @include dashed-divider;
   transition: border-color $dur-fast $ease-standard;
-  animation: mwp-fade-up 240ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-pop $ease-decelerate both;
 
   .dark-theme & {
     border-top-color: $divider-dark;

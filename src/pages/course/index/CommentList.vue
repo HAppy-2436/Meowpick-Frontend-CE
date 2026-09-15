@@ -1,6 +1,11 @@
 <template>
   <view class="comment" :class="themeStore.themeClass">
-    <view v-for="item of list" :key="item.id" class="item">
+    <view
+      v-for="(item, index) of list"
+      :key="item.id"
+      class="item mwp-fade-up"
+      :style="{ animationDelay: Math.min(index * 60, 300) + 'ms' }"
+    >
       <CommentBox :data="item" @like="like" />
     </view>
   </view>

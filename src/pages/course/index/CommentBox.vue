@@ -63,7 +63,7 @@ const textTags = (tags: string[]) => tags || [];
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard,
               transform $dur-fast $ease-standard;
-  animation: mwp-fade-up 360ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate both;
 
   .dark-theme & {
     background: $bg-card-dark;
@@ -171,7 +171,7 @@ const textTags = (tags: string[]) => tags || [];
   transition: transform $dur-base $ease-spring;
 
   &.is-liked {
-    animation: mwp-heart-beat 480ms $ease-spring;
+    animation: mwp-heart-beat $motion-heart $ease-spring;
   }
 }
 

@@ -154,7 +154,7 @@
   z-index: $z-base;
   background: $bg-page-light;
   overflow: visible;
-  transition: transform 250ms $ease-standard, opacity 200ms $ease-standard;
+  transition: transform 250ms $ease-standard, opacity $dur-base $ease-standard;
 
   .dark-theme & {
     background: $bg-page-dark;
@@ -255,7 +255,7 @@
   flex-shrink: 0;
   font-size: $font-xs;
   color: $text-tertiary-light;
-  transition: transform 200ms $ease-standard, color $dur-fast $ease-standard;
+  transition: transform $dur-base $ease-standard, color $dur-fast $ease-standard;
   line-height: 1;
 
   .dark-theme & { color: $text-tertiary-dark; }
@@ -288,7 +288,7 @@
   box-shadow: $shadow-md;
   display: flex;
   flex-direction: column;
-  animation: mwp-fade-down 200ms $ease-decelerate both;
+  animation: mwp-fade-down $dur-base $ease-decelerate both;
 
   .dark-theme & {
     background: $bg-card-dark;
@@ -596,7 +596,7 @@
   border: 4rpx solid rgba(178, 0, 53, 0.20);
   border-top-color: $brand-red;
   border-radius: 50%;
-  animation: mwp-spin 800ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 }
 
 .loading-text {
@@ -676,7 +676,7 @@
   border-radius: $radius-xl;
   overflow: hidden;
   transition: transform $dur-fast $ease-emphasized;
-  animation: mwp-fade-up 320ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter $ease-decelerate both;
 
   &:active { transform: scale($press-scale-md); }
 }
@@ -890,7 +890,7 @@
   flex-direction: column;
   gap: $space-5;
   z-index: $z-tabbar + 1;
-  animation: mwp-fade-up 480ms $ease-decelerate 240ms both;
+  animation: mwp-fade-up $motion-heart $ease-decelerate $motion-pop both;
 }
 
 .fab-btn {

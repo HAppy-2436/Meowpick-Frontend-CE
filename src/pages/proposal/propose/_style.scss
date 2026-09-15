@@ -20,7 +20,7 @@
     display: flex;
     align-items: center;
     gap: $space-2;
-    animation: mwp-fade-down 360ms $ease-decelerate both;
+    animation: mwp-fade-down $motion-enter-lg $ease-decelerate both;
     @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
@@ -41,7 +41,7 @@
     margin-bottom: $space-7;
     box-shadow: $shadow-card;
     @include mwp-transition($dur-base, $ease-standard);
-    animation: mwp-fade-up 360ms $ease-decelerate both;
+    animation: mwp-fade-up $motion-enter-lg $ease-decelerate both;
 
     &:active {
         transform: scale($press-scale-sm);
@@ -297,7 +297,7 @@
     display: flex;
     align-items: center;
     gap: $space-4;
-    animation: mwp-fade-up 280ms $ease-decelerate both;
+    animation: mwp-fade-up $motion-enter-sm $ease-decelerate both;
 }
 
 .teacher-input-group {

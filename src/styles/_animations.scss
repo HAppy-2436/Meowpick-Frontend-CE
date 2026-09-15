@@ -123,17 +123,17 @@
 }
 
 // ---------- 公共类（直接挂载即可生效）----------
-.mwp-fade-up      { animation: mwp-fade-up 320ms cubic-bezier(0, 0, 0.2, 1) both; }
-.mwp-fade-down    { animation: mwp-fade-down 320ms cubic-bezier(0, 0, 0.2, 1) both; }
-.mwp-fade-in      { animation: mwp-fade-in 300ms ease both; }
-.mwp-scale-in     { animation: mwp-scale-in 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-.mwp-slide-up     { animation: mwp-slide-up 360ms cubic-bezier(0, 0, 0.2, 1) both; }
-.mwp-bounce-in    { animation: mwp-bounce-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-.mwp-pop          { animation: mwp-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.mwp-fade-up      { animation: mwp-fade-up $motion-enter $ease-decelerate both; }
+.mwp-fade-down    { animation: mwp-fade-down $motion-enter $ease-decelerate both; }
+.mwp-fade-in      { animation: mwp-fade-in $dur-medium ease both; }
+.mwp-scale-in     { animation: mwp-scale-in $motion-pop $ease-spring both; }
+.mwp-slide-up     { animation: mwp-slide-up $motion-enter-lg $ease-decelerate both; }
+.mwp-bounce-in    { animation: mwp-bounce-in $motion-bounce $ease-spring both; }
+.mwp-pop          { animation: mwp-pop $motion-pop $ease-spring both; }
 
 // 列表项 stagger：配合 style="animation-delay: ${i * 60}ms" 使用
 .mwp-stagger-item {
-  animation: mwp-fade-up 360ms cubic-bezier(0, 0, 0.2, 1) both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate both;
 }
 
 // 加载 spinner（双圈）
@@ -144,7 +144,7 @@
   border: 4rpx solid rgba(178, 0, 53, 0.18);
   border-top-color: $brand-red;
   border-radius: 50%;
-  animation: mwp-spin 800ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 }
 
 .mwp-spinner-sm {
@@ -190,16 +190,16 @@
 // 心动
 .mwp-heart {
   display: inline-block;
-  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform $dur-base $ease-spring;
 
   &.is-active {
-    animation: mwp-heart-beat 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: mwp-heart-beat $motion-heart $ease-spring;
   }
 }
 
 // 触觉按压（最常用）
 .mwp-pressable {
-  transition: transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
+  transition: transform $dur-fast $ease-emphasized,
               box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
   &:active {
     transform: scale(0.97);

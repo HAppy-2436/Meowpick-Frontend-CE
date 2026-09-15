@@ -78,7 +78,7 @@ const handleClose = () => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: mwp-fade-in 240ms $ease-standard both;
+  animation: mwp-fade-in $motion-pop $ease-standard both;
 }
 
 .teacher-list-modal__sheet {
@@ -88,7 +88,7 @@ const handleClose = () => {
   border-radius: $radius-2xl $radius-2xl 0 0;
   display: flex;
   flex-direction: column;
-  animation: mwp-slide-up 360ms $ease-decelerate both;
+  animation: mwp-slide-up $motion-enter-lg $ease-decelerate both;
   transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {
@@ -247,7 +247,7 @@ const handleClose = () => {
   display: flex;
   flex-direction: column;
   gap: $space-3;
-  animation: mwp-fade-in 360ms $ease-decelerate both;
+  animation: mwp-fade-in $motion-enter-lg $ease-decelerate both;
 }
 
 .empty-text {

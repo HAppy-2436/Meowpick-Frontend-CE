@@ -52,7 +52,7 @@
       display: flex;
       align-items: center;
       padding-right: 100rpx;
-      animation: mwp-fade-in 280ms $ease-decelerate both;
+      animation: mwp-fade-in $motion-enter-sm $ease-decelerate both;
 
       .page-title {
         font-size: $font-lg + 2rpx;
@@ -73,13 +73,13 @@
   position: relative;
   z-index: $z-base;
   padding: 0 $space-7 $space-7;
-  animation: mwp-fade-up 360ms $ease-decelerate 80ms both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate $dur-instant both;
 }
 
 .comment-section {
   padding: 0 $space-7;
   margin-top: $space-8;
-  animation: mwp-fade-up 380ms $ease-decelerate 160ms both;
+  animation: mwp-fade-up $motion-bounce $ease-decelerate $dur-fast both;
 
   .section-header {
     display: flex;
@@ -138,7 +138,7 @@
   z-index: $z-tabbar + 1;
   transition: transform $dur-fast $ease-emphasized,
               box-shadow $dur-medium $ease-standard;
-  animation: mwp-bounce-in 480ms $ease-spring 240ms both;
+  animation: mwp-bounce-in $motion-heart $ease-spring $motion-pop both;
 
   .dark-theme & {
     box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.50);

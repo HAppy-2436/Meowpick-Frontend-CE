@@ -117,7 +117,8 @@
           v-else
           v-for="(item, index) in filteredList"
           :key="item.id"
-          class="list-item mwp-pressable"
+          class="list-item mwp-pressable mwp-fade-up"
+          :style="{ animationDelay: Math.min(index * 60, 300) + 'ms' }"
           @click="onItemClick(item)"
           @longpress="onCardMenu(item)"
         >
@@ -805,7 +806,7 @@ onShow(() => {
     border-radius: 100rpx;
     box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.06);
     flex-shrink: 0;
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease-out;
+    transition: transform 0.15s $ease-standard, box-shadow 0.15s ease-out;
 
     &:active {
         transform: scale(0.92);

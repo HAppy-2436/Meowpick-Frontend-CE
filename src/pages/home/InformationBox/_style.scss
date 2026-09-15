@@ -12,7 +12,7 @@
   flex-direction: row;
   position: relative;
   padding-bottom: $space-9;
-  animation: mwp-fade-up 380ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-bounce $ease-decelerate both;
 }
 
 .timeline-column {

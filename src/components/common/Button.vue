@@ -168,7 +168,7 @@ const handleClick = (e: any) => {
   border: 3rpx solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
-  animation: mwp-spin 700ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 }
 
 .mwp-btn-icon {

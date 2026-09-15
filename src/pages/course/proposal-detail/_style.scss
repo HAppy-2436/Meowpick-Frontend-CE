@@ -53,7 +53,7 @@ $bg-gradient-top: $brand-red-tint;
       flex: 1;
       display: flex;
       align-items: center;
-      animation: mwp-fade-in 280ms $ease-decelerate both;
+      animation: mwp-fade-in $motion-enter-sm $ease-decelerate both;
 
       .page-title {
         font-size: $font-lg;
@@ -85,7 +85,7 @@ $bg-gradient-top: $brand-red-tint;
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard,
               transform $dur-base $ease-standard;
-  animation: mwp-fade-up 380ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-bounce $ease-decelerate both;
 
   &:active {
     transform: scale($press-scale-sm);
@@ -230,7 +230,7 @@ $bg-gradient-top: $brand-red-tint;
         transition: transform $dur-base $ease-spring;
 
         .is-voted & {
-          animation: mwp-bounce-in 460ms $ease-spring;
+          animation: mwp-bounce-in $dur-slow $ease-spring;
         }
       }
 

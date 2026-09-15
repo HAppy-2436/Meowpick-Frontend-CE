@@ -139,13 +139,22 @@ $ease-decelerate: cubic-bezier(0, 0, 0.2, 1);    // 入场减速
 $ease-accelerate: cubic-bezier(0.4, 0, 1, 1);     // 出场加速
 $ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  // 弹性回弹
 
-// 标准时长
+// 标准时长（交互过渡）
 $dur-instant: 100ms;
 $dur-fast: 150ms;
 $dur-base: 200ms;
 $dur-medium: 300ms;
 $dur-slow: 450ms;
 $dur-slower: 600ms;
+
+// 动效时长（入场 / 弹入 / 循环，配合 _animations.scss）
+$motion-enter-sm: 280ms;   // 轻量入场（顶部提示等）
+$motion-enter: 320ms;      // 标准入场（列表/卡片）
+$motion-enter-lg: 360ms;   // 较强入场
+$motion-pop: 240ms;        // 缩放弹入
+$motion-bounce: 380ms;     // 弹性入场
+$motion-heart: 480ms;      // 点赞心跳
+$motion-spin: 800ms;       // 加载旋转
 
 // ---------- 按压反馈缩放 ----------
 $press-scale-sm: 0.97;  // 按钮/卡片（小）

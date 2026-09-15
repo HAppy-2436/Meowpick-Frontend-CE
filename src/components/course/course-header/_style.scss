@@ -15,7 +15,7 @@
   flex-direction: column;
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard;
-  animation: mwp-fade-up 420ms $ease-decelerate both;
+  animation: mwp-fade-up $dur-slow $ease-decelerate both;
   position: relative;
   overflow: hidden;
 

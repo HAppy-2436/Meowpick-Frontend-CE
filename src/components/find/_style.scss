@@ -185,7 +185,7 @@
   z-index: $z-base;
   background: $bg-page-light;
   overflow: visible;
-  transition: transform 250ms $ease-standard, opacity 200ms $ease-standard;
+  transition: transform 250ms $ease-standard, opacity $dur-base $ease-standard;
 
   .dark-theme & {
     background: $bg-page-dark;
@@ -303,7 +303,7 @@
   flex-shrink: 0;
   font-size: $font-xs;
   color: $text-tertiary-light;
-  transition: transform 200ms $ease-standard, color $dur-fast $ease-standard;
+  transition: transform $dur-base $ease-standard, color $dur-fast $ease-standard;
   line-height: 1;
 
   .dark-theme & {
@@ -343,7 +343,7 @@
   box-shadow: $shadow-md;
   display: flex;
   flex-direction: column;
-  animation: mwp-fade-down 200ms $ease-decelerate both;
+  animation: mwp-fade-down $dur-base $ease-decelerate both;
 
   .dark-theme & {
     background: $bg-card-dark;
@@ -666,7 +666,7 @@
   border-bottom: 1rpx solid $divider-light;
   transition: background-color $dur-fast $ease-standard;
   cursor: pointer;
-  animation: mwp-fade-up 240ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-pop $ease-decelerate both;
 
   .dark-theme & {
     border-bottom-color: $divider-dark;
@@ -793,7 +793,7 @@
   border: 4rpx solid rgba(178, 0, 53, 0.20);
   border-top-color: $brand-red;
   border-radius: 50%;
-  animation: mwp-spin 800ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 
   &--sm {
     width: 32rpx;
@@ -918,7 +918,7 @@
   border-radius: $radius-lg;
   transition: transform $dur-fast $ease-emphasized;
   cursor: pointer;
-  animation: mwp-fade-up 320ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter $ease-decelerate both;
 
   &:last-child {
     margin-bottom: 0;
@@ -1076,7 +1076,7 @@
   line-height: 1;
   @include mwp-transition($dur-fast, $ease-emphasized);
   cursor: pointer;
-  animation: mwp-scale-in 240ms $ease-spring both;
+  animation: mwp-scale-in $motion-pop $ease-spring both;
 
   .dark-theme & {
     background: $bg-muted-dark;
@@ -1120,7 +1120,7 @@
   border-radius: $radius-md;
   @include mwp-transition($dur-fast, $ease-emphasized);
   cursor: pointer;
-  animation: mwp-fade-up 320ms $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter $ease-decelerate both;
   box-shadow: $shadow-xs;
 
   .dark-theme & {

@@ -119,9 +119,10 @@
 
 ### 动效规则
 
-- 时长只用 `$dur-instant/fast/base/medium/slow`；曲线只用 5 条 `$ease-*`。
+- 时长只用 `$dur-*`（交互过渡）与 `$motion-*`（入场/弹入/循环）；曲线只用 5 条 `$ease-*`。
 - 禁止 `transition: all`；只声明需要变化的属性。
-- 列表错峰节奏统一为 **60ms**。
+- 列表错峰节奏统一为 **60ms**（`Math.min(index * 60, 300)`）。
+- 所有可点击元素必须有按下反馈（`:active` 缩放或 `.mwp-pressable`），最小 `scale(0.97)`。
 - 所有动效必须有 `prefers-reduced-motion` 降级。
 
 ### 装饰语言

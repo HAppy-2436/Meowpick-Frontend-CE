@@ -242,7 +242,7 @@ const handleClose = () => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: mwp-fade-in 240ms $ease-standard both;
+  animation: mwp-fade-in $motion-pop $ease-standard both;
 }
 
 .teacher-modal__sheet {
@@ -252,7 +252,7 @@ const handleClose = () => {
   border-radius: $radius-2xl $radius-2xl 0 0;
   display: flex;
   flex-direction: column;
-  animation: mwp-slide-up 360ms $ease-decelerate both;
+  animation: mwp-slide-up $motion-enter-lg $ease-decelerate both;
   transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {
@@ -395,7 +395,7 @@ const handleClose = () => {
   border: 3rpx solid rgba(178, 0, 53, 0.20);
   border-top-color: $brand-red;
   border-radius: 50%;
-  animation: mwp-spin 800ms linear infinite;
+  animation: mwp-spin $motion-spin linear infinite;
 }
 
 .form-loading-text {

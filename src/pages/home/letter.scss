@@ -24,7 +24,7 @@
   backdrop-filter: blur(10rpx);
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard;
-  animation: mwp-fade-up 480ms $ease-decelerate 80ms both;
+  animation: mwp-fade-up $motion-heart $ease-decelerate $dur-instant both;
 
   .dark-theme & {
     background: rgba(30, 30, 30, 0.95);
