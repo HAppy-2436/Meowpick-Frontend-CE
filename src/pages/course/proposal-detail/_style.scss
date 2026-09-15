@@ -8,7 +8,7 @@ $bg-gradient-top: $brand-red-tint;
   flex-direction: column;
   transition: background-color $dur-medium $ease-standard;
 
-  .dark-theme & {
+  &.dark-theme {
     background-color: $bg-page-dark;
   }
 }

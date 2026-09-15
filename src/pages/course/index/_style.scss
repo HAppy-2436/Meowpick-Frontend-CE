@@ -4,7 +4,7 @@
   background-color: $bg-page-light;
   transition: background-color $dur-medium $ease-standard;
 
-  .dark-theme & {
+  &.dark-theme {
     background-color: $bg-page-dark;
   }
 }

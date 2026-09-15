@@ -2,7 +2,7 @@
 .timeline-container {
   padding: $space-7 $space-7 0;
 
-  .dark-theme & {
+  &.dark-theme {
     background-color: $bg-page-dark;
   }
 }

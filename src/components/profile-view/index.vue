@@ -722,7 +722,8 @@ onShow(() => {
     height: 100%;
     overflow: visible;
 
-    .dark-theme & {
+    // 根节点自身带主题类，必须用同元素选择器（.dark-theme & 需要祖先才会命中）
+    &.dark-theme {
         background-color: $bg-page-dark;
     }
 }

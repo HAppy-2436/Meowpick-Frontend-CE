@@ -10,7 +10,7 @@
   position: relative;
   transition: background-color $dur-medium $ease-standard;
 
-  .dark-theme & {
+  &.dark-theme {
     background-color: $bg-page-dark;
   }
 }
