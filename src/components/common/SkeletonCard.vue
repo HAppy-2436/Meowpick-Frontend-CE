@@ -4,7 +4,7 @@
       v-for="i in count"
       :key="i"
       class="skeleton-card mwp-stagger-item"
-      :style="{ animationDelay: `${(i - 1) * 80}ms` }"
+      :style="{ animationDelay: `${(i - 1) * 60}ms` }"
     >
       <view class="skeleton-line skeleton-title"></view>
       <view class="skeleton-row">

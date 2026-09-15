@@ -106,7 +106,7 @@
   padding: 4rpx $space-3;
   border-radius: $radius-pill;
   margin-top: 4rpx;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: rgba(178, 0, 53, 0.20);
@@ -325,7 +325,7 @@
   border: 1rpx solid transparent;
   text-align: center;
   line-height: 1;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
 
   .dark-theme & {
     color: $text-secondary-dark;

@@ -17,7 +17,7 @@
           :key="index"
           class="tag-item mwp-pressable"
           :class="{ 'is-active': item.isSelected }"
-          :style="{ animationDelay: `${Math.min(index * 40, 240)}ms` }"
+          :style="{ animationDelay: `${Math.min(index * 60, 240)}ms` }"
           @click="toggleTag(item)"
         >
           <image :src="item.icon" class="tag-icon" mode="aspectFit" />

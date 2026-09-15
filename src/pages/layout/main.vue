@@ -269,7 +269,7 @@ function onSwiperAnimationFinish(e: any) {
     font-size: $font-lg + 2rpx;
     color: $text-tertiary-light;
     font-weight: $weight-medium;
-    transition: all $dur-instant $ease-emphasized;
+    @include mwp-transition($dur-instant, $ease-emphasized);
     cursor: pointer;
 
     .dark-theme & {

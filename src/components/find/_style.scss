@@ -95,7 +95,7 @@
   display: flex;
   align-items: center;
   padding: 0 $space-5;
-  transition: all 150ms $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
   box-sizing: border-box;
 
   .dark-theme & {
@@ -596,7 +596,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   &--reset {
     background: $bg-muted-light;
@@ -866,7 +866,7 @@
   justify-content: center;
   box-shadow: $shadow-brand-sm;
   text-align: center;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
 
   &:active {
     transform: scale($press-scale-sm);
@@ -971,7 +971,7 @@
   width: fit-content;
   min-width: 360rpx;
   box-shadow: $shadow-brand-sm;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
   cursor: pointer;
 
   &:active {
@@ -1073,7 +1073,7 @@
   font-weight: $weight-medium;
   text-align: center;
   line-height: 1;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
   cursor: pointer;
   animation: mwp-scale-in 240ms $ease-spring both;
 
@@ -1117,7 +1117,7 @@
   padding: $space-4 $space-5;
   background: $bg-card-light;
   border-radius: $radius-md;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
   cursor: pointer;
   animation: mwp-fade-up 320ms $ease-decelerate both;
   box-shadow: $shadow-xs;
@@ -1265,7 +1265,7 @@
   justify-content: center;
   text-align: center;
   box-shadow: $shadow-brand-sm;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
 
   &:active {
     transform: scale($press-scale-sm);

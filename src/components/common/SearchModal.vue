@@ -39,7 +39,7 @@
             v-for="(item, idx) in results"
             :key="idx"
             class="search-modal__item mwp-stagger-item mwp-pressable"
-            :style="{ animationDelay: `${Math.min(idx * 40, 240)}ms` }"
+            :style="{ animationDelay: `${Math.min(idx * 60, 240)}ms` }"
             @click="handleSelect(item)"
           >
             <text class="search-modal__item-label">{{ item.label || item.value }}</text>
@@ -240,7 +240,7 @@ const handleClose = () => {
   justify-content: center;
   font-size: $font-2xl;
   color: $text-tertiary-light;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-tertiary-dark;
@@ -273,7 +273,7 @@ const handleClose = () => {
   background: $bg-muted-light;
   border: 2rpx solid transparent;
   border-radius: $radius-pill;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: $bg-muted-dark;
@@ -321,7 +321,7 @@ const handleClose = () => {
   border-radius: $radius-md;
   min-width: 96rpx;
   flex-shrink: 0;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   &:active {
     transform: scale($press-scale-md);
@@ -427,7 +427,7 @@ const handleClose = () => {
   background: $bg-muted-light;
   padding: 4rpx $space-3;
   border-radius: $radius-xs;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-secondary-dark;

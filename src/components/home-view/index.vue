@@ -447,7 +447,7 @@ const goToProposalFeed = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: all 0.1s;
+  @include mwp-transition($dur-instant, $ease-standard);
 
   .card-title {
     font-size: $font-md;

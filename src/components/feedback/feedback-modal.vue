@@ -161,7 +161,7 @@ const close = () => emit('update:visible', false);
   background: $bg-muted-light;
   border-radius: $radius-md;
   border: 2rpx solid transparent;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
   cursor: pointer;
 
   .dark-theme & {

@@ -370,7 +370,7 @@
   padding: $space-4;
   border-radius: $radius-md;
   border-left: 6rpx solid rgba(178, 0, 53, 0.20);
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: rgba(255, 255, 255, 0.03);

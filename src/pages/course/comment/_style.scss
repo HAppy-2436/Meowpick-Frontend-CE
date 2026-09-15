@@ -84,7 +84,7 @@
   background: $bg-muted-light;
   border-radius: $radius-md;
   border: 2rpx solid transparent;
-  transition: all $dur-fast $ease-emphasized;
+  @include mwp-transition($dur-fast, $ease-emphasized);
   animation: mwp-scale-in 240ms $ease-spring both;
   cursor: pointer;
 
@@ -139,7 +139,7 @@
   border-radius: $radius-md;
   padding: $space-5;
   border: 2rpx solid transparent;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: $bg-muted-dark;

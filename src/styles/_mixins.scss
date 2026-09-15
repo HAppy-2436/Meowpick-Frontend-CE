@@ -19,6 +19,16 @@
   }
 }
 
+// 交互过渡：只动画不会触发布局的属性，替代 `transition: all`
+@mixin mwp-transition($dur: $dur-fast, $ease: $ease-standard) {
+  transition: color $dur $ease,
+              background-color $dur $ease,
+              border-color $dur $ease,
+              box-shadow $dur $ease,
+              transform $dur $ease,
+              opacity $dur $ease;
+}
+
 // 弹性回弹（用于点赞 / 收藏图标）
 @mixin bounce-on-tap($scale: 1.18) {
   transition: transform $dur-base $ease-spring;
@@ -144,7 +154,7 @@
   font-size: $font-sm;
   font-weight: $weight-medium;
   border: 1rpx solid transparent;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 }
 
 // ---------- 渐变文字 ----------

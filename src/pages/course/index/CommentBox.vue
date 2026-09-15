@@ -6,7 +6,7 @@
           v-for="(item, index) in textTags(data.tags || [])"
           :key="index"
           class="ctag mwp-stagger-item"
-          :style="{ animationDelay: `${index * 40}ms` }"
+          :style="{ animationDelay: `${index * 60}ms` }"
         >
           <image v-if="Emoji(item)" :src="Emoji(item)" class="tag-icon" />
           <text class="txt">{{ item }}</text>

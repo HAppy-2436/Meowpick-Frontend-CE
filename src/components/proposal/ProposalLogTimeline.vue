@@ -287,7 +287,7 @@ const formatTime = (iso?: string) => {
   padding: $space-5 $space-6;
   box-shadow: $shadow-xs;
   border: 1rpx solid $divider-light;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: $bg-card-dark;
@@ -468,7 +468,7 @@ const formatTime = (iso?: string) => {
   font-size: $font-sm;
   color: $brand-red;
   font-weight: $weight-medium;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   &:active {
     transform: scale($press-scale-md);
@@ -497,7 +497,7 @@ const formatTime = (iso?: string) => {
   justify-content: center;
   font-size: $font-lg;
   line-height: 1;
-  transition: all $dur-base $ease-emphasized;
+  @include mwp-transition($dur-base, $ease-emphasized);
 
   .dark-theme & {
     background: $bg-muted-dark;

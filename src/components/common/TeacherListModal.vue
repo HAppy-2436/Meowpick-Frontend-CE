@@ -131,7 +131,7 @@ const handleClose = () => {
   justify-content: center;
   font-size: $font-2xl;
   color: $text-tertiary-light;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-tertiary-dark;
@@ -165,7 +165,7 @@ const handleClose = () => {
   padding: $space-5 $space-7;
   background: $bg-muted-light;
   border-radius: $radius-md;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: $bg-muted-dark;
@@ -229,7 +229,7 @@ const handleClose = () => {
   align-items: center;
   justify-content: center;
   margin-left: $space-4;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-tertiary-dark;

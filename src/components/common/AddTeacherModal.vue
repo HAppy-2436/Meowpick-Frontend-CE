@@ -31,7 +31,7 @@
                 :key="idx"
                 class="form-option mwp-stagger-item mwp-pressable"
                 :class="{ 'is-selected': draft.name === name }"
-                :style="{ animationDelay: `${Math.min(idx * 30, 180)}ms` }"
+                :style="{ animationDelay: `${Math.min(idx * 60, 180)}ms` }"
                 @click="selectName(name)"
               >
                 <text>{{ name }}</text>
@@ -65,7 +65,7 @@
                 :key="idx"
                 class="form-option mwp-stagger-item mwp-pressable"
                 :class="{ 'is-selected': draft.department === dept }"
-                :style="{ animationDelay: `${Math.min(idx * 30, 180)}ms` }"
+                :style="{ animationDelay: `${Math.min(idx * 60, 180)}ms` }"
                 @click="selectDept(dept)"
               >
                 <text>{{ dept }}</text>
@@ -295,7 +295,7 @@ const handleClose = () => {
   justify-content: center;
   font-size: $font-2xl;
   color: $text-tertiary-light;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-tertiary-dark;
@@ -342,7 +342,7 @@ const handleClose = () => {
   background: $bg-muted-light;
   border: 2rpx solid transparent;
   border-radius: $radius-pill;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     background: $bg-muted-dark;
@@ -417,7 +417,7 @@ const handleClose = () => {
   background: $bg-muted-light;
   border-radius: $radius-sm;
   margin-bottom: $space-2;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-primary-dark;
@@ -464,7 +464,7 @@ const handleClose = () => {
   justify-content: center;
   font-size: $font-base;
   font-weight: $weight-semibold;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   &--ghost {
     background: $bg-muted-light;

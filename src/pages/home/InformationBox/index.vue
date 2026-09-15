@@ -4,7 +4,7 @@
       v-for="(item, index) in data"
       :key="index"
       class="timeline-item mwp-stagger-item"
-      :style="{ animationDelay: `${Math.min(index * 80, 320)}ms` }"
+      :style="{ animationDelay: `${Math.min(index * 60, 300)}ms` }"
     >
       <!-- 时间线轴 -->
       <view class="timeline-column">

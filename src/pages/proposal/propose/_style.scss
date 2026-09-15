@@ -22,7 +22,7 @@
     align-items: center;
     gap: $space-2;
     animation: mwp-fade-down 360ms $ease-decelerate both;
-    transition: all $dur-fast $ease-standard;
+    @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
         background: linear-gradient(90deg, rgba(178, 0, 53, 0.20) 0%, $bg-card-dark 100%);
@@ -41,7 +41,7 @@
     padding: $space-7;
     margin-bottom: $space-7;
     box-shadow: $shadow-card;
-    transition: all $dur-base $ease-standard;
+    @include mwp-transition($dur-base, $ease-standard);
     animation: mwp-fade-up 360ms $ease-decelerate both;
 
     &:active {
@@ -191,7 +191,7 @@
         display: inline-flex;
         align-items: center;
         gap: $space-2;
-        transition: all $dur-fast $ease-standard;
+        @include mwp-transition($dur-fast, $ease-standard);
 
         .dark-theme & {
             color: $text-primary-dark;
@@ -335,7 +335,7 @@
     font-size: $font-base;
     color: $text-primary-light;
     box-sizing: border-box;
-    transition: all $dur-fast $ease-standard;
+    @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
         background: $bg-muted-dark;
@@ -363,7 +363,7 @@
     font-size: $font-sm + 2rpx;
     color: $text-primary-light;
     box-sizing: border-box;
-    transition: all $dur-fast $ease-standard;
+    @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
         background: $bg-muted-dark;
@@ -408,7 +408,7 @@
     align-items: center;
     justify-content: center;
     font-size: $font-2xl;
-    transition: all $dur-fast $ease-standard;
+    @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
         background: $bg-muted-dark;
@@ -431,7 +431,7 @@
     border-radius: $radius-sm;
     border: 1rpx dashed rgba(178, 0, 53, 0.30);
     font-size: $font-base;
-    transition: all $dur-fast $ease-standard;
+    @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
         background: rgba(178, 0, 53, 0.10);
@@ -457,7 +457,7 @@
     font-size: $font-sm + 2rpx;
     color: $text-secondary-light;
     border: 1rpx solid transparent;
-    transition: all $dur-fast $ease-emphasized;
+    @include mwp-transition($dur-fast, $ease-emphasized);
 
     .dark-theme & {
         background: $bg-muted-dark;
@@ -487,7 +487,7 @@
     padding: $space-5;
     border-radius: $radius-sm;
     box-sizing: border-box;
-    transition: all $dur-fast $ease-standard;
+    @include mwp-transition($dur-fast, $ease-standard);
 
     .dark-theme & {
         background: $bg-muted-dark;

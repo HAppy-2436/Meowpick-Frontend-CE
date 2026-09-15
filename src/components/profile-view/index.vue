@@ -1023,7 +1023,7 @@ onShow(() => {
     font-size: 28rpx;
     font-weight: 500;
     color: $text-secondary-light;
-    transition: all 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
+    @include mwp-transition($dur-fast, $ease-emphasized);
     box-sizing: border-box;
     height: 64rpx;
     line-height: 64rpx;

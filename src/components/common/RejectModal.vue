@@ -138,7 +138,7 @@ const handleConfirm = () => {
   justify-content: center;
   font-size: $font-2xl;
   color: $text-tertiary-light;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-tertiary-dark;
@@ -187,7 +187,7 @@ const handleConfirm = () => {
   border: 1rpx solid $divider-light;
   border-radius: $radius-sm;
   box-sizing: border-box;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-primary-dark;
@@ -232,7 +232,7 @@ const handleConfirm = () => {
   justify-content: center;
   font-size: $font-base;
   font-weight: $weight-semibold;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   &--ghost {
     background: $bg-muted-light;

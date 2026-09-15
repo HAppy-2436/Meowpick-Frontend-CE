@@ -105,7 +105,7 @@
   padding: $space-1 $space-3;
   font-size: $font-xs;
   color: $text-secondary-light;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
   animation: mwp-fade-up 280ms $ease-decelerate both;
 
   .dark-theme & {
@@ -147,7 +147,7 @@
   font-size: $font-sm;
   color: $text-secondary-light;
   background: transparent;
-  transition: all $dur-fast $ease-standard;
+  @include mwp-transition($dur-fast, $ease-standard);
 
   .dark-theme & {
     color: $text-secondary-dark;
