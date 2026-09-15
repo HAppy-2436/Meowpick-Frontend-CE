@@ -53,7 +53,6 @@ const textTags = (tags: string[]) => tags || [];
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .comment-box {
   background: $bg-card-light;

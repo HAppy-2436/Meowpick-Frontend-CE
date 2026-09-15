@@ -38,7 +38,6 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .skeleton-list {
   display: flex;

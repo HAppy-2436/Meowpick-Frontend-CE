@@ -47,7 +47,6 @@ const handleClick = (e: any) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .mwp-btn {
   position: relative;

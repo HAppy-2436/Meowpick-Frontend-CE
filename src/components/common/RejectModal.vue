@@ -77,7 +77,6 @@ const handleConfirm = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .reject-modal {
   position: fixed;

@@ -58,7 +58,6 @@ const close = () => emit('update:visible', false);
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .feedback-overlay {
   position: fixed;

@@ -190,7 +190,6 @@ function onSwiperAnimationFinish(e: any) {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .main-container {
   display: flex;

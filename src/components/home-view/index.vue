@@ -283,7 +283,6 @@ const goToProposalFeed = () => {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/index.scss";
 
 .home-view-container {
   box-sizing: border-box;
@@ -603,7 +602,6 @@ const goToProposalFeed = () => {
 
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 // ===== 引导弹窗 =====
 

@@ -233,7 +233,6 @@ const handleClose = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .teacher-modal {
   position: fixed;

@@ -21,9 +21,10 @@ export default defineConfig(({ command, mode }) => {
           const p = require('path');
           const t = p.resolve(__dirname, 'src/styles/_tokens.scss').replace(/\\\\/g, '/');
           const m = p.resolve(__dirname, 'src/styles/_mixins.scss').replace(/\\\\/g, '/');
-          const a = p.resolve(__dirname, 'src/styles/_animations.scss').replace(/\\\\/g, '/');
+          // 注意：只注入 tokens/mixins（零 CSS 输出）。animations 含真实类与 keyframes，
+          // 统一由 main.scss 全局引入一次，避免被重复打包进每个组件。
           return {
-            additionalData: `@import "nutui-uniapp/styles/variables.scss"; @import "${t}"; @import "${m}"; @import "${a}";`,
+            additionalData: `@import "nutui-uniapp/styles/variables.scss"; @import "${t}"; @import "${m}";`,
             loadPaths: ['src', 'node_modules'],
             includePaths: ['src', 'node_modules']
           };

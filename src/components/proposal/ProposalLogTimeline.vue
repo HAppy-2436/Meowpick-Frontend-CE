@@ -138,7 +138,6 @@ const formatTime = (iso?: string) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/index.scss";
 
 .timeline-list {
   padding: $space-5 0;
