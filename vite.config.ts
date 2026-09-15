@@ -21,10 +21,12 @@ export default defineConfig(({ command, mode }) => {
           const p = require('path');
           const t = p.resolve(__dirname, 'src/styles/_tokens.scss').replace(/\\\\/g, '/');
           const m = p.resolve(__dirname, 'src/styles/_mixins.scss').replace(/\\\\/g, '/');
-          // 注意：只注入 tokens/mixins（零 CSS 输出）。animations 含真实类与 keyframes，
-          // 统一由 main.scss 全局引入一次，避免被重复打包进每个组件。
+          const a = p.resolve(__dirname, 'src/styles/_animations.scss').replace(/\\\\/g, '/');
+          // 注意：必须把 animations 也注入每个组件。小程序自定义组件默认 styleIsolation: isolated，
+          // app.wxss 的 .mwp-* 工具类无法作用到组件内部；只放全局会导致组件（如首页卡片）丢动画。
+          // 允许一定重复打包，优先保证组件内动画/按压反馈可用。
           return {
-            additionalData: `@import "nutui-uniapp/styles/variables.scss"; @import "${t}"; @import "${m}";`,
+            additionalData: `@import "nutui-uniapp/styles/variables.scss"; @import "${t}"; @import "${m}"; @import "${a}";`,
             loadPaths: ['src', 'node_modules'],
             includePaths: ['src', 'node_modules']
           };
