@@ -1,5 +1,5 @@
 <template>
-  <view class="back-btn" @click="handleBack" :style="customStyle">
+  <view class="back-btn" @click="handleBack" :style="customStyle" hover-class="mwp-hover">
     <view class="css-back-arrow" :class="{ 'is-light': color === '$bg-card-light' || color === 'white' }"></view>
   </view>
 </template>

@@ -7,11 +7,11 @@
         <image v-else :src="avatarUrl || defaultCatAvatar" class="sticky-avatar-default" mode="aspectFill" />
       </button>
       <view class="sticky-avatar-meta">
-        <text class="sticky-avatar-name" @click="openNicknameModal">{{ userName }}</text>
+        <view class="sticky-avatar-name" hover-class="mwp-hover-sm" @click="openNicknameModal">{{ userName }}</view>
         <text class="sticky-avatar-contrib">贡献值：{{ contribution }}</text>
       </view>
       <!-- 更多按钮 -->
-      <view class="user-more-btn" @click="toggleMoreMenu">
+      <view class="user-more-btn" @click="toggleMoreMenu" hover-class="mwp-hover">
         <view class="line"></view>
         <view class="line"></view>
         <view class="line"></view>
@@ -21,41 +21,41 @@
     <!-- 更多菜单弹出层 -->
     <view v-if="showMoreMenu" class="more-menu-mask" @click="showMoreMenu = false" />
     <view v-if="showMoreMenu" class="more-menu-popover" :class="themeStore.themeClass">
-      <view class="menu-item" @click="handleMenuClick('theme')">
+      <view class="menu-item" @click="handleMenuClick('theme')" hover-class="mwp-hover">
         <text class="menu-icon">{{ themeStore.isDark ? '☀️' : '🌙' }}</text>
         <text class="menu-text">{{ themeStore.isDark ? '浅色模式' : '深色模式' }}</text>
       </view>
-      <view class="menu-item" @click="handleMenuClick('nickname')">
+      <view class="menu-item" @click="handleMenuClick('nickname')" hover-class="mwp-hover">
         <text class="menu-icon">✏️</text>
         <text class="menu-text">更改昵称</text>
       </view>
-      <view class="menu-item" @click="handleMenuClick('feed')">
+      <view class="menu-item" @click="handleMenuClick('feed')" hover-class="mwp-hover">
         <text class="menu-icon">📋</text>
         <text class="menu-text">提案广场</text>
       </view>
-      <view class="menu-item" @click="handleMenuClick('feedback')">
+      <view class="menu-item" @click="handleMenuClick('feedback')" hover-class="mwp-hover">
         <text class="menu-icon">💬</text>
         <text class="menu-text">我要反馈</text>
       </view>
       <!-- 管理员专属菜单 -->
       <template v-if="isAdmin">
-        <view class="menu-item" @click="handleMenuClick('admin')">
+        <view class="menu-item" @click="handleMenuClick('admin')" hover-class="mwp-hover">
           <text class="menu-icon">{{ adminMode ? '✅' : '❌' }}</text>
           <text class="menu-text">管理员{{ adminMode ? '' : '(已关闭)' }}</text>
         </view>
         <template v-if="adminMode">
-          <view class="menu-item" @click="handleMenuClick('logs')">
+          <view class="menu-item" @click="handleMenuClick('logs')" hover-class="mwp-hover">
             <text class="menu-icon">📑</text>
             <text class="menu-text">提案日志</text>
           </view>
-          <view class="menu-item" @click="handleMenuClick('test')">
+          <view class="menu-item" @click="handleMenuClick('test')" hover-class="mwp-hover">
             <text class="menu-icon">🧪</text>
             <text class="menu-text" :class="{ 'text-danger': testMode }">测试模式{{ testMode ? '(已开启)' : '' }}</text>
           </view>
         </template>
       </template>
       <!-- 非管理员显示更新日志 -->
-      <view v-if="!isAdmin" class="menu-item" @click="handleMenuClick('changelog')">
+      <view v-if="!isAdmin" class="menu-item" @click="handleMenuClick('changelog')" hover-class="mwp-hover">
         <text class="menu-icon">📝</text>
         <text class="menu-text">更新日志</text>
       </view>
@@ -79,19 +79,19 @@
           <view class="filter-pill"
             :class="{ active: currentFilter === 'all' }"
             @click="setFilter('all')"
-          >
+           hover-class="mwp-hover">
             <text>全部</text>
           </view>
           <view class="filter-pill"
             :class="{ active: currentFilter === 'comment' }"
             @click="setFilter('comment')"
-          >
+           hover-class="mwp-hover">
             <text>吐槽</text>
           </view>
           <view class="filter-pill"
             :class="{ active: currentFilter === 'proposal' }"
             @click="setFilter('proposal')"
-          >
+           hover-class="mwp-hover">
             <text>提案</text>
           </view>
         </view>
@@ -136,7 +136,7 @@
                   <image src="@/images/like-icon.png" class="like-icon" />
                   <text class="likes-text">{{ item.likes || 0 }}</text>
                 </view>
-                <view class="card-more-btn" @click.stop="onCardMenu(item)">
+                <view class="card-more-btn" @click.stop="onCardMenu(item)" hover-class="mwp-hover">
                   <text>⋯</text>
                 </view>
               </view>
@@ -168,7 +168,7 @@
                     :label="item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中'"
                     pill
                   />
-                  <view class="card-more-btn" @click.stop="onCardMenu(item)">
+                  <view class="card-more-btn" @click.stop="onCardMenu(item)" hover-class="mwp-hover">
                     <text>⋯</text>
                   </view>
                 </view>
@@ -211,14 +211,14 @@
           <button class="avatar-btn" open-type="chooseAvatar" @chooseavatar="onGuideChooseAvatar">
             选择头像
           </button>
-          <view class="guide-skip" @click="onGuideSkip">跳过，使用默认</view>
+          <view class="guide-skip" @click="onGuideSkip" hover-class="mwp-hover">跳过，使用默认</view>
         </view>
       </view>
     </view>
   </view>
 
   <!-- Floating Action Button -->
-  <view class="fab-btn" @click="onAddClick">
+  <view class="fab-btn" @click="onAddClick" hover-class="mwp-hover">
     <view class="plus-icon">+</view>
   </view>
 
@@ -227,7 +227,7 @@
     <view class="modal-card" :class="themeStore.themeClass" @click.stop>
       <view class="modal-header">
         <text class="modal-title">设置你的昵称</text>
-        <view class="modal-close" @click="closeNicknameModal">×</view>
+        <view class="modal-close" @click="closeNicknameModal" hover-class="mwp-hover">×</view>
       </view>
 
       <view class="modal-body">
@@ -246,8 +246,8 @@
       </view>
 
       <view class="modal-footer">
-        <view class="btn-cancel" @click="closeNicknameModal">取消</view>
-        <view class="btn-confirm" :class="{ disabled: submittingNickname }" @click="confirmNicknameChange">
+        <view class="btn-cancel" @click="closeNicknameModal" hover-class="mwp-hover">取消</view>
+        <view class="btn-confirm" :class="{ disabled: submittingNickname }" @click="confirmNicknameChange" hover-class="mwp-hover">
           {{ submittingNickname ? '提交中...' : '确认' }}
         </view>
       </view>

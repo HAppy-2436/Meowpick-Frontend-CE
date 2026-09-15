@@ -44,7 +44,7 @@
             class="vote-btn mwp-pressable"
             :class="{ 'is-voted': isVoted }"
             @click="handleVote"
-          >
+           hover-class="mwp-hover">
             <text>{{ isVoted ? '已支持' : '🙋 支持提案' }}</text>
           </view>
         </view>

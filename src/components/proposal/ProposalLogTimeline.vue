@@ -30,7 +30,7 @@
           <view v-if="idx !== logs.length - 1" class="timeline-line"></view>
         </view>
 
-        <view class="log-card mwp-pressable" @click="toggleCard(log.logId || '')">
+        <view class="log-card mwp-pressable" @click="toggleCard(log.logId || '')" hover-class="mwp-hover">
           <view class="log-header">
             <view class="header-main">
               <text class="course-name">
@@ -71,7 +71,7 @@
               </view>
             </view>
 
-            <view class="proposal-link" @click.stop="$emit('proposal-click', log.proposalId)">
+            <view class="proposal-link" @click.stop="$emit('proposal-click', log.proposalId)" hover-class="mwp-hover">
               <text>查看提案</text>
               <text class="link-arrow">›</text>
             </view>

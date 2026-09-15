@@ -20,7 +20,7 @@
             @confirm="doSearch(true)"
             confirm-type="search"
           />
-          <view v-if="keyword" class="clear-icon" @click="clearSearch">
+          <view v-if="keyword" class="clear-icon" @click="clearSearch" hover-class="mwp-hover">
             <text class="clear-text">×</text>
           </view>
         </view>
@@ -30,23 +30,23 @@
     <!-- 筛选条 -->
     <view class="filter-bar-wrapper" :class="{ 'is-hidden': isFilterHidden }" :style="{ top: headerHeight + 'px' }">
       <view class="filter-chip-bar">
-        <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.campus.length, 'is-open': openDropdown === 'campus' || openDropdown === 'all' }" @click="toggleDropdown('campus')">
+        <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.campus.length, 'is-open': openDropdown === 'campus' || openDropdown === 'all' }" @click="toggleDropdown('campus')" hover-class="mwp-hover">
           <text class="chip-text">{{ filterForm.campus.length ? filterForm.campus.map(c => c.replace('校区','')).join('+') : '校区' }}</text>
           <text class="chip-arrow">▾</text>
         </view>
-        <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.department.length, 'is-open': openDropdown === 'department' || openDropdown === 'all' }" @click="toggleDropdown('department')">
+        <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.department.length, 'is-open': openDropdown === 'department' || openDropdown === 'all' }" @click="toggleDropdown('department')" hover-class="mwp-hover">
           <text class="chip-text">{{ filterForm.department.length ? (filterForm.department.length > 1 ? filterForm.department.length + '个院系' : filterForm.department[0]) : '院系' }}</text>
           <text class="chip-arrow">▾</text>
         </view>
-        <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.category.length, 'is-open': openDropdown === 'category' || openDropdown === 'all' }" @click="toggleDropdown('category')">
+        <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.category.length, 'is-open': openDropdown === 'category' || openDropdown === 'all' }" @click="toggleDropdown('category')" hover-class="mwp-hover">
           <text class="chip-text">{{ filterForm.category.length ? (filterForm.category.length > 1 ? filterForm.category.length + '个分类' : filterForm.category[0]) : '分类' }}</text>
           <text class="chip-arrow">▾</text>
         </view>
-        <view v-if="isAdmin" class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.status.length, 'is-open': openDropdown === 'status' || openDropdown === 'all' }" @click="toggleDropdown('status')">
+        <view v-if="isAdmin" class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterForm.status.length, 'is-open': openDropdown === 'status' || openDropdown === 'all' }" @click="toggleDropdown('status')" hover-class="mwp-hover">
           <text class="chip-text">{{ filterForm.status.length ? filterForm.status.map(s => statusLabel(s)).join('+') : '状态' }}</text>
           <text class="chip-arrow">▾</text>
         </view>
-        <view class="filter-chip filter-chip--expand" :class="{ 'is-open': openDropdown === 'all' }" @click="toggleDropdown('all')">
+        <view class="filter-chip filter-chip--expand" :class="{ 'is-open': openDropdown === 'all' }" @click="toggleDropdown('all')" hover-class="mwp-hover">
           <text class="chip-arrow">▾</text>
         </view>
       </view>
@@ -58,7 +58,7 @@
           <view class="fd-group" v-if="openDropdown === 'campus' || openDropdown === 'all'">
             <text class="fd-label">校区</text>
             <view class="fd-tags">
-              <view v-for="c in campusOptions" :key="c" class="fd-tag" :class="{ active: filterForm.campus.includes(c) }" @click="toggleFilter('campus', c)">{{ c }}</view>
+              <view v-for="c in campusOptions" :key="c" class="fd-tag" :class="{ active: filterForm.campus.includes(c) }" @click="toggleFilter('campus', c)" hover-class="mwp-hover">{{ c }}</view>
             </view>
           </view>
           <view class="fd-group" v-if="openDropdown === 'department' || openDropdown === 'all'">
@@ -66,32 +66,32 @@
             <view v-if="filterForm.department.length" class="fd-selected-tags">
               <view v-for="d in filterForm.department" :key="d" class="fd-selected">
                 <text class="fd-selected-text">{{ d }}</text>
-                <text class="fd-selected-clear" @click="toggleFilterArray('department', d)">×</text>
+                <view class="fd-selected-clear" hover-class="mwp-hover-sm" @click="toggleFilterArray('department', d)">×</view>
               </view>
             </view>
             <view class="fd-search">
               <input class="fd-search-input" placeholder="搜索院系..." placeholder-class="fd-placeholder" v-model="deptKeyword" @input="onDeptSearch" />
               <view v-if="deptResults.length" class="fd-suggest-list">
-                <view v-for="item in deptResults" :key="item.value" class="fd-suggest-item" @click="selectDept(item)">{{ item.label || item.value }}</view>
+                <view v-for="item in deptResults" :key="item.value" class="fd-suggest-item" @click="selectDept(item)" hover-class="mwp-hover">{{ item.label || item.value }}</view>
               </view>
             </view>
           </view>
           <view class="fd-group" v-if="openDropdown === 'category' || openDropdown === 'all'">
             <text class="fd-label">分类</text>
             <view class="fd-tags">
-              <view v-for="c in categoryOptions" :key="c" class="fd-tag" :class="{ active: filterForm.category.includes(c) }" @click="toggleFilterArray('category', c)">{{ c }}</view>
+              <view v-for="c in categoryOptions" :key="c" class="fd-tag" :class="{ active: filterForm.category.includes(c) }" @click="toggleFilterArray('category', c)" hover-class="mwp-hover">{{ c }}</view>
             </view>
           </view>
           <view class="fd-group" v-if="isAdmin && (openDropdown === 'status' || openDropdown === 'all')">
             <text class="fd-label">状态</text>
             <view class="fd-tags">
-              <view v-for="s in statusOptions" :key="s.value" class="fd-tag" :class="{ active: filterForm.status.includes(s.value) }" @click="toggleFilter('status', s.value)">{{ s.label }}</view>
+              <view v-for="s in statusOptions" :key="s.value" class="fd-tag" :class="{ active: filterForm.status.includes(s.value) }" @click="toggleFilter('status', s.value)" hover-class="mwp-hover">{{ s.label }}</view>
             </view>
           </view>
         </view>
         <view class="fd-footer">
-          <view class="fd-btn fd-btn--reset" @click="resetFilters">重置</view>
-          <view class="fd-btn fd-btn--confirm" @click="applyFilters">确定</view>
+          <view class="fd-btn fd-btn--reset" @click="resetFilters" hover-class="mwp-hover">重置</view>
+          <view class="fd-btn fd-btn--confirm" @click="applyFilters" hover-class="mwp-hover">确定</view>
         </view>
       </view>
     </view>
@@ -153,15 +153,15 @@
             <!-- 管理员操作 -->
             <view v-if="isAdmin && adminMode" class="admin-actions" @click.stop>
               <template v-if="item.status === 'pending'">
-                <view class="admin-btn admin-btn--approve" @click="handleApprove(item)">通过</view>
-                <view class="admin-btn admin-btn--reject" @click="handleReject(item)">拒绝</view>
+                <view class="admin-btn admin-btn--approve" @click="handleApprove(item)" hover-class="mwp-hover">通过</view>
+                <view class="admin-btn admin-btn--reject" @click="handleReject(item)" hover-class="mwp-hover">拒绝</view>
               </template>
-              <view v-else class="admin-btn admin-btn--withdraw" @click="handleWithdraw(item)">
+              <view v-else class="admin-btn admin-btn--withdraw" @click="handleWithdraw(item)" hover-class="mwp-hover">
                 {{ item.status === 'approved' ? '撤回审批' : '撤回' }}
               </view>
             </view>
             <!-- 已通过：查看课程 -->
-            <view v-if="item.status === 'approved' && item.courseId" class="view-course-row" @click.stop="goToCourse(item.courseId)">
+            <view v-if="item.status === 'approved' && item.courseId" class="view-course-row" @click.stop="goToCourse(item.courseId)" hover-class="mwp-hover">
               <text class="view-course-text">查看课程</text>
               <text class="view-course-arrow">→</text>
             </view>
@@ -175,10 +175,10 @@
 
     <!-- FAB：普通用户=加号，管理员=日志 -->
     <view class="fab-group">
-      <view v-if="isAdmin && adminMode" class="fab-btn" @click="goToLogs">
+      <view v-if="isAdmin && adminMode" class="fab-btn" @click="goToLogs" hover-class="mwp-hover">
         <text class="fab-icon">📑</text>
       </view>
-      <view v-else class="fab-btn" @click="goToPropose">
+      <view v-else class="fab-btn" @click="goToPropose" hover-class="mwp-hover">
         <text class="fab-icon">+</text>
       </view>
     </view>

@@ -19,7 +19,7 @@
           :class="{ 'is-active': item.isSelected }"
           :style="{ animationDelay: `${Math.min(index * 60, 240)}ms` }"
           @click="toggleTag(item)"
-        >
+         hover-class="mwp-hover">
           <image :src="item.icon" class="tag-icon" mode="aspectFit" />
           <text class="tag-text">{{ item.text }}</text>
         </view>
@@ -45,7 +45,7 @@
     </view>
 
     <!-- 发布按钮 -->
-    <view class="publish-btn mwp-pressable" :class="{ 'is-disabled': isClicked || !canSubmit }" @click="commit">
+    <view class="publish-btn mwp-pressable" :class="{ 'is-disabled': isClicked || !canSubmit }" @click="commit" hover-class="mwp-hover">
       <text class="publish-btn__label">{{ isClicked ? '发布中...' : '发布吐槽' }}</text>
     </view>
 

@@ -21,7 +21,7 @@
 
               <view class="proposal-row-bottom">
                   <text class="proposal-badge">提案新增</text>
-                  <view class="vote-count-box" :class="{ 'is-liked': isLiked }" @click.stop="handleLike">
+                  <view class="vote-count-box" :class="{ 'is-liked': isLiked }" @click.stop="handleLike" hover-class="mwp-hover">
                       <image src="@/images/like_active.png" class="vote-icon" />
                       <text class="vote-num">{{ likeCount }}</text>
                       <text class="vote-label">支持</text>

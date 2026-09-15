@@ -7,7 +7,7 @@
       { 'is-block': block, 'is-loading': loading, 'is-disabled': disabled }
     ]"
     @click="handleClick"
-  >
+   hover-class="mwp-hover">
     <view v-if="loading" class="mwp-btn-spinner"></view>
     <text v-else-if="icon" class="mwp-btn-icon">{{ icon }}</text>
     <text class="mwp-btn-label"><slot /></text>

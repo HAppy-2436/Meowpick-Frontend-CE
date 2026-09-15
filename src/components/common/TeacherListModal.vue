@@ -1,9 +1,9 @@
 <template>
-  <view v-if="visible" class="teacher-list-modal" @click="handleClose">
+  <view v-if="visible" class="teacher-list-modal" @click="handleClose" hover-class="mwp-hover">
     <view class="teacher-list-modal__sheet" @click.stop>
       <view class="teacher-list-modal__header">
         <text class="teacher-list-modal__title">授课教师</text>
-        <view class="teacher-list-modal__close" @click="handleClose">×</view>
+        <view class="teacher-list-modal__close" @click="handleClose" hover-class="mwp-hover">×</view>
       </view>
 
       <scroll-view scroll-y class="teacher-list-modal__body">
@@ -19,7 +19,7 @@
               <text v-if="t.title" class="teacher-title">{{ t.title }}</text>
               <text v-if="t.department" class="teacher-dept">{{ t.department }}</text>
             </view>
-            <view class="teacher-remove mwp-pressable" @click.stop="handleRemove(idx)">
+            <view class="teacher-remove mwp-pressable" @click.stop="handleRemove(idx)" hover-class="mwp-hover">
               <text>×</text>
             </view>
           </view>
@@ -29,7 +29,7 @@
       </scroll-view>
 
       <view class="teacher-list-modal__footer">
-        <view class="add-btn mwp-pressable" @click="handleAdd">
+        <view class="add-btn mwp-pressable" @click="handleAdd" hover-class="mwp-hover">
           <text class="add-icon">+</text>
           <text class="add-text">添加教师</text>
         </view>

@@ -24,7 +24,7 @@
       </view>
     </view>
 
-    <view class="fab-btn mwp-pressable" @click="jump2comment">
+    <view class="fab-btn mwp-pressable" @click="jump2comment" hover-class="mwp-hover">
       <image
         class="fab-icon"
         src="@/images/comment_white.png"

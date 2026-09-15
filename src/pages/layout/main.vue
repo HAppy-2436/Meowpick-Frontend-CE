@@ -35,14 +35,14 @@
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 0 }]"
           @click="switchTab(0)"
-        >
+         hover-class="mwp-hover">
           首页
         </view>
         <view
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
           @click="onMyTabClick"
-        >
+         hover-class="mwp-hover">
           我的
         </view>
       </view>
@@ -64,7 +64,7 @@
       <view class="admin-verify-card" :class="themeStore.themeClass" @click.stop>
         <view class="admin-verify-header">
           <text class="admin-verify-title">管理员验证</text>
-          <view class="admin-verify-close" @click="showAdminVerify = false">×</view>
+          <view class="admin-verify-close" @click="showAdminVerify = false" hover-class="mwp-hover">×</view>
         </view>
         <view class="admin-verify-body">
           <text class="admin-verify-label">请输入管理员密码</text>
@@ -78,8 +78,8 @@
           />
         </view>
         <view class="admin-verify-footer">
-          <view class="admin-verify-btn admin-verify-btn--cancel" @click="showAdminVerify = false">取消</view>
-          <view class="admin-verify-btn admin-verify-btn--confirm" @click="verifyAdminPassword">确认</view>
+          <view class="admin-verify-btn admin-verify-btn--cancel" @click="showAdminVerify = false" hover-class="mwp-hover">取消</view>
+          <view class="admin-verify-btn admin-verify-btn--confirm" @click="verifyAdminPassword" hover-class="mwp-hover">确认</view>
         </view>
       </view>
     </view>

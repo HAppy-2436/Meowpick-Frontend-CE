@@ -12,7 +12,7 @@
             :style="searchBarWrapperStyle"
         >
             <!-- 左侧：返回按钮 -->
-            <view class="nav-back-btn" @click="goBack" :style="{ height: menuButtonInfo.height + 'px', width: menuButtonInfo.height + 'px' }">
+            <view class="nav-back-btn" @click="goBack" :style="{ height: menuButtonInfo.height + 'px', width: menuButtonInfo.height + 'px' }" hover-class="mwp-hover">
                 <BackBtn />
             </view>
 
@@ -31,7 +31,7 @@
                 @confirm="handleSearch"
                 placeholder-class="placeholder-style"
                 />
-                <view v-if="searchText" class="clear-icon" @click="clearSearch">
+                <view v-if="searchText" class="clear-icon" @click="clearSearch" hover-class="mwp-hover">
                     <text class="clear-text">×</text>
                 </view>
             </view>
@@ -43,19 +43,19 @@
     <!-- 筛选条（仅结果模式，移至dynamic-header外部） -->
     <view v-if="isResultMode" class="filter-bar-wrapper" :class="{ 'is-hidden': isFilterHidden }" :style="{ top: headerHeight + 'px' }">
         <view class="filter-chip-bar">
-                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.campuses.length, 'is-open': openDropdown === 'campus' || openDropdown === 'all' }" @click="toggleDropdown('campus')">
+                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.campuses.length, 'is-open': openDropdown === 'campus' || openDropdown === 'all' }" @click="toggleDropdown('campus')" hover-class="mwp-hover">
                     <text class="chip-text">{{ filterState.campuses.length ? filterState.campuses.map(c => c.replace('校区','')).join('+') : '校区' }}</text>
                     <text class="chip-arrow">▾</text>
                 </view>
-                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.departments.length, 'is-open': openDropdown === 'department' || openDropdown === 'all' }" @click="toggleDropdown('department')">
+                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.departments.length, 'is-open': openDropdown === 'department' || openDropdown === 'all' }" @click="toggleDropdown('department')" hover-class="mwp-hover">
                     <text class="chip-text">{{ filterState.departments.length ? (filterState.departments.length > 1 ? filterState.departments.length + '个院系' : filterState.departments[0]) : '院系' }}</text>
                     <text class="chip-arrow">▾</text>
                 </view>
-                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.categories.length, 'is-open': openDropdown === 'category' || openDropdown === 'all' }" @click="toggleDropdown('category')">
+                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.categories.length, 'is-open': openDropdown === 'category' || openDropdown === 'all' }" @click="toggleDropdown('category')" hover-class="mwp-hover">
                     <text class="chip-text">{{ filterState.categories.length ? (filterState.categories.length > 1 ? filterState.categories.length + '个分类' : filterState.categories[0]) : '分类' }}</text>
                     <text class="chip-arrow">▾</text>
                 </view>
-                <view class="filter-chip filter-chip--expand" :class="{ 'is-open': openDropdown === 'all' }" @click="toggleDropdown('all')">
+                <view class="filter-chip filter-chip--expand" :class="{ 'is-open': openDropdown === 'all' }" @click="toggleDropdown('all')" hover-class="mwp-hover">
                     <text class="chip-arrow">▾</text>
                 </view>
             </view>
@@ -73,7 +73,7 @@
                                 class="fd-tag"
                                 :class="{ active: filterState.campuses.includes(campus) }"
                                 @click="toggleCampus(campus)"
-                            >{{ campus.replace('校区', '') }}</view>
+                             hover-class="mwp-hover">{{ campus.replace('校区', '') }}</view>
                         </view>
                     </view>
                     <view class="fd-group" v-if="openDropdown === 'department' || openDropdown === 'all'">
@@ -81,13 +81,13 @@
                         <view v-if="filterState.departments.length" class="fd-selected-tags">
                             <view v-for="d in filterState.departments" :key="d" class="fd-selected">
                                 <text class="fd-selected-text">{{ d }}</text>
-                                <text class="fd-selected-clear" @click="removeDepartment(d)">×</text>
+                                <view class="fd-selected-clear" hover-class="mwp-hover-sm" @click="removeDepartment(d)">×</view>
                             </view>
                         </view>
                         <view class="fd-search">
                             <input class="fd-search-input" placeholder="搜索院系..." placeholder-class="fd-placeholder" v-model="deptKeyword" @input="onDeptSearch" />
                             <view v-if="deptResults.length" class="fd-suggest-list">
-                                <view v-for="item in deptResults" :key="item.value" class="fd-suggest-item" @click="selectDept(item)">{{ item.label || item.value }}</view>
+                                <view v-for="item in deptResults" :key="item.value" class="fd-suggest-item" @click="selectDept(item)" hover-class="mwp-hover">{{ item.label || item.value }}</view>
                             </view>
                         </view>
                     </view>
@@ -96,20 +96,20 @@
                         <view v-if="filterState.categories.length" class="fd-selected-tags">
                             <view v-for="cat in filterState.categories" :key="cat" class="fd-selected">
                                 <text class="fd-selected-text">{{ cat }}</text>
-                                <text class="fd-selected-clear" @click="removeCategory(cat)">×</text>
+                                <view class="fd-selected-clear" hover-class="mwp-hover-sm" @click="removeCategory(cat)">×</view>
                             </view>
                         </view>
                         <view class="fd-search">
                             <input class="fd-search-input" placeholder="搜索分类..." placeholder-class="fd-placeholder" v-model="categoryKeyword" @input="onCategorySearch" />
                             <view v-if="categoryResults.length" class="fd-suggest-list">
-                                <view v-for="item in categoryResults" :key="item.value" class="fd-suggest-item" @click="selectCategory(item)">{{ item.label || item.value }}</view>
+                                <view v-for="item in categoryResults" :key="item.value" class="fd-suggest-item" @click="selectCategory(item)" hover-class="mwp-hover">{{ item.label || item.value }}</view>
                             </view>
                         </view>
                     </view>
                 </view>
                 <view class="fd-footer">
-                    <view class="fd-btn fd-btn--reset" @click="resetFilters">重置</view>
-                    <view class="fd-btn fd-btn--confirm" @click="applyFilters">确定</view>
+                    <view class="fd-btn fd-btn--reset" @click="resetFilters" hover-class="mwp-hover">重置</view>
+                    <view class="fd-btn fd-btn--confirm" @click="applyFilters" hover-class="mwp-hover">确定</view>
                 </view>
             </view>
         </view>
@@ -133,7 +133,7 @@
           class="suggest-item"
           :class="{ 'suggest-item-input': item.type === 'input' }"
           @click="handleSuggestClick(item)"
-        >
+         hover-class="mwp-hover">
           <!-- 左侧图标/类型 -->
           <view class="item-icon-wrapper">
              <text class="mini-search-icon">🔍</text>
@@ -174,7 +174,7 @@
                         <text class="loading-text">加载中...</text>
                     </view>
                     <view v-else class="bottom">--- 到底了哟 ---</view>
-                    <view class="show-proposals-tip" @click="toggleProposalsList">
+                    <view class="show-proposals-tip" @click="toggleProposalsList" hover-class="mwp-hover">
                         <text>查看广场提案</text>
                         <image src="@/images/go-back.png" class="tip-arrow" />
                     </view>
@@ -195,7 +195,7 @@
                         </view>
                     </view>
                     <view v-if="!proposalLoading" class="bottom">--- 到底了哟 ---</view>
-                    <view v-if="!proposalLoading" class="new-card" @click="goToProposal">
+                    <view v-if="!proposalLoading" class="new-card" @click="goToProposal" hover-class="mwp-hover">
                         <text class="new-card-text">新建提案</text>
                     </view>
                 </template>
@@ -213,7 +213,7 @@
         <!-- 历史记录 -->
         <view class="section-header">
           <text class="section-title">历史搜索</text>
-          <view class="clear-history" @click="clearHistory">
+          <view class="clear-history" @click="clearHistory" hover-class="mwp-hover">
              🗑️ <!-- 暂时用 emoji 替代图标 -->
           </view>
         </view>
@@ -224,7 +224,7 @@
               :key="index" 
               class="tag-item"
               @click="clickHistory(tag)"
-            >
+             hover-class="mwp-hover">
               {{ tag }}
             </view>
             <view v-if="historyList.length === 0" class="no-history">暂无搜索记录</view>

@@ -18,7 +18,7 @@
 
     <view class="footer-section">
       <text class="date-str">{{ format(data.createdAt || data.crateAt || '') }}</text>
-      <view class="like-block mwp-pressable" @click="like">
+      <view class="like-block mwp-pressable" @click="like" hover-class="mwp-hover">
         <image
           :src="data.relation?.like ? Liked : Like"
           class="icon-small"

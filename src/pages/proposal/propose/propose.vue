@@ -34,7 +34,7 @@
       <view class="card">
          <view class="card-title">基本信息</view>
 
-         <view class="form-row" @click="openSearchModal('courseName')">
+         <view class="form-row" @click="openSearchModal('courseName')" hover-class="mwp-hover">
             <view class="label">课程名称</view>
             <view class="input-display">
               <text class="input-display__text" :class="{ 'is-empty': !formData.courseName }">
@@ -44,7 +44,7 @@
             </view>
          </view>
 
-         <view class="form-row" @click="openSearchModal('courseCode')">
+         <view class="form-row" @click="openSearchModal('courseCode')" hover-class="mwp-hover">
             <view class="label">课程代码</view>
             <view class="input-display">
               <text class="input-display__text" :class="{ 'is-empty': !formData.courseCode }">
@@ -54,7 +54,7 @@
             </view>
          </view>
 
-         <view class="form-row" @click="openSearchModal('department')">
+         <view class="form-row" @click="openSearchModal('department')" hover-class="mwp-hover">
             <view class="label">开课院系</view>
             <view class="input-display">
               <text class="input-display__text" :class="{ 'is-empty': !formData.department }">
@@ -64,7 +64,7 @@
             </view>
          </view>
 
-         <view class="form-row" @click="openSearchModal('category')">
+         <view class="form-row" @click="openSearchModal('category')" hover-class="mwp-hover">
             <view class="label">课程类别</view>
             <view class="input-display">
               <text class="input-display__text" :class="{ 'is-empty': !formData.category }">
@@ -79,7 +79,7 @@
       <view class="card">
          <view class="card-title">教学信息</view>
 
-         <view class="form-row" @click="openTeacherListModal">
+         <view class="form-row" @click="openTeacherListModal" hover-class="mwp-hover">
             <view class="label">授课教师</view>
             <view class="input-display">
               <text class="input-display__text" :class="{ 'is-empty': !formData.teachers.length }">
@@ -110,7 +110,7 @@
                     :key="campus"
                     :class="{ active: formData.campuses.includes(campus) }"
                     @click="toggleCampus(campus)"
-                >
+                 hover-class="mwp-hover">
                     {{ campus }}
                 </view>
             </view>
@@ -140,12 +140,12 @@
                   class="tag-item mwp-pressable"
                   :class="{ active: formData.showUsername === true }"
                   @click="formData.showUsername = true"
-                >展示</view>
+                 hover-class="mwp-hover">展示</view>
                 <view
                   class="tag-item mwp-pressable"
                   :class="{ active: formData.showUsername === false }"
                   @click="formData.showUsername = false"
-                >不展示</view>
+                 hover-class="mwp-hover">不展示</view>
             </view>
          </view>
          <text class="field-hint">通过后展示你的昵称；选择"否"将匿名</text>

@@ -3,7 +3,7 @@
     <view class="feedback-card mwp-bounce-in" :class="themeStore.themeClass" @click.stop>
       <view class="feedback-header">
         <text class="feedback-title">反馈</text>
-        <view class="feedback-close mwp-pressable" @click="close">×</view>
+        <view class="feedback-close mwp-pressable" @click="close" hover-class="mwp-hover">×</view>
       </view>
 
       <view class="feedback-body">
@@ -15,7 +15,7 @@
           class="feedback-section mwp-stagger-item"
           :style="{ animationDelay: `${item.delay}ms` }"
           @click="handleCopy(item)"
-        >
+         hover-class="mwp-hover">
           <view class="feedback-section-header">
             <text class="feedback-label">{{ item.label }}</text>
             <text class="feedback-hint">点击复制</text>

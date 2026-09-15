@@ -199,11 +199,24 @@
 
 // 触觉按压（最常用）
 .mwp-pressable {
-  transition: transform $dur-fast $ease-emphasized,
+  transition: transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1),
               box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
   &:active {
     transform: scale(0.97);
   }
+}
+
+// 小程序 `view` 的 :active 不触发，按压反馈统一走 hover-class="mwp-hover"。
+// 该文件已注入每个组件，故本类在每个组件内都可用。
+.mwp-hover {
+  transform: scale(0.94);
+  opacity: 0.96;
+  transition: transform 120ms cubic-bezier(0.25, 0.8, 0.25, 1), opacity 120ms ease;
+}
+.mwp-hover-sm {
+  transform: scale(0.97);
+  opacity: 0.98;
+  transition: transform 120ms cubic-bezier(0.25, 0.8, 0.25, 1), opacity 120ms ease;
 }
 
 // 减弱动画（用户系统设置 prefers-reduced-motion）

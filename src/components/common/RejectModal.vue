@@ -1,9 +1,9 @@
 <template>
-  <view v-if="visible" class="reject-modal" @click="handleCancel">
+  <view v-if="visible" class="reject-modal" @click="handleCancel" hover-class="mwp-hover">
     <view class="reject-modal__sheet" @click.stop>
       <view class="reject-modal__header">
         <text class="reject-modal__title">拒绝提案</text>
-        <view class="reject-modal__close" @click="handleCancel">×</view>
+        <view class="reject-modal__close" @click="handleCancel" hover-class="mwp-hover">×</view>
       </view>
 
       <view class="reject-modal__body">
@@ -23,14 +23,14 @@
       </view>
 
       <view class="reject-modal__footer">
-        <view class="reject-modal__btn reject-modal__btn--ghost mwp-pressable" @click="handleCancel">
+        <view class="reject-modal__btn reject-modal__btn--ghost mwp-pressable" @click="handleCancel" hover-class="mwp-hover">
           <text>取消</text>
         </view>
         <view
           class="reject-modal__btn reject-modal__btn--primary mwp-pressable"
           :class="{ 'is-disabled': !reason.trim() }"
           @click="handleConfirm"
-        >
+         hover-class="mwp-hover">
           <text>确认拒绝</text>
         </view>
       </view>

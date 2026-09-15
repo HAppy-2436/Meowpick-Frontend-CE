@@ -1,9 +1,9 @@
 <template>
-  <view v-if="visible" class="search-modal" @click="handleClose">
+  <view v-if="visible" class="search-modal" @click="handleClose" hover-class="mwp-hover">
     <view class="search-modal__sheet" @click.stop>
       <view class="search-modal__header">
         <text class="search-modal__title">{{ title }}</text>
-        <view class="search-modal__close" @click="handleClose">×</view>
+        <view class="search-modal__close" @click="handleClose" hover-class="mwp-hover">×</view>
       </view>
 
       <view class="search-modal__input-row">
@@ -22,7 +22,7 @@
           v-if="allowAdd && keyword.trim()"
           class="search-modal__add-btn mwp-pressable"
           @click="handleAddNew"
-        >
+         hover-class="mwp-hover">
           <text class="search-modal__add-icon">+</text>
           <text class="search-modal__add-text">新增</text>
         </view>
@@ -41,7 +41,7 @@
             class="search-modal__item mwp-stagger-item mwp-pressable"
             :style="{ animationDelay: `${Math.min(idx * 60, 240)}ms` }"
             @click="handleSelect(item)"
-          >
+           hover-class="mwp-hover">
             <text class="search-modal__item-label">{{ item.label || item.value }}</text>
             <view v-if="field === 'teacherName' && item.courses && item.courses.length" class="search-modal__courses">
               <text

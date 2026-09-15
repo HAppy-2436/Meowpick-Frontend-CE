@@ -1,9 +1,9 @@
 <template>
-  <view v-if="visible" class="teacher-modal" @click="handleClose">
+  <view v-if="visible" class="teacher-modal" @click="handleClose" hover-class="mwp-hover">
     <view class="teacher-modal__sheet" @click.stop>
       <view class="teacher-modal__header">
         <text class="teacher-modal__title">添加教师</text>
-        <view class="teacher-modal__close" @click="handleClose">×</view>
+        <view class="teacher-modal__close" @click="handleClose" hover-class="mwp-hover">×</view>
       </view>
 
       <scroll-view scroll-y class="teacher-modal__body">
@@ -33,7 +33,7 @@
                 :class="{ 'is-selected': draft.name === name }"
                 :style="{ animationDelay: `${Math.min(idx * 60, 180)}ms` }"
                 @click="selectName(name)"
-              >
+               hover-class="mwp-hover">
                 <text>{{ name }}</text>
                 <text v-if="draft.name === name" class="form-option__check">✓</text>
               </view>
@@ -67,7 +67,7 @@
                 :class="{ 'is-selected': draft.department === dept }"
                 :style="{ animationDelay: `${Math.min(idx * 60, 180)}ms` }"
                 @click="selectDept(dept)"
-              >
+               hover-class="mwp-hover">
                 <text>{{ dept }}</text>
                 <text v-if="draft.department === dept" class="form-option__check">✓</text>
               </view>
@@ -77,14 +77,14 @@
       </scroll-view>
 
       <view class="teacher-modal__footer">
-        <view class="teacher-modal__btn teacher-modal__btn--ghost mwp-pressable" @click="handleClose">
+        <view class="teacher-modal__btn teacher-modal__btn--ghost mwp-pressable" @click="handleClose" hover-class="mwp-hover">
           <text>取消</text>
         </view>
         <view
           class="teacher-modal__btn teacher-modal__btn--primary mwp-pressable"
           :class="{ 'is-disabled': !canConfirm }"
           @click="handleConfirm"
-        >
+         hover-class="mwp-hover">
           <text>确认添加</text>
         </view>
       </view>

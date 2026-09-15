@@ -25,7 +25,7 @@
  * 用法：
  *   <TopNavBar title="提案广场" :subtitle="`${total} 条记录`" />
  *   <TopNavBar title="详情" @back="goBack">
- *     <template #right><view @click="onShare">分享</view></template>
+ *     <template #right><view @click="onShare" hover-class="mwp-hover">分享</view></template>
  *   </TopNavBar>
  */
 import { computed } from "vue";
