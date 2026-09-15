@@ -136,4 +136,11 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
     border-top-color: $divider-dark;
   }
 }
+
+// 暗色：用低透明白色扫光，避免亮块刺眼
+.dark-theme .skeleton-line,
+.dark-theme .skeleton-circle,
+.dark-theme .skeleton-chip {
+  @include shimmer-dark;
+}
 </style>

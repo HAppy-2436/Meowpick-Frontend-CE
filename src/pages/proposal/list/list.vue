@@ -109,10 +109,7 @@
       <view class="content-spacer" :style="{ height: contentPaddingTop }" />
 
       <!-- Loading -->
-      <view v-if="loading && proposals.length === 0" class="loading-section">
-        <view class="loading-spinner" />
-        <text class="loading-text">加载中...</text>
-      </view>
+      <SkeletonCard v-if="loading && proposals.length === 0" :count="4" class="skeleton-wrap" />
 
       <!-- 空状态 -->
       <EmptyState

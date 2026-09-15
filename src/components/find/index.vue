@@ -156,10 +156,7 @@
 
       <!-- 场景 C: 结果模式 -> 显示 Result List -->
       <view v-else-if="isResultMode" class="result-section">
-        <view v-if="loading && groupedRows.courses.length === 0" class="loading-section">
-          <view class="loading-spinner" />
-          <text class="loading-text">搜索中...</text>
-        </view>
+        <SkeletonCard v-if="loading && groupedRows.courses.length === 0" :count="3" />
         <view v-else class="list-content">
                 <!-- Courses Section -->
                 <view class="group-section" v-if="groupedRows.courses.length">

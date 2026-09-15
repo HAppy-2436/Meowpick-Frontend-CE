@@ -581,32 +581,6 @@
   pointer-events: none;
 }
 
-// =====================================================
-// Loading
-// =====================================================
-.loading-section {
-  padding: $space-12 0;
-  text-align: center;
-}
-
-.loading-spinner {
-  width: 60rpx;
-  height: 60rpx;
-  margin: 0 auto $space-5;
-  border: 4rpx solid rgba(178, 0, 53, 0.20);
-  border-top-color: $brand-red;
-  border-radius: 50%;
-  animation: mwp-spin $motion-spin linear infinite;
-}
-
-.loading-text {
-  font-size: $font-base;
-  color: $text-secondary-light;
-  text-align: center;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & { color: $text-secondary-dark; }
-}
 
 
 // =====================================================
@@ -614,6 +588,10 @@
 // =====================================================
 .result-section {
   padding: 0 $space-7 $space-9;
+}
+
+.skeleton-wrap {
+  padding: 0 $space-7;
 }
 
 .result-card {
@@ -842,7 +820,6 @@
 @media (prefers-reduced-motion: reduce) {
   .result-card,
   .fab-group,
-  .loading-spinner,
   .filter-dropdown,
   .search-input-box,
   .filter-chip {

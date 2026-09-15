@@ -99,10 +99,7 @@
 
       <!-- 列表（my-publish-card 用 sticky 整体悬停，列表在内部自然展开） -->
       <view class="list-container" :style="{ minHeight: listMinHeight + 'px' }">
-        <view class="loading-state" v-if="loading">
-          <view class="loading-spinner"></view>
-          <text class="loading-text">加载中...</text>
-        </view>
+        <SkeletonCard v-if="loading" :count="3" />
 
         <EmptyState v-else-if="error" tone="danger" emoji="⚠️" title="加载失败" compact>
           <template #action>
@@ -1302,35 +1299,8 @@ onShow(() => {
     gap: 12rpx;
 }
 
-// 加载状态
-
-.loading-state {
-    width: 100%;
-    padding: 200rpx 0;
-    text-align: center;
-
-    .loading-spinner {
-        width: 80rpx;
-        height: 80rpx;
-        margin: 0 auto 24rpx;
-        border: 4rpx solid $border-color-strong-light;
-        border-top-color: $brand-red;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    .loading-text {
-        font-size: 28rpx;
-        color: $text-secondary-light;
-    }
-}
 
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
 
 /* Modal: Nickname & Feedback (shared base styles) */
 .modal-overlay {
@@ -1499,7 +1469,6 @@ onShow(() => {
 .profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #{$bg-card-dark} 100%); border-color: rgba(178,0,53,0.2); }
 .profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); }
 .profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #{$bg-card-dark}); }
-.profile-container.dark-theme .loading-state .loading-text { color: $text-tertiary-dark; }
 
 .dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }
@@ -1511,7 +1480,6 @@ onShow(() => {
 .dark-theme .guide-overlay.dark-theme .guide-footer .start-btn { opacity: 0.85; }
 
 .profile-container.dark-theme .sticky-bar .filter-pill.active { color: $pure-white; }
-.profile-container.dark-theme .loading-state .loading-spinner { border-color: $divider-card-dark; border-top-color: $brand-red-soft; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
 /* More Menu Dark Mode - ⋯ 按钮现已在 user-info-layer 内 */
