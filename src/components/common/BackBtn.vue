@@ -51,8 +51,14 @@ const arrowStyle = computed(() => ({
   margin-left: 2rpx;
   border-bottom: 4.5rpx solid $brand-red;
   border-left: 4.5rpx solid $brand-red;
-  border-radius: 4rpx;
+  border-radius: $radius-xs;
   transition: border-color $dur-fast $ease-standard;
+
+  // 暗色下品牌红对比度偏低，提亮一档
+  .dark-theme & {
+    border-bottom-color: $brand-red-soft;
+    border-left-color: $brand-red-soft;
+  }
 
   &.is-light {
     border-bottom-color: $bg-card-light;

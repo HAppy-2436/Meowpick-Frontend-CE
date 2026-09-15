@@ -85,7 +85,7 @@
           </view>
         </view>
         <view class="guide-footer">
-          <button class="guide-btn guide-btn--auth" @click="onGuideDismiss">我知道了</button>
+          <Button tone="brand" block size="lg" @click="onGuideDismiss">我知道了</Button>
         </view>
       </view>
     </view>
@@ -699,41 +699,6 @@ const goToProposalFeed = () => {
 }
 
 .guide-footer {
-  .guide-btn {
-    width: 100%;
-    height: 88rpx;
-    line-height: 88rpx;
-    border-radius: $radius-pill;
-    font-size: $font-lg;
-    font-weight: $weight-semibold;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    @include pressable($press-scale-sm);
-
-    &--auth {
-      background: $gradient-brand;
-      color: $pure-white;
-      box-shadow: $shadow-brand-md;
-
-      &:active {
-        transform: scale($press-scale-sm);
-        opacity: 0.92;
-      }
-    }
-
-    &--skip {
-      background: transparent;
-      color: $text-secondary-light;
-      font-size: $font-base;
-      font-weight: $weight-medium;
-      height: 72rpx;
-      line-height: 72rpx;
-      margin-top: $space-3;
-    }
-  }
 
   .guide-dont-ask {
     text-align: center;
@@ -758,14 +723,12 @@ const goToProposalFeed = () => {
     .step-title { color: $text-primary-dark; }
     .step-desc { color: $text-tertiary-dark; }
   }
-  .guide-btn--skip { color: $text-secondary-dark; }
   .guide-dont-ask { color: $text-tertiary-dark; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .guide-overlay,
-  .guide-content,
-  .guide-btn {
+  .guide-content {
     animation: none;
     transition: none;
   }

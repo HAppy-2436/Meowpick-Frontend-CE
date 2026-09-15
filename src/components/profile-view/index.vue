@@ -1422,7 +1422,12 @@ onShow(() => {
 
     &:focus {
         border-color: $brand-red;
-        background-color: #fff;
+        background-color: $bg-card-light;
+
+        .dark-theme & {
+            background-color: $bg-card-dark;
+            border-color: $brand-red-soft;
+        }
     }
 }
 

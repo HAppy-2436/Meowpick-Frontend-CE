@@ -152,9 +152,17 @@
       </view>
 
       <!-- 提交按钮 -->
-      <button class="submit-btn" @click="submit" :disabled="submitting || (quotaInfo?.remaining ?? 1) <= 0">
+      <Button
+        class="submit-btn"
+        tone="brand"
+        size="lg"
+        block
+        :loading="submitting"
+        :disabled="submitting || (quotaInfo?.remaining ?? 1) <= 0"
+        @click="submit"
+      >
         {{ submitting ? '提交中...' : (isApproveMode ? '通过提案' : (editProposalId ? '重新提交' : '发布提案')) }}
-      </button>
+      </Button>
       <view class="safe-area-bottom"></view>
 
     </view>
