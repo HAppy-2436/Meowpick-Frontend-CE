@@ -1115,23 +1115,23 @@ onShow(() => {
 
 .card {
     background: $bg-card-light;
-    border-radius: 24rpx;
-    box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.05);
+    border-radius: $radius-xl;
+    box-shadow: $shadow-card;
     display: flex;
     overflow: hidden;
     position: relative;
-    margin-bottom: 24rpx;
-    border: $border-light;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: $space-6;
+    transition: transform $dur-base $ease-emphasized,
+                box-shadow $dur-base $ease-standard;
 
     &:active {
-        transform: scale(0.98);
-        box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+        transform: scale($press-scale-sm);
+        box-shadow: $shadow-sm;
     }
 
     &.proposal-card {
-        background: linear-gradient(135deg, #fff5f6 0%, #ffffff 100%);
-        box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.06); 
+        background: linear-gradient(135deg, $brand-red-tint 0%, $bg-card-light 100%);
+        box-shadow: $shadow-comp-glow;
         border: 1px solid rgba(178, 0, 53, 0.15);
 
         .course-row-middle {

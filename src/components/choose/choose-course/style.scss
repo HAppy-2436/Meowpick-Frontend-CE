@@ -11,7 +11,7 @@
   position: relative;
   overflow: hidden;
   padding: $space-7;
-  border-radius: $radius-lg;
+  border-radius: $radius-xl;
   background: $gradient-brand-soft;
   border: 1rpx solid rgba(178, 0, 53, 0.15);
   box-shadow: $shadow-comp-glow;
@@ -196,14 +196,13 @@
   display: flex;
   flex-direction: column;
   background: $bg-card-light;
-  border-radius: $radius-lg;
-  border: 1rpx solid $divider-light;
-  box-shadow: $shadow-comp;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-card;
   overflow: hidden;
   position: relative;
   will-change: transform;
-  transition: box-shadow $dur-base $ease-standard,
-              border-color $dur-base $ease-standard;
+  transition: transform $dur-base $ease-emphasized,
+              box-shadow $dur-base $ease-standard;
 
   // 顶部 1px 高光线（仅亮色）
   &::before {
@@ -220,7 +219,7 @@
 
   &:active {
     transform: scale($press-scale-sm);
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+    box-shadow: $shadow-xs;
 
     &::before {
       opacity: 1;
@@ -229,7 +228,6 @@
 
   .dark-theme & {
     background: $bg-card-dark;
-    border-color: $divider-dark;
     box-shadow: $shadow-sm-dark;
   }
 }

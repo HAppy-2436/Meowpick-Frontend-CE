@@ -672,8 +672,8 @@
 }
 
 .result-card {
-  margin-bottom: $space-5;
-  border-radius: $radius-lg;
+  margin-bottom: $space-6;
+  border-radius: $radius-xl;
   overflow: hidden;
   transition: transform $dur-fast $ease-emphasized;
   animation: mwp-fade-up 320ms $ease-decelerate both;
@@ -683,13 +683,14 @@
 
 .result-card-wrapper {
   background: $bg-card-light;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-xs;
-  transition: background-color $dur-medium $ease-standard;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-card;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-base $ease-standard;
 
   .dark-theme & {
     background: $bg-card-dark;
-    box-shadow: $shadow-xs-dark;
+    box-shadow: $shadow-sm-dark;
   }
 }
 

@@ -372,8 +372,8 @@ const goToProposalFeed = () => {
     display: flex;
     align-items: center;
     background-color: $bg-card-light;
-    border-radius: 40rpx;
-    padding: 0 30rpx;
+    border-radius: $radius-pill;
+    padding: 0 $space-7;
 
     box-shadow: $shadow-brand-md;
     border: none;
@@ -435,8 +435,8 @@ const goToProposalFeed = () => {
 // 通用卡片 - 面板风格
 .card-item {
   background-color: $bg-card-light;
-  border-radius: 36rpx;
-  padding: 30rpx;
+  border-radius: $radius-xl;
+  padding: $space-7;
   position: relative;
   overflow: hidden;
   box-shadow: $shadow-comp-glow;
@@ -512,7 +512,7 @@ const goToProposalFeed = () => {
   font-size: $font-xs;
   font-weight: 700;
   padding: 4rpx 12rpx;
-  border-radius: 20rpx;
+  border-radius: $radius-pill;
   z-index: 3;
 }
 
@@ -523,8 +523,8 @@ const goToProposalFeed = () => {
   background-color: $bg-card-light;
   border: 1rpx solid rgba(0,0,0,0.03);
   color: $text-primary-light;
-  border-radius: 36rpx;
-  padding: 40rpx;
+  border-radius: $radius-xl;
+  padding: $space-8;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
