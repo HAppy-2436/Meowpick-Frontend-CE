@@ -72,8 +72,8 @@
 
   &[disabled],
   &.disabled {
-    background: #cccccc;
-    color: #ffffff;
+    background: $text-placeholder-light;
+    color: $pure-white;
     box-shadow: none;
     transform: none;
   }

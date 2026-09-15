@@ -229,9 +229,9 @@
 // ---------- 全局 placeholder 颜色（深色模式友好） ----------
 // 用法：<input placeholder-class="mwp-placeholder" />
 .mwp-placeholder {
-  color: #cccccc;
+  color: $text-placeholder-light;
   font-weight: 400;
 }
 .dark-theme .mwp-placeholder {
-  color: #555555;
+  color: $text-placeholder-dark;
 }
