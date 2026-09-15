@@ -86,7 +86,7 @@ const handleConfirm = () => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: mwp-fade-in $motion-pop $ease-standard both;
+  animation: mwp-fade-in $motion-pop $ease-standard backwards;
 }
 
 .reject-modal__sheet {
@@ -96,7 +96,7 @@ const handleConfirm = () => {
   padding-bottom: calc(#{$space-7} + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  animation: mwp-slide-up $motion-enter-lg $ease-decelerate both;
+  animation: mwp-slide-up $motion-enter-lg $ease-decelerate backwards;
   transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {

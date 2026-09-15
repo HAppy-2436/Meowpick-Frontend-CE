@@ -288,7 +288,7 @@
   box-shadow: $shadow-md;
   display: flex;
   flex-direction: column;
-  animation: mwp-fade-down $dur-base $ease-decelerate both;
+  animation: mwp-fade-down $dur-base $ease-decelerate backwards;
 
   .dark-theme & {
     background: $bg-card-dark;
@@ -599,7 +599,7 @@
   border-radius: $radius-card;
   overflow: hidden;
   transition: transform $dur-fast $ease-emphasized;
-  animation: mwp-fade-up $motion-enter $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
 
   &:active { transform: scale($press-scale-md); }
 }
@@ -792,7 +792,7 @@
   flex-direction: column;
   gap: $space-5;
   z-index: $z-tabbar + 1;
-  animation: mwp-fade-up $motion-heart $ease-decelerate $motion-pop both;
+  animation: mwp-fade-up $motion-heart $ease-decelerate $motion-pop backwards;
 }
 
 .fab-btn {

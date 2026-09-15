@@ -21,24 +21,24 @@
     <view class="toolbox-section" :style="{ height: L.toolboxHeight + 'px', gap: L.cardGap + 'px', padding: '0 10rpx' }">
       <view class="left-group" :style="{ gap: L.cardGap + 'px' }">
         <view
+          class="card-item log-card mwp-pressable mwp-stagger-item"
+          @click="goToProposalFeed"
+          :style="{ animationDelay: '60ms' }"
+        >
+          <text class="card-title">提案广场</text>
+          <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">Proposals</text>
+          <text class="card-bg-icon">📋</text>
+        </view>
+
+        <view
           class="card-item letter-card mwp-pressable mwp-stagger-item"
           @click="goToLetter"
-          :style="{ animationDelay: '60ms' }"
+          :style="{ animationDelay: '120ms' }"
         >
           <text class="card-title">致用户的一封信</text>
           <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">To Users</text>
           <text class="card-bg-icon">✉️</text>
           <view v-if="showNewIcon" class="new-tag">NEW</view>
-        </view>
-
-        <view
-          class="card-item log-card mwp-pressable mwp-stagger-item"
-          @click="goToProposalFeed"
-          :style="{ animationDelay: '120ms' }"
-        >
-          <text class="card-title">提案广场</text>
-          <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">Proposals</text>
-          <text class="card-bg-icon">📋</text>
         </view>
       </view>
 
@@ -482,9 +482,10 @@ const goToProposalFeed = () => {
       transform: scale($press-scale-sm);
   }
 
-  &.letter-card {
+  // 主功能卡：提案广场，品牌渐变 + 品牌标题色
+  &.log-card {
       background: linear-gradient(135deg, $pure-white 0%, $brand-red-tint 100%);
-      .card-title { color: $brand-red-soft; }
+      .card-title { color: $brand-red; }
   }
 }
 
@@ -497,7 +498,7 @@ const goToProposalFeed = () => {
   .card-subtitle { color: $text-tertiary-dark; }
 }
 
-.dark-theme .letter-card {
+.dark-theme .log-card {
   background: linear-gradient(135deg, $bg-muted-dark 0%, $bg-card-dark 100%);
   .card-title { color: $brand-red-soft; }
 }
@@ -615,7 +616,7 @@ const goToProposalFeed = () => {
   justify-content: center;
   padding: $space-9;
   box-sizing: border-box;
-  animation: mwp-fade-in $motion-enter-sm $ease-standard both;
+  animation: mwp-fade-in $motion-enter-sm $ease-standard backwards;
 }
 
 .guide-content {
@@ -625,7 +626,7 @@ const goToProposalFeed = () => {
   border-radius: $radius-2xl;
   padding: $space-10 $space-8;
   box-shadow: $shadow-xl;
-  animation: mwp-bounce-in $motion-heart $ease-spring both;
+  animation: mwp-bounce-in $motion-heart $ease-spring backwards;
   transition: background-color $dur-medium $ease-standard;
 }
 

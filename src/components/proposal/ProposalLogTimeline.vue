@@ -361,7 +361,7 @@ const formatTime = (iso?: string) => {
   padding-top: $space-5;
   @include dashed-divider;
   transition: border-color $dur-fast $ease-standard;
-  animation: mwp-fade-up $motion-pop $ease-decelerate both;
+  animation: mwp-fade-up $motion-pop $ease-decelerate backwards;
 
   .dark-theme & {
     border-top-color: $divider-dark;

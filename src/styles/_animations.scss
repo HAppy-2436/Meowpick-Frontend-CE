@@ -123,17 +123,17 @@
 }
 
 // ---------- 公共类（直接挂载即可生效）----------
-.mwp-fade-up      { animation: mwp-fade-up $motion-enter $ease-decelerate both; }
-.mwp-fade-down    { animation: mwp-fade-down $motion-enter $ease-decelerate both; }
-.mwp-fade-in      { animation: mwp-fade-in $dur-medium ease both; }
-.mwp-scale-in     { animation: mwp-scale-in $motion-pop $ease-spring both; }
-.mwp-slide-up     { animation: mwp-slide-up $motion-enter-lg $ease-decelerate both; }
-.mwp-bounce-in    { animation: mwp-bounce-in $motion-bounce $ease-spring both; }
-.mwp-pop          { animation: mwp-pop $motion-pop $ease-spring both; }
+.mwp-fade-up      { animation: mwp-fade-up $motion-enter $ease-decelerate backwards; }
+.mwp-fade-down    { animation: mwp-fade-down $motion-enter $ease-decelerate backwards; }
+.mwp-fade-in      { animation: mwp-fade-in $dur-medium ease backwards; }
+.mwp-scale-in     { animation: mwp-scale-in $motion-pop $ease-spring backwards; }
+.mwp-slide-up     { animation: mwp-slide-up $motion-enter-lg $ease-decelerate backwards; }
+.mwp-bounce-in    { animation: mwp-bounce-in $motion-bounce $ease-spring backwards; }
+.mwp-pop          { animation: mwp-pop $motion-pop $ease-spring backwards; }
 
 // 列表项 stagger：配合 style="animation-delay: ${i * 60}ms" 使用
 .mwp-stagger-item {
-  animation: mwp-fade-up $motion-enter-lg $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
 }
 
 // 加载 spinner（双圈）

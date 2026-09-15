@@ -63,7 +63,7 @@ const textTags = (tags: string[]) => tags || [];
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard,
               transform $dur-fast $ease-standard;
-  animation: mwp-fade-up $motion-enter-lg $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
 
   .dark-theme & {
     background: $bg-card-dark;

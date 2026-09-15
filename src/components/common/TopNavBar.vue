@@ -97,7 +97,7 @@ const navBarHeight = computed(() => (menuButtonInfo.top || 0) + (menuButtonInfo.
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  animation: mwp-fade-in $motion-pop ease both;
+  animation: mwp-fade-in $motion-pop ease backwards;
 
   &.has-back {
     margin-left: $space-4;

@@ -23,7 +23,7 @@
   box-shadow: $shadow-md;
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard;
-  animation: mwp-fade-up $motion-heart $ease-decelerate $dur-instant both;
+  animation: mwp-fade-up $motion-heart $ease-decelerate $dur-instant backwards;
 
   .dark-theme & {
     background: $bg-card-dark;

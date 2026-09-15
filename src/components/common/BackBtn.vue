@@ -51,7 +51,7 @@ const arrowStyle = computed(() => ({
   margin-left: 2rpx;
   border-bottom: 4.5rpx solid $brand-red;
   border-left: 4.5rpx solid $brand-red;
-  border-radius: $radius-xs;
+  border-radius: 4rpx;
   transition: border-color $dur-fast $ease-standard;
 
   // 暗色下品牌红对比度偏低，提亮一档

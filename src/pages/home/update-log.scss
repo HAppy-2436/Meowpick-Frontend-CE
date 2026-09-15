@@ -49,7 +49,7 @@
       left: auto;
       right: auto;
       transform: none;
-      animation: mwp-fade-in $motion-enter-sm $ease-decelerate both;
+      animation: mwp-fade-in $motion-enter-sm $ease-decelerate backwards;
 
       .page-title {
         font-size: $font-lg;
@@ -70,5 +70,5 @@
 .log-list {
   position: relative;
   z-index: $z-base;
-  animation: mwp-fade-up $motion-bounce $ease-decelerate $dur-instant both;
+  animation: mwp-fade-up $motion-bounce $ease-decelerate $dur-instant backwards;
 }

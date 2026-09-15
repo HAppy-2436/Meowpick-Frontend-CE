@@ -21,7 +21,7 @@
   transition: background-color $dur-medium $ease-standard,
               box-shadow $dur-medium $ease-standard,
               opacity $dur-fast $ease-standard;
-  animation: mwp-fade-up $motion-enter-lg $ease-decelerate both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
 
   &:nth-of-type(1) { animation-delay: 60ms; }
   &:nth-of-type(2) { animation-delay: 120ms; }
@@ -84,7 +84,7 @@
   border-radius: $radius-md;
   border: 2rpx solid transparent;
   @include mwp-transition($dur-fast, $ease-emphasized);
-  animation: mwp-scale-in $motion-pop $ease-spring both;
+  animation: mwp-scale-in $motion-pop $ease-spring backwards;
   cursor: pointer;
 
   .dark-theme & {
@@ -197,7 +197,7 @@
   text-align: center;
   line-height: 1;
   box-shadow: $shadow-brand-sm;
-  animation: mwp-fade-up $motion-enter-lg $ease-decelerate $dur-fast both;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate $dur-fast backwards;
 
   &:active {
     transform: scale($press-scale-sm);
@@ -227,7 +227,7 @@
   align-items: center;
   justify-content: center;
   z-index: $z-modal;
-  animation: mwp-fade-in $dur-base $ease-standard both;
+  animation: mwp-fade-in $dur-base $ease-standard backwards;
 
   .dark-theme & {
     background-color: $bg-overlay-dark;

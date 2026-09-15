@@ -242,7 +242,7 @@ const handleClose = () => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: mwp-fade-in $motion-pop $ease-standard both;
+  animation: mwp-fade-in $motion-pop $ease-standard backwards;
 }
 
 .teacher-modal__sheet {
@@ -252,7 +252,7 @@ const handleClose = () => {
   border-radius: $radius-2xl $radius-2xl 0 0;
   display: flex;
   flex-direction: column;
-  animation: mwp-slide-up $motion-enter-lg $ease-decelerate both;
+  animation: mwp-slide-up $motion-enter-lg $ease-decelerate backwards;
   transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {
