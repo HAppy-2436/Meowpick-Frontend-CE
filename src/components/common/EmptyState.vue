@@ -49,6 +49,10 @@ const emoji = computed(() => props.emoji);
   text-align: center;
   animation: mwp-fade-in 400ms ease both;
 
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
   &.compact {
     padding: 48rpx 24rpx;
   }

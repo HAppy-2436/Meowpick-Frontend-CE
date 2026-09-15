@@ -57,6 +57,7 @@
   justify-content: center;
   margin-right: $space-4;
   flex-shrink: 0;
+  @include pressable($press-scale-md);
 }
 
 .search-input-box {
@@ -530,7 +531,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  @include mwp-transition($dur-fast, $ease-standard);
+  @include pressable($press-scale-sm);
 
   &--reset {
     background: $bg-muted-light;
@@ -843,7 +844,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  @include mwp-transition($dur-fast, $ease-standard);
+  @include pressable($press-scale-sm);
 
   &--approve {
     background: linear-gradient(135deg, $success, #2e7d32);

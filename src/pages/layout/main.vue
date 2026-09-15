@@ -352,6 +352,7 @@ function onSwiperAnimationFinish(e: any) {
   justify-content: center;
   font-size: $font-2xl;
   color: $text-tertiary-light;
+  @include pressable($press-scale-md);
 
   .dark-theme & {
     color: $text-tertiary-dark;
@@ -406,6 +407,7 @@ function onSwiperAnimationFinish(e: any) {
   justify-content: center;
   font-size: $font-md;
   font-weight: $weight-semibold;
+  @include pressable($press-scale-sm);
 
   &--cancel {
     color: $text-secondary-light;

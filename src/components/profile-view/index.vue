@@ -117,7 +117,7 @@
           v-else
           v-for="(item, index) in filteredList"
           :key="item.id"
-          class="list-item"
+          class="list-item mwp-pressable"
           @click="onItemClick(item)"
           @longpress="onCardMenu(item)"
         >
@@ -1019,7 +1019,7 @@ onShow(() => {
 
 .filter-pill {
     padding: 0 24rpx;
-    border-radius: 60rpx;
+    border-radius: $radius-pill;
     font-size: 28rpx;
     font-weight: 500;
     color: $text-secondary-light;
@@ -1027,6 +1027,10 @@ onShow(() => {
     box-sizing: border-box;
     height: 64rpx;
     line-height: 64rpx;
+
+    &:active {
+        transform: scale($press-scale-sm);
+    }
 
     &.active {
         background: $gradient-brand;
@@ -1421,10 +1425,11 @@ onShow(() => {
     .retry-btn {
         background: $gradient-brand;
         color: white;
-        border-radius: 24rpx;
+        border-radius: $radius-md;
         font-size: 28rpx;
         padding: 16rpx 48rpx;
         border: none;
+        @include pressable($press-scale-sm);
     }
 }
 
@@ -1480,6 +1485,7 @@ onShow(() => {
         align-items: center;
         justify-content: center;
         line-height: 1;
+        @include pressable($press-scale-md);
     }
 }
 
@@ -1547,7 +1553,7 @@ onShow(() => {
         align-items: center;
         justify-content: center;
         font-size: 30rpx;
-        transition: opacity 0.15s;
+        @include pressable($press-scale-sm);
     }
 
     .btn-cancel {
@@ -1770,6 +1776,7 @@ onShow(() => {
     font-size: 28rpx;
     color: $text-tertiary-light;
     padding: 24rpx 0 0;
+    @include pressable($press-scale-sm);
   }
 }
 </style>

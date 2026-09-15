@@ -10,8 +10,8 @@
     </view>
     
     <!-- 搜索区域 -->
-    <view class="search-section" hover-class="search-hover" @click="goToSearch" :style="{ marginBottom: L.gap + 'px' }">
-      <view class="search-box" :style="{ height: L.searchHeight + 'px' }">
+    <view class="search-section mwp-fade-down" @click="goToSearch" :style="{ marginBottom: L.gap + 'px' }">
+      <view class="search-box mwp-pressable" :style="{ height: L.searchHeight + 'px' }">
         <text class="search-icon">🔍</text>
         <text class="search-placeholder">搜索课程、老师或吐槽...</text>
       </view>
@@ -21,9 +21,9 @@
     <view class="toolbox-section" :style="{ height: L.toolboxHeight + 'px', gap: L.cardGap + 'px', padding: '0 10rpx' }">
       <view class="left-group" :style="{ gap: L.cardGap + 'px' }">
         <view
-          class="card-item letter-card"
-          hover-class="card-hover"
+          class="card-item letter-card mwp-pressable mwp-stagger-item"
           @click="goToLetter"
+          :style="{ animationDelay: '60ms' }"
         >
           <text class="card-title">致用户的一封信</text>
           <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">To Users</text>
@@ -32,9 +32,9 @@
         </view>
 
         <view
-          class="card-item log-card"
-          hover-class="card-hover"
+          class="card-item log-card mwp-pressable mwp-stagger-item"
           @click="goToProposalFeed"
+          :style="{ animationDelay: '120ms' }"
         >
           <text class="card-title">提案广场</text>
           <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">Proposals</text>
@@ -43,7 +43,7 @@
       </view>
 
       <view class="right-group">
-        <view class="stat-card">
+        <view class="stat-card mwp-stagger-item" :style="{ animationDelay: '180ms' }">
           <view class="stat-title">已收录吐槽</view>
           <view class="stat-number" :style="{ fontSize: L.statNumSize + 'px', marginBottom: L.cardTitleGap + 'px' }">{{ totalComment }}</view>
           <view class="stat-unit" :style="{ fontSize: L.statUnitSize + 'px' }">条</view>
@@ -711,6 +711,7 @@ const goToProposalFeed = () => {
     align-items: center;
     justify-content: center;
     border: none;
+    @include pressable($press-scale-sm);
 
     &--auth {
       background: $gradient-brand;
