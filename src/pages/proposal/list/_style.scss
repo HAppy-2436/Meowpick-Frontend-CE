@@ -608,61 +608,6 @@
   .dark-theme & { color: $text-secondary-dark; }
 }
 
-// =====================================================
-// 空状态
-// =====================================================
-.empty-section {
-  padding: $space-12 $space-7;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: $space-4;
-}
-
-.empty-emoji {
-  font-size: 96rpx;
-  line-height: 1;
-}
-
-.empty-text {
-  font-size: $font-lg;
-  color: $text-primary-light;
-  font-weight: $weight-semibold;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & { color: $text-primary-dark; }
-}
-
-.empty-hint {
-  font-size: $font-sm;
-  color: $text-tertiary-light;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & { color: $text-tertiary-dark; }
-}
-
-.empty-btn {
-  margin-top: $space-5;
-  padding: 0 $space-9;
-  height: 80rpx;
-  min-width: 280rpx;
-  background: $gradient-brand;
-  color: $pure-white;
-  border-radius: $radius-pill;
-  font-size: $font-base;
-  font-weight: $weight-semibold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: $shadow-brand-sm;
-  @include mwp-transition($dur-fast, $ease-emphasized);
-
-  &:active {
-    transform: scale($press-scale-sm);
-    box-shadow: $shadow-brand-md;
-  }
-}
 
 // =====================================================
 // 结果区
@@ -727,27 +672,6 @@
   .dark-theme & { color: $text-primary-dark; }
 }
 
-.proposal-status {
-  flex-shrink: 0;
-  font-size: $font-xs;
-  font-weight: $weight-semibold;
-  padding: 4rpx $space-3;
-  border-radius: $radius-pill;
-  line-height: 1.2;
-
-  &.status-pending {
-    background: $info-soft;
-    color: $info;
-  }
-  &.status-approved {
-    background: $success-soft;
-    color: $success;
-  }
-  &.status-rejected {
-    background: $danger-soft;
-    color: $brand-red;
-  }
-}
 
 .proposal-row-middle {
   display: flex;

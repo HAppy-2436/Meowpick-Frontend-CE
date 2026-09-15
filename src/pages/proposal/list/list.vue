@@ -115,14 +115,16 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-else-if="!loading && proposals.length === 0" class="empty-section">
-        <text class="empty-emoji">🐾</text>
-        <text class="empty-text">暂无提案</text>
-        <text class="empty-hint">快来发起第一个吧</text>
-        <view class="empty-btn" @click="goToPropose">
-          <text>发起提案</text>
-        </view>
-      </view>
+      <EmptyState
+        v-else-if="!loading && proposals.length === 0"
+        emoji="🐾"
+        title="暂无提案"
+        desc="快来发起第一个吧"
+      >
+        <template #action>
+          <Button tone="brand" @click="goToPropose">发起提案</Button>
+        </template>
+      </EmptyState>
 
       <!-- 提案列表 -->
       <view v-else class="result-section">
@@ -131,9 +133,7 @@
             <view class="proposal-content">
               <view class="proposal-row-top">
                 <text class="proposal-name">{{ item.courseName }}</text>
-                <view v-if="item.status" class="proposal-status" :class="`status-${item.status}`">
-                  {{ statusLabel(item.status) }}
-                </view>
+                <StatusBadge v-if="item.status" :status="item.status" :label="statusLabel(item.status)" pill />
               </view>
               <view class="proposal-row-middle">
                 <view v-if="item.teachers" class="proposal-info-item">

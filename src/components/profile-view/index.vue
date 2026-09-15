@@ -104,14 +104,13 @@
           <text class="loading-text">加载中...</text>
         </view>
 
-        <view class="error-state" v-else-if="error">
-          <text class="error-text">加载失败</text>
-          <button class="retry-btn" @click="loadData">重试</button>
-        </view>
+        <EmptyState v-else-if="error" tone="danger" emoji="⚠️" title="加载失败" compact>
+          <template #action>
+            <Button tone="danger" @click="loadData">重试</Button>
+          </template>
+        </EmptyState>
 
-        <view class="empty-tip" v-else-if="filteredList.length === 0">
-          <text>这里空空如也~</text>
-        </view>
+        <EmptyState v-else-if="filteredList.length === 0" emoji="🐾" title="这里空空如也~" compact />
 
         <view
           v-else
@@ -167,16 +166,11 @@
                   <text class="vote-label">支持</text>
                 </view>
                 <view class="footer-right">
-                  <text
-                    class="status-badge"
-                    :class="{
-                      'status-approved': item.status === 'approved',
-                      'status-rejected': item.status === 'rejected',
-                      'status-pending': item.status === 'pending'
-                    }"
-                  >
-                    {{ item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中' }}
-                  </text>
+                  <StatusBadge
+                    :status="item.status"
+                    :label="item.status === 'approved' ? '已采纳' : item.status === 'rejected' ? '已拒绝' : '投票中'"
+                    pill
+                  />
                   <view class="card-more-btn" @click.stop="onCardMenu(item)">
                     <text>⋯</text>
                   </view>
@@ -1217,28 +1211,6 @@ onShow(() => {
              }
         }
 
-        .status-badge {
-            padding: 10rpx 20rpx;
-            border-radius: $radius-pill;
-            font-size: 24rpx;
-            font-weight: 600;
-            
-            &.status-pending {
-                background: linear-gradient(90deg, rgba(0, 102, 204, 0.08), rgba(0, 102, 204, 0.04));
-                color: #0066cc;
-                border: 1px solid rgba(0, 102, 204, 0.05);
-            }
-            &.status-approved {
-                background: linear-gradient(90deg, rgba(56, 142, 60, 0.08), rgba(56, 142, 60, 0.04));
-                color: #388E3C;
-                border: 1px solid rgba(56, 142, 60, 0.05);
-            }
-            &.status-rejected {
-                background: linear-gradient(90deg, rgba(178, 0, 53, 0.08), rgba(178, 0, 53, 0.04));
-                color: $brand-red;
-                border: 1px solid rgba(178, 0, 53, 0.05);
-            }
-        }
     }
 }
 
@@ -1331,15 +1303,6 @@ onShow(() => {
 }
 
 // 加载状态
-.empty-tip {
-    padding: 200rpx 0;
-    text-align: center;
-
-    text {
-        font-size: 28rpx;
-        color: $text-tertiary-light;
-    }
-}
 
 .loading-state {
     width: 100%;
@@ -1362,29 +1325,6 @@ onShow(() => {
     }
 }
 
-// 错误状态
-.error-state {
-    width: 100%;
-    padding: 200rpx 0;
-    text-align: center;
-
-    .error-text {
-        font-size: 28rpx;
-        color: #f43f30;
-        display: block;
-        margin-bottom: 32rpx;
-    }
-
-    .retry-btn {
-        background: $gradient-brand;
-        color: white;
-        border-radius: $radius-pill;
-        font-size: 28rpx;
-        padding: 16rpx 48rpx;
-        border: none;
-        @include pressable($press-scale-sm);
-    }
-}
 
 @keyframes spin {
     to {
@@ -1554,12 +1494,7 @@ onShow(() => {
 .profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #{$bg-card-dark} 100%); border-color: rgba(178,0,53,0.2); }
 .profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); }
 .profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #{$bg-card-dark}); }
-.profile-container.dark-theme .empty-tip text { color: $text-placeholder-dark; }
 .profile-container.dark-theme .loading-state .loading-text { color: $text-tertiary-dark; }
-.profile-container.dark-theme .error-state .error-text { color: #ff6b6b; }
-.profile-container.dark-theme .status-badge.status-pending { background: rgba(0, 102, 204, 0.2); color: #4da6ff; border-color: rgba(0, 102, 204, 0.2); }
-.profile-container.dark-theme .status-badge.status-approved { background: rgba(56, 142, 60, 0.2); color: #66bb6a; border-color: rgba(56, 142, 60, 0.2); }
-.profile-container.dark-theme .status-badge.status-rejected { background: rgba(178, 0, 53, 0.2); color: #ff6b8a; border-color: rgba(178, 0, 53, 0.2); }
 
 .dark-theme .guide-overlay { background-color: rgba(0,0,0,0.45); }
 .guide-overlay.dark-theme { background-color: rgba(0,0,0,0.45); }

@@ -5,16 +5,18 @@
       <text class="loading-text">加载中...</text>
     </view>
 
-    <view v-else-if="error" class="error-state">
-      <text class="error-text">加载失败</text>
-      <button class="retry-btn mwp-pressable" @click="$emit('retry')">重试</button>
-    </view>
+    <EmptyState v-else-if="error" tone="danger" emoji="⚠️" title="加载失败" compact>
+      <template #action>
+        <Button tone="danger" @click="$emit('retry')">重试</Button>
+      </template>
+    </EmptyState>
 
-    <view v-else-if="logs.length === 0" class="empty-state">
-      <text class="empty-emoji">📋</text>
-      <text class="empty-text">暂无操作记录</text>
-      <text class="empty-hint">管理员审批 / 撤回后会显示在这里</text>
-    </view>
+    <EmptyState
+      v-else-if="logs.length === 0"
+      emoji="📋"
+      title="暂无操作记录"
+      desc="管理员审批 / 撤回后会显示在这里"
+    />
 
     <view v-else class="timeline">
       <view
@@ -143,9 +145,7 @@ const formatTime = (iso?: string) => {
   padding: $space-5 0;
 }
 
-.loading-state,
-.error-state,
-.empty-state {
+.loading-state {
   padding: $space-12 0;
   text-align: center;
   display: flex;
@@ -171,42 +171,10 @@ const formatTime = (iso?: string) => {
   }
 }
 
-.error-text {
-  font-size: $font-base;
-  color: $brand-red;
-}
 
-.retry-btn {
-  margin-top: $space-3;
-  padding: $space-3 $space-7;
-  background: $gradient-brand;
-  color: #fff;
-  border-radius: $radius-pill;
-  font-size: $font-sm;
-  font-weight: $weight-medium;
-  box-shadow: $shadow-brand-sm;
-}
 
-.empty-emoji {
-  font-size: 96rpx;
-}
 
-.empty-text {
-  font-size: $font-lg;
-  color: $text-primary-light;
-  font-weight: $weight-semibold;
-  .dark-theme & {
-    color: $text-primary-dark;
-  }
-}
 
-.empty-hint {
-  font-size: $font-sm;
-  color: $text-tertiary-light;
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-}
 
 .timeline {
   position: relative;

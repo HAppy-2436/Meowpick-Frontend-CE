@@ -25,10 +25,7 @@
           </view>
         </view>
 
-        <view v-else class="empty-tip">
-          <text class="empty-text">暂无教师信息</text>
-          <text class="empty-hint">请点击下方按钮添加</text>
-        </view>
+        <EmptyState v-else emoji="👩‍🏫" title="暂无教师信息" desc="请点击下方按钮添加" compact />
       </scroll-view>
 
       <view class="teacher-list-modal__footer">
@@ -241,34 +238,8 @@ const handleClose = () => {
   }
 }
 
-.empty-tip {
-  text-align: center;
-  padding: $space-12 $space-7;
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-  animation: mwp-fade-in $motion-enter-lg $ease-decelerate both;
-}
 
-.empty-text {
-  font-size: $font-base;
-  color: $text-secondary-light;
-  font-weight: $weight-medium;
-  text-align: center;
 
-  .dark-theme & {
-    color: $text-secondary-dark;
-  }
-}
-
-.empty-hint {
-  font-size: $font-sm;
-  color: $text-tertiary-light;
-
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-}
 
 .teacher-list-modal__footer {
   padding: $space-5 $space-7 calc(#{$space-7} + env(safe-area-inset-bottom));

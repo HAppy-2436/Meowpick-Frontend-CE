@@ -144,12 +144,21 @@ const handleClick = (e: any) => {
   background: transparent;
   color: $brand-red;
   border-color: rgba(178, 0, 53, 0.35);
+  .dark-theme & {
+    color: $brand-red-soft;
+    border-color: rgba(255, 77, 106, 0.45);
+  }
 }
 
 .tone-danger {
   background: $danger-soft;
   color: $brand-red;
   border-color: rgba(178, 0, 53, 0.20);
+  .dark-theme & {
+    background: rgba(255, 77, 106, 0.14);
+    color: $brand-red-soft;
+    border-color: rgba(255, 77, 106, 0.30);
+  }
 }
 
 .tone-plain {

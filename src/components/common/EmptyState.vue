@@ -67,22 +67,27 @@ const emoji = computed(() => props.emoji);
   justify-content: center;
   margin-bottom: $space-6;
   background: $gradient-brand-soft;
+}
 
-  .tone-danger & {
-    background: linear-gradient(135deg, rgba(178, 0, 53, 0.08) 0%, rgba(178, 0, 53, 0.02) 100%);
-  }
-  .tone-info & {
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.08) 0%, rgba(0, 102, 204, 0.02) 100%);
-  }
-  .tone-neutral & {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.01) 100%);
-  }
+.tone-danger .empty-illust {
+  background: $gradient-danger-soft;
+}
+.tone-info .empty-illust {
+  background: $gradient-info-soft;
+}
+.tone-neutral .empty-illust {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.01) 100%);
+}
 
-  .dark-theme & {
-    .tone-neutral & {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
-    }
-  }
+// 暗色：实色/低透明填充在深底上重建层次（统一 .dark-theme 祖先）
+.dark-theme .tone-neutral .empty-illust {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+.dark-theme .tone-danger .empty-illust {
+  background: linear-gradient(135deg, rgba(255, 77, 106, 0.16) 0%, rgba(255, 77, 106, 0.04) 100%);
+}
+.dark-theme .tone-info .empty-illust {
+  background: linear-gradient(135deg, rgba(77, 166, 255, 0.16) 0%, rgba(77, 166, 255, 0.04) 100%);
 }
 
 .empty-emoji {
