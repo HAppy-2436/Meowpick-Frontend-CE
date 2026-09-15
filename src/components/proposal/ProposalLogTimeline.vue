@@ -348,11 +348,19 @@ const formatTime = (iso?: string) => {
   }
   &.badge-delete {
     background: $warning-soft;
-    color: $warning;
+    color: $warning-text;
   }
   &.badge-update {
     background: $info-soft;
     color: $info;
+  }
+
+  .dark-theme & {
+    &.badge-create,
+    &.badge-update { color: $info-text-dark; }
+    &.badge-approve { color: $success-text-dark; }
+    &.badge-delete { color: $warning-text-dark; }
+    &.badge-reject { color: $brand-red-soft; }
   }
 }
 

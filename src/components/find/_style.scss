@@ -999,7 +999,7 @@
   padding: $space-5 $space-7;
   border-radius: $radius-md;
   background: $warning-soft;
-  color: $warning;
+  color: $warning-text;
   font-size: $font-sm;
   font-weight: $weight-medium;
   text-align: left;
@@ -1007,7 +1007,7 @@
 
   .dark-theme & {
     background: rgba(230, 162, 60, 0.20);
-    color: $warning;
+    color: $warning-text-dark;
   }
 }
 

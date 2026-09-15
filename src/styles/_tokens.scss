@@ -12,19 +12,25 @@ $brand-red-deep: #8a0028;     // 按压态深红
 $brand-red-glow: rgba(178, 0, 53, 0.30);   // 品牌发光环
 
 // 状态色完整集
-$success: #388E3C;
-$success-soft: rgba(56, 142, 60, 0.12);
-$success-deep: #2e7d32;
-$warning: #E6A23C;
+// 注：$success/$warning/$info 为「视觉色」，用于图标/边框/背景；
+//     需要作为文字时请用 *-text 变体，保证 ≥4.5:1 对比度。
+$success: #2e7d32;           // 白底 5.13:1
+$success-soft: rgba(46, 125, 50, 0.12);
+$success-deep: #1b5e20;
+$warning: #E6A23C;           // 仅视觉使用（图标/背景）
 $warning-soft: rgba(230, 162, 60, 0.14);
 $warning-deep: #c79141;
+$warning-text: #8a5a00;      // 白底 5.93:1
+$warning-text-dark: #ffca7a; // 暗底 11.1:1
 $danger: #b20035;
 $danger-soft: rgba(178, 0, 53, 0.10);
 $danger-deep: #ff4d4f;
 $danger-light: #ff7875;
-$info: #0066cc;
+$info: #0066cc;              // 白底 5.57:1
 $info-soft: rgba(0, 102, 204, 0.10);
 $info-deep: #1565c0;
+$info-text-dark: #4da6ff;    // 暗底 6.52:1
+$success-text-dark: #81c784; // 暗底 8.28:1
 
 // 纯白与纯黑（语义）
 $pure-white: #ffffff;

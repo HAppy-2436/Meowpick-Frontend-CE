@@ -86,18 +86,22 @@ const label = computed(() => {
 .status-success {
   color: $success;
   background: $success-soft;
+  .dark-theme & { color: $success-text-dark; }
 }
 .status-warning {
-  color: $warning;
+  color: $warning-text;
   background: $warning-soft;
+  .dark-theme & { color: $warning-text-dark; }
 }
 .status-danger {
   color: $danger;
   background: $danger-soft;
+  .dark-theme & { color: $brand-red-soft; }
 }
 .status-info {
   color: $info;
   background: $info-soft;
+  .dark-theme & { color: $info-text-dark; }
 }
 .status-neutral {
   color: $text-secondary-light;
