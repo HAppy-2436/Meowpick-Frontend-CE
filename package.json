@@ -44,6 +44,8 @@
     "prepare": "husky install",
     "type-check": "vue-tsc --noEmit",
     "api": "npx swagger-typescript-api -p src/swagger.json -o ./src/api --modular --templates ./templates/modular --axios --enum-names-as-values --module-name-first-tag --single-http-client",
+    "theme:gen": "node scripts/gen-theme-colors.mjs",
+    "theme:check": "node scripts/gen-theme-colors.mjs --check",
     "release": "release-it"
   },
   "dependencies": {
