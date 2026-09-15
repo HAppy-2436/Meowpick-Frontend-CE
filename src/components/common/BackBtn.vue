@@ -35,73 +35,32 @@ const arrowStyle = computed(() => ({
 
 <style scoped lang="scss">
 
-// 圆形浅底 + 圆头 chevron：明确的点击热区，视觉更清晰
 .back-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  background: $bg-muted-light;
-  transition: background-color $dur-fast $ease-standard,
-              transform $dur-fast $ease-emphasized,
-              box-shadow $dur-base $ease-standard;
-
-  &:active {
-    transform: scale(0.94);
-    background: $divider-light;
-  }
-
-  .dark-theme & {
-    background: $bg-muted-dark;
-
-    &:active {
-      background: $bg-muted-darker;
-    }
-  }
+  @include pressable(0.92);
 }
 
-// 圆头 chevron：两根圆角短棒绕同一顶点旋转
+// 矢量 chevron（内联 SVG，任意尺寸都清晰，不再用旋转的 rpx 短棒）
+// stroke 颜色：浅色 #b20035 / 暗色 #ff4d6a / is-light #ffffff
 .css-back-arrow {
-  position: relative;
-  width: 26rpx;
-  height: 26rpx;
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    left: 5rpx;
-    top: 10rpx;
-    width: 16rpx;
-    height: 5rpx;
-    border-radius: 5rpx;
-    background: $brand-red;
-    transform-origin: 0 50%;
-    transition: background-color $dur-fast $ease-standard;
-  }
-
-  &::before {
-    transform: rotate(-45deg);
-  }
-  &::after {
-    transform: rotate(45deg);
-  }
+  width: 40rpx;
+  height: 40rpx;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjYjIwMDM1JyBzdHJva2Utd2lkdGg9JzIuNicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJz48cGF0aCBkPSdNMTUgNUw4IDEyTDE1IDE5Jy8+PC9zdmc+");
 
   // 暗色下品牌红对比度偏低，提亮一档
   .dark-theme & {
-    &::before,
-    &::after {
-      background: $brand-red-soft;
-    }
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmY0ZDZhJyBzdHJva2Utd2lkdGg9JzIuNicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJz48cGF0aCBkPSdNMTUgNUw4IDEyTDE1IDE5Jy8+PC9zdmc+");
   }
 
   &.is-light {
-    &::before,
-    &::after {
-      background: $bg-card-light;
-    }
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmZmZmJyBzdHJva2Utd2lkdGg9JzIuNicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJz48cGF0aCBkPSdNMTUgNUw4IDEyTDE1IDE5Jy8+PC9zdmc+");
   }
 }
 </style>
