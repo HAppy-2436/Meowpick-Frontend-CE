@@ -189,13 +189,6 @@ function onSwiperAnimationFinish(e: any) {
 }
 </script>
 
-<style lang="scss">
-/* Global More Button - 胶囊风格，与筛选胶囊统一 */
-
-/* Popover - 位置由 inline style 控制，紧邻 ⋯ 按钮下方 */
-
-</style>
-
 <style lang="scss" scoped>
 @import "@/styles/index.scss";
 

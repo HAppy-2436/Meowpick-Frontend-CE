@@ -1573,8 +1573,8 @@ onShow(() => {
 /* Feedback Modal Styles 已迁移至 components/feedback/feedback-modal.vue */
 </style>
 
-<style lang="scss">
-.profile-container.dark-theme { background-color: $bg-card-dark !important; }
+<style lang="scss" scoped>
+.profile-container.dark-theme { background-color: $bg-card-dark; }
 .profile-container.dark-theme .capsule-mask { background-color: $bg-page-dark; }
 
 /* User info layer dark mode */
@@ -1593,18 +1593,18 @@ onShow(() => {
 .profile-container.dark-theme .sticky-bar .filter-pill { color: $text-tertiary-dark; }
 .profile-container.dark-theme .list-container { padding: 24rpx 32rpx 40rpx; }
 .profile-container.dark-theme .list-item { background: transparent; }
-.profile-container.dark-theme .card { background: $bg-card-dark !important; border-color: $divider-card-dark; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
+.profile-container.dark-theme .card { background: $bg-card-dark; border-color: $divider-card-dark; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
 .profile-container.dark-theme .card .card-main { background: transparent; }
 .profile-container.dark-theme .card .course-row-top .course-name { color: $text-primary-dark; }
 .profile-container.dark-theme .card .course-row-top .time-text { color: $text-secondary-light; }
-.profile-container.dark-theme .card .course-row-middle { background: $bg-muted-dark !important; }
+.profile-container.dark-theme .card .course-row-middle { background: $bg-muted-dark; }
 .profile-container.dark-theme .card .course-row-middle .course-info-item { color: $text-tertiary-light; }
 .profile-container.dark-theme .card .content-text { color: $text-placeholder-light; }
 .profile-container.dark-theme .card .footer-row { border-color: rgba(255,255,255,0.05); }
 .profile-container.dark-theme .card .footer-row .likes-text { color: $text-tertiary-dark; }
 .profile-container.dark-theme .card .footer-row .likes-box { background: transparent; }
-.profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #{$bg-card-dark} 100%) !important; border-color: rgba(178,0,53,0.2); }
-.profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5) !important; border-color: rgba(178,0,53,0.1); }
+.profile-container.dark-theme .card.proposal-card { background: linear-gradient(135deg, #1a0a0e 0%, #{$bg-card-dark} 100%); border-color: rgba(178,0,53,0.2); }
+.profile-container.dark-theme .card.proposal-card .course-row-middle { background: rgba(30,30,30,0.5); border-color: rgba(178,0,53,0.1); }
 .profile-container.dark-theme .card.proposal-card .vote-count-box { background: linear-gradient(90deg, #2a1a1e, #{$bg-card-dark}); }
 .profile-container.dark-theme .empty-tip text { color: $text-placeholder-dark; }
 .profile-container.dark-theme .loading-state .loading-text { color: $text-tertiary-dark; }

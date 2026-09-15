@@ -296,7 +296,7 @@ const goToProposalFeed = () => {
 }
 
 .dark-theme {
-  background-color: $bg-page-dark !important;
+  background-color: $bg-page-dark;
 }
 
 // 新增：顶部欢迎语样式
@@ -500,7 +500,7 @@ const goToProposalFeed = () => {
 
 .dark-theme .letter-card {
   background: linear-gradient(135deg, $bg-muted-dark 0%, $text-primary-light 100%);
-  .card-title { color: $brand-red !important; }
+  .card-title { color: $brand-red; }
 }
 
 .new-tag {
@@ -602,7 +602,7 @@ const goToProposalFeed = () => {
 </style>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/index.scss";
 
 // ===== 引导弹窗 =====
