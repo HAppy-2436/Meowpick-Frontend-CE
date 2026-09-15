@@ -774,7 +774,7 @@
 
 .proposal-row-contributor {
   padding-top: $space-3;
-  border-top: 1rpx dashed $divider-light;
+  @include dashed-divider;
   transition: border-color $dur-fast $ease-standard;
 
   .dark-theme & { border-top-color: $divider-dark; }

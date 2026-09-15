@@ -181,7 +181,7 @@
 .tags-section {
   margin-top: $space-9;
   padding-top: $space-6;
-  border-top: 2rpx dashed $divider-light;
+  @include dashed-divider;
   transition: border-color $dur-fast $ease-standard;
 
   .dark-theme & {

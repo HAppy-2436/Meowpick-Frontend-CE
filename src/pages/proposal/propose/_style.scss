@@ -59,32 +59,14 @@
 }
 
 .card-title {
+    @include title-accent;
     font-size: $font-md;
     font-weight: $weight-bold;
     color: $text-primary-light;
     margin-bottom: $space-7;
-    position: relative;
-    padding-left: $space-5;
-    transition: color $dur-fast $ease-standard;
 
     .dark-theme & {
         color: $text-primary-dark;
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 6rpx;
-        bottom: 6rpx;
-        width: 8rpx;
-        background: $gradient-brand;
-        border-radius: $radius-xs;
-        transition: transform $dur-fast $ease-standard;
-    }
-
-    .card:hover &::before {
-        transform: scaleY(1.2);
     }
 }
 

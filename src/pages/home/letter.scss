@@ -60,7 +60,7 @@
 .card-footer {
   margin-top: $space-10;
   padding-top: $space-8;
-  border-top: 2rpx dashed $divider-light;
+  @include dashed-divider;
   text-align: center;
   transition: border-color $dur-fast $ease-standard;
 

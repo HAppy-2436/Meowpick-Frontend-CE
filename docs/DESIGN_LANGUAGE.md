@@ -124,6 +124,23 @@
 - 列表错峰节奏统一为 **60ms**。
 - 所有动效必须有 `prefers-reduced-motion` 降级。
 
+### 装饰语言
+
+装饰是品牌的“签名”，必须**同形同意**——同一种装饰在任何页面看起来都一样。统一实现为 `_mixins.scss` 中的 mixin + `_tokens.scss` 中的 `$deco-*`：
+
+| 装饰 | Mixin | 用途 | 规格 |
+|---|---|---|---|
+| 标题强调条 | `@include title-accent` | 卡片/区块标题左侧 | 8rpx 竖直品牌渐变条 |
+| 卡片高光线 | `@include card-top-line` | 卡片顶部，active/hover 显现 | 2rpx 居中品牌渐变 |
+| 角落光晕 | `@include corner-glow($opacity)` | 品牌卡片右上角 | 200rpx 径向品牌光晕 |
+| 引用块左条 | `@include quote-accent` | 说明/引用块 | 左侧 6rpx 品牌条 |
+| 虚线分隔 | `@include dashed-divider` / `dashed-divider($deco-divider-dash-brand)` | 卡片内部区块分隔 | 1rpx dashed |
+
+规则：
+- 禁止再手写上述装饰（伪元素 / border-left 品牌条 / radial-gradient 光晕 / dashed 边框）；一律走 mixin。
+- 颜色只用 `$deco-*` 或品牌 token，不得出现新的一次性 rgba。
+- 装饰只为强调层级与品牌识别服务，同一容器内不超过两种装饰。
+
 ### 采用规则
 
 - 通用组件（`Button / EmptyState / StatusBadge / SkeletonCard`）为唯一实现；页面不得再手写等价结构。

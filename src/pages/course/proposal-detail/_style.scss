@@ -178,7 +178,7 @@ $bg-gradient-top: $brand-red-tint;
     padding: $space-6;
     border-radius: $radius-sm;
     margin-bottom: $space-9;
-    border-left: 4rpx solid rgba(178, 0, 53, 0.15);
+    @include quote-accent;
     transition: background-color $dur-fast $ease-standard;
 
     .dark-theme & {

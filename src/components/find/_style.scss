@@ -1026,6 +1026,7 @@
 }
 
 .section-title {
+  @include title-accent;
   font-size: $font-base;
   font-weight: $weight-semibold;
   color: $text-primary-light;

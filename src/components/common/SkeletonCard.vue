@@ -129,7 +129,7 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
   justify-content: space-between;
   align-items: center;
   padding-top: $space-4;
-  border-top: 1rpx dashed $divider-light;
+  @include dashed-divider;
   transition: border-color $dur-fast $ease-standard;
 
   .dark-theme & {

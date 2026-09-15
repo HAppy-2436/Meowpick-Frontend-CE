@@ -89,6 +89,69 @@
   }
 }
 
+// ---------- 装饰语言 ----------
+// 统一的装饰元素，避免各页面各写一套（同形同意）。
+
+// 标题左侧品牌强调条（竖直渐变条）
+@mixin title-accent($width: $deco-bar-width, $gap: $deco-bar-gap) {
+  position: relative;
+  padding-left: $gap;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.12em;
+    bottom: 0.12em;
+    width: $width;
+    border-radius: $radius-xs;
+    background: $gradient-brand-vertical;
+  }
+}
+
+// 卡片顶部品牌高光线（静息隐藏，active/hover 显现）
+@mixin card-top-line($inset: $space-7) {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: $inset;
+    right: $inset;
+    height: 2rpx;
+    background: linear-gradient(90deg, transparent, $brand-red-glow, transparent);
+    opacity: 0;
+    transition: opacity $dur-medium $ease-standard;
+    pointer-events: none;
+  }
+}
+
+// 卡片角落装饰光晕
+@mixin corner-glow($size: $deco-glow-size, $color: $deco-glow-color, $opacity: 1) {
+  &::before {
+    content: "";
+    position: absolute;
+    top: -80rpx;
+    right: -80rpx;
+    width: $size;
+    height: $size;
+    border-radius: 50%;
+    background: radial-gradient(circle, $color 0%, transparent 70%);
+    opacity: $opacity;
+    transition: opacity $dur-medium $ease-standard;
+    pointer-events: none;
+  }
+}
+
+// 虚线分隔（统一 dash 样式）
+@mixin dashed-divider($style: $deco-divider-dash) {
+  border-top: $style;
+}
+
+// 引用/说明块左侧品牌条
+@mixin quote-accent($style: $deco-quote) {
+  border-left: $style;
+}
+
 // ---------- 卡片容器 ----------
 @mixin card($radius: $radius-lg, $padding: $space-7) {
   background: $bg-card-light;

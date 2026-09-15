@@ -391,7 +391,7 @@ const formatTime = (iso?: string) => {
 .expand-area {
   margin-top: $space-5;
   padding-top: $space-5;
-  border-top: 1rpx dashed $divider-light;
+  @include dashed-divider;
   transition: border-color $dur-fast $ease-standard;
   animation: mwp-fade-up 240ms $ease-decelerate both;
 

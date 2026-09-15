@@ -178,6 +178,15 @@ $border-brand: 1px solid $border-color-brand;
 $border-dark: 1px solid $border-color-dark;
 $border-medium-dark: 1px solid $border-color-medium-dark;
 
+// ---------- 装饰（装饰条 / 光晕 / 高光线 / 虚线分隔） ----------
+$deco-bar-width: 8rpx;                    // 标题左侧品牌强调条
+$deco-bar-gap: $space-5;                  // 强调条与文字间距
+$deco-glow-size: 200rpx;                  // 卡片角落光晕尺寸
+$deco-glow-color: rgba(178, 0, 53, 0.08); // 品牌光晕
+$deco-divider-dash: 1rpx dashed $divider-light;         // 中性虚线分隔
+$deco-divider-dash-brand: 1rpx dashed rgba(178, 0, 53, 0.18); // 品牌虚线分隔
+$deco-quote: 6rpx solid rgba(178, 0, 53, 0.20);         // 引用/说明块左侧品牌条
+
 // ---------- z-index 层级 ----------
 $z-base: 1;
 $z-sticky: 10;

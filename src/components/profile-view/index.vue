@@ -1214,7 +1214,7 @@ onShow(() => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-top: 1px dashed rgba(0,0,0,0.05);
+        @include dashed-divider;
         padding-top: 24rpx;
         
         .likes-box {
