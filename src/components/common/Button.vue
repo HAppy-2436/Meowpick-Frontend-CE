@@ -1,19 +1,17 @@
 <template>
-  <button
+  <view
     class="mwp-btn"
     :class="[
       `tone-${tone}`,
       `size-${size}`,
       { 'is-block': block, 'is-loading': loading, 'is-disabled': disabled }
     ]"
-    :disabled="disabled || loading"
-    :loading="loading"
     @click="handleClick"
   >
     <view v-if="loading" class="mwp-btn-spinner"></view>
     <text v-else-if="icon" class="mwp-btn-icon">{{ icon }}</text>
     <text class="mwp-btn-label"><slot /></text>
-  </button>
+  </view>
 </template>
 
 <script setup lang="ts">
