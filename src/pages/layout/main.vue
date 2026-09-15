@@ -41,10 +41,7 @@
         <view
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
-          @click="switchTab(1)"
-          @touchstart="onTabTouchStart"
-          @touchend="onTabTouchEnd"
-          @touchcancel="onTabTouchEnd"
+          @click="onMyTabClick"
         >
           我的
         </view>
@@ -117,27 +114,22 @@ onLoad(() => {
   uni.removeStorageSync('meowpick_temp_admin');
 });
 
-onShow(() => {
-  try { uni.hideTabBar(); } catch (e) {}
-});
-
 // ===== 临时管理员验证 =====
 const showAdminVerify = ref(false);
 const adminPassword = ref('');
-let holdTimer: ReturnType<typeof setTimeout> | null = null;
+let tapCount = 0;
+let tapTimer: ReturnType<typeof setTimeout> | null = null;
 
-function onTabTouchStart() {
-  holdTimer = setTimeout(() => {
+function onMyTabClick() {
+  switchTab(1);
+  tapCount++;
+  if (tapTimer) clearTimeout(tapTimer);
+  if (tapCount >= 5) {
+    tapCount = 0;
     showAdminVerify.value = true;
     adminPassword.value = '';
-    holdTimer = null;
-  }, 10000); // 10秒长按
-}
-
-function onTabTouchEnd() {
-  if (holdTimer) {
-    clearTimeout(holdTimer);
-    holdTimer = null;
+  } else {
+    tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
   }
 }
 
@@ -334,7 +326,7 @@ function onSwiperAnimationFinish(e: any) {
   overflow: hidden;
 
   &.dark-theme {
-    background: #1e1e1e;
+    background: $bg-card-dark;
   }
 }
 
@@ -346,7 +338,7 @@ function onSwiperAnimationFinish(e: any) {
   border-bottom: 1rpx solid $divider-light;
 
   .dark-theme & {
-    border-bottom-color: #333;
+    border-bottom-color: $divider-card-dark;
   }
 }
 
@@ -356,7 +348,7 @@ function onSwiperAnimationFinish(e: any) {
   color: $text-primary-light;
 
   .dark-theme & {
-    color: #e0e0e0;
+    color: $text-primary-dark;
   }
 }
 
@@ -370,7 +362,7 @@ function onSwiperAnimationFinish(e: any) {
   color: $text-tertiary-light;
 
   .dark-theme & {
-    color: #888;
+    color: $text-tertiary-dark;
   }
 }
 
@@ -385,7 +377,7 @@ function onSwiperAnimationFinish(e: any) {
   margin-bottom: $space-4;
 
   .dark-theme & {
-    color: #aaa;
+    color: $text-secondary-dark;
   }
 }
 
@@ -400,8 +392,8 @@ function onSwiperAnimationFinish(e: any) {
   box-sizing: border-box;
 
   .dark-theme & {
-    background: #2a2a2a;
-    color: #e0e0e0;
+    background: $bg-muted-dark;
+    color: $text-primary-dark;
   }
 }
 
@@ -410,7 +402,7 @@ function onSwiperAnimationFinish(e: any) {
   border-top: 1rpx solid $divider-light;
 
   .dark-theme & {
-    border-top-color: #333;
+    border-top-color: $divider-card-dark;
   }
 }
 
@@ -425,13 +417,13 @@ function onSwiperAnimationFinish(e: any) {
 
   &--cancel {
     color: $text-secondary-light;
-    .dark-theme & { color: #888; }
+    .dark-theme & { color: $text-tertiary-dark; }
   }
 
   &--confirm {
     color: $brand-red;
     border-left: 1rpx solid $divider-light;
-    .dark-theme & { border-left-color: #333; }
+    .dark-theme & { border-left-color: $divider-card-dark; }
 
     &:active {
       background: $danger-soft;
