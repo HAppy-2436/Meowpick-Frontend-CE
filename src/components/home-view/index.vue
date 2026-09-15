@@ -371,7 +371,7 @@ const goToProposalFeed = () => {
     display: flex;
     align-items: center;
     background-color: $bg-card-light;
-    border-radius: $radius-pill;
+    border-radius: $radius-control;
     padding: 0 $space-7;
 
     box-shadow: $shadow-brand-md;

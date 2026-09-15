@@ -1378,7 +1378,7 @@ onShow(() => {
     .retry-btn {
         background: $gradient-brand;
         color: white;
-        border-radius: $radius-md;
+        border-radius: $radius-pill;
         font-size: 28rpx;
         padding: 16rpx 48rpx;
         border: none;
