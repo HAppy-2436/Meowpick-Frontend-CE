@@ -187,6 +187,16 @@ $deco-divider-dash: 1rpx dashed $divider-light;         // 中性虚线分隔
 $deco-divider-dash-brand: 1rpx dashed rgba(178, 0, 53, 0.18); // 品牌虚线分隔
 $deco-quote: 6rpx solid rgba(178, 0, 53, 0.20);         // 引用/说明块左侧品牌条
 
+// 图标底板（彩色圆角底 + 图标）
+$tile-blue: rgba(52, 152, 219, 0.10);
+$tile-green: rgba(46, 204, 113, 0.10);
+$tile-orange: rgba(243, 156, 18, 0.10);
+$tile-purple: rgba(155, 89, 182, 0.10);
+$tile-blue-dark: rgba(52, 152, 219, 0.18);
+$tile-green-dark: rgba(46, 204, 113, 0.18);
+$tile-orange-dark: rgba(243, 156, 18, 0.18);
+$tile-purple-dark: rgba(155, 89, 182, 0.18);
+
 // ---------- z-index 层级 ----------
 $z-base: 1;
 $z-sticky: 10;

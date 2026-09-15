@@ -135,6 +135,8 @@
 | 角落光晕 | `@include corner-glow($opacity)` | 品牌卡片右上角 | 200rpx 径向品牌光晕 |
 | 引用块左条 | `@include quote-accent` | 说明/引用块 | 左侧 6rpx 品牌条 |
 | 虚线分隔 | `@include dashed-divider` / `dashed-divider($deco-divider-dash-brand)` | 卡片内部区块分隔 | 1rpx dashed |
+| 图标底板 | `@include icon-tile($size,$bg,$radius)` | 彩色圆角底包图标 | 默认 80rpx，色调用 `$tile-*` |
+| 标签/徽标 | 直接 `border-radius: $radius-pill` | 状态、提案、新课等小标签 | 一律胶囊形 |
 
 规则：
 - 禁止再手写上述装饰（伪元素 / border-left 品牌条 / radial-gradient 光晕 / dashed 边框）；一律走 mixin。

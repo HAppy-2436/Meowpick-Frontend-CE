@@ -152,6 +152,18 @@
   border-left: $style;
 }
 
+// 图标底板（彩色圆角底 + 居中图标）
+@mixin icon-tile($size: 80rpx, $bg: $bg-muted-light, $radius: $radius-md) {
+  width: $size;
+  height: $size;
+  border-radius: $radius;
+  background: $bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 // ---------- 卡片容器 ----------
 @mixin card($radius: $radius-lg, $padding: $space-7) {
   background: $bg-card-light;

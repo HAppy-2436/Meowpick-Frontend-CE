@@ -1262,7 +1262,7 @@ onShow(() => {
 
         .status-badge {
             padding: 10rpx 20rpx;
-            border-radius: 30rpx;
+            border-radius: $radius-pill;
             font-size: 24rpx;
             font-weight: 600;
             
