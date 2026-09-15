@@ -339,7 +339,7 @@ const goToProposalFeed = () => {
 }
 
 .dark-theme .header-welcome {
-  .hello-text { color: $text-secondary-light; }
+  .hello-text { color: $text-secondary-dark; }
   .name-text { color: $text-primary-dark; }
 }
 
@@ -401,9 +401,9 @@ const goToProposalFeed = () => {
 .dark-theme .search-section {
   .search-box {
     background-color: $bg-muted-dark;
-    border-color: $brand-red;
+    border-color: $brand-red-soft;
     box-shadow: $shadow-brand-lg;
-    .search-placeholder { color: $text-secondary-light; }
+    .search-placeholder { color: $text-secondary-dark; }
   }
 }
 
@@ -484,7 +484,7 @@ const goToProposalFeed = () => {
 
   &.letter-card {
       background: linear-gradient(135deg, $pure-white 0%, $brand-red-tint 100%);
-      .card-title { color: $brand-red; }
+      .card-title { color: $brand-red-soft; }
   }
 }
 
@@ -494,12 +494,12 @@ const goToProposalFeed = () => {
   box-shadow: $shadow-sm-dark;
 
   .card-title { color: $text-primary-dark; }
-  .card-subtitle { color: $text-tertiary-light; }
+  .card-subtitle { color: $text-tertiary-dark; }
 }
 
 .dark-theme .letter-card {
-  background: linear-gradient(135deg, $bg-muted-dark 0%, $text-primary-light 100%);
-  .card-title { color: $brand-red; }
+  background: linear-gradient(135deg, $bg-muted-dark 0%, $bg-card-dark 100%);
+  .card-title { color: $brand-red-soft; }
 }
 
 .new-tag {
@@ -571,13 +571,13 @@ const goToProposalFeed = () => {
   background-color: $bg-muted-dark;
   border-color: $bg-muted-darker;
   box-shadow: $shadow-sm-dark;
-  .stat-title { color: $text-tertiary-light; }
-  .stat-number { color: $brand-red; }
-  .stat-unit { color: $text-secondary-light; }
+  .stat-title { color: $text-tertiary-dark; }
+  .stat-number { color: $brand-red-soft; }
+  .stat-unit { color: $text-secondary-dark; }
 }
 
 .dark-theme .feedback-entry {
-  .feedback-entry-text { color: $text-tertiary-light; &:active { color: $brand-red-soft; } }
+  .feedback-entry-text { color: $text-tertiary-dark; &:active { color: $brand-red-soft; } }
 }
 
 /* 底部"我要反馈"小字入口 - 紧贴内容末尾 */

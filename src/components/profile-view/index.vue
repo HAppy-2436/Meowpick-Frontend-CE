@@ -1489,10 +1489,10 @@ onShow(() => {
 .profile-container.dark-theme .card { background: $bg-card-dark; border-color: $divider-card-dark; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3); }
 .profile-container.dark-theme .card .card-main { background: transparent; }
 .profile-container.dark-theme .card .course-row-top .course-name { color: $text-primary-dark; }
-.profile-container.dark-theme .card .course-row-top .time-text { color: $text-secondary-light; }
+.profile-container.dark-theme .card .course-row-top .time-text { color: $text-secondary-dark; }
 .profile-container.dark-theme .card .course-row-middle { background: $bg-muted-dark; }
-.profile-container.dark-theme .card .course-row-middle .course-info-item { color: $text-tertiary-light; }
-.profile-container.dark-theme .card .content-text { color: $text-placeholder-light; }
+.profile-container.dark-theme .card .course-row-middle .course-info-item { color: $text-tertiary-dark; }
+.profile-container.dark-theme .card .content-text { color: $text-secondary-dark; }
 .profile-container.dark-theme .card .footer-row { border-color: rgba(255,255,255,0.05); }
 .profile-container.dark-theme .card .footer-row .likes-text { color: $text-tertiary-dark; }
 .profile-container.dark-theme .card .footer-row .likes-box { background: transparent; }
@@ -1511,7 +1511,7 @@ onShow(() => {
 .dark-theme .guide-overlay.dark-theme .guide-footer .start-btn { opacity: 0.85; }
 
 .profile-container.dark-theme .sticky-bar .filter-pill.active { color: $pure-white; }
-.profile-container.dark-theme .loading-state .loading-spinner { border-color: $divider-card-dark; border-top-color: $brand-red; }
+.profile-container.dark-theme .loading-state .loading-spinner { border-color: $divider-card-dark; border-top-color: $brand-red-soft; }
 .profile-container.dark-theme .fab-btn { box-shadow: 0 8rpx 30rpx rgba(178, 0, 53, 0.5); }
 
 /* More Menu Dark Mode - ⋯ 按钮现已在 user-info-layer 内 */
