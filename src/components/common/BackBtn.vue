@@ -18,14 +18,12 @@ const emit = defineEmits<{
 }>();
 
 const handleBack = () => {
-  uni.navigateBack({
-    delta: 1,
-    fail: () => {
-      uni.switchTab({
-        url: '/pages/home/home'
-      });
-    }
-  });
+  const pages = getCurrentPages();
+  if (pages.length > 1) {
+    uni.navigateBack({ delta: 1 });
+  } else {
+    uni.reLaunch({ url: '/pages/layout/main' });
+  }
   emit('click');
 };
 

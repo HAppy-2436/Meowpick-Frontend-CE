@@ -1,6 +1,6 @@
 <template>
   <view class="background" :class="themeStore.themeClass">
-    <TopNavBar title="版本更新日志" @back="goBack" />
+    <TopNavBar title="版本更新日志" />
 
     <view :style="{ height: navBarHeight + 'px' }"></view>
 

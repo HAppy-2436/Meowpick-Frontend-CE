@@ -17,6 +17,7 @@
 .content-card {
   position: relative;
   z-index: $z-base;
+  margin-top: $space-8;
   background: rgba(255, 255, 255, 0.95);
   border-radius: $radius-lg;
   padding: $space-10 $space-8;

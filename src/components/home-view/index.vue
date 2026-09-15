@@ -26,7 +26,7 @@
           @click="goToLetter"
         >
           <text class="card-title">致用户的一封信</text>
-          <text class="card-subtitle">To Users</text>
+          <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">To Users</text>
           <text class="card-bg-icon">✉️</text>
           <view v-if="showNewIcon" class="new-tag">NEW</view>
         </view>
@@ -36,8 +36,8 @@
           hover-class="card-hover"
           @click="goToProposalFeed"
         >
-          <text class="card-title">提议广场</text>
-          <text class="card-subtitle">Proposals</text>
+          <text class="card-title">提案广场</text>
+          <text class="card-subtitle" :style="{ marginTop: L.cardTitleGap + 'px' }">Proposals</text>
           <text class="card-bg-icon">📋</text>
         </view>
       </view>
@@ -45,8 +45,8 @@
       <view class="right-group">
         <view class="stat-card">
           <view class="stat-title">已收录吐槽</view>
-          <view class="stat-number" :style="{ fontSize: L.statNumSize + 'px' }">{{ totalComment }}</view>
-          <view class="stat-unit">条</view>
+          <view class="stat-number" :style="{ fontSize: L.statNumSize + 'px', marginBottom: L.cardTitleGap + 'px' }">{{ totalComment }}</view>
+          <view class="stat-unit" :style="{ fontSize: L.statUnitSize + 'px' }">条</view>
         </view>
       </view>
     </view>
@@ -79,8 +79,8 @@
           <view class="guide-step">
             <view class="step-icon">📝</view>
             <view class="step-body">
-              <text class="step-title">提议新课，投票支持</text>
-              <text class="step-desc">搜索不到想要的课？发起提议让大家投票，通过后将收录进数据库</text>
+              <text class="step-title">提案新课，投票支持</text>
+              <text class="step-desc">搜索不到想要的课？发起提案让大家投票，通过后将收录进数据库</text>
             </view>
           </view>
         </view>
@@ -97,6 +97,7 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin } from '@/utils/init';
 import { http, useThemeStore } from '@/config';
+import defaultCatAvatar from '@/images/cat-emoji/cat_face.png';
 import FeedbackModal from '@/components/feedback/feedback-modal.vue';
 const themeStore = useThemeStore();
 
@@ -118,7 +119,9 @@ const L = reactive({
   searchHeight: 48,
   toolboxHeight: 300,
   statNumSize: 36,
+  statUnitSize: 14,
   cardGap: 8,
+  cardTitleGap: 4,
 });
 
 const calcLayout = () => {
@@ -139,7 +142,9 @@ const calcLayout = () => {
   L.nameSize = Math.min(Math.round(36 * r), 44);
   L.searchHeight = Math.min(Math.round(56 * r), 66);
   L.statNumSize = Math.min(Math.round(40 * r), 48);
+  L.statUnitSize = Math.min(Math.round(28 * r), 34);
   L.cardGap = Math.round(Math.max(L.gap * 0.5, 8));
+  L.cardTitleGap = Math.round(Math.max(8 * r, 4));
 
   const helloArea = Math.round(30 * r);
   const nameArea = Math.round(40 * r);
@@ -198,6 +203,8 @@ const applyDefaults = () => {
   if (!stored || !stored.nickName) {
     const info = {
       nickName: generateDefaultName(),
+      avatarUrl: defaultCatAvatar,
+      avatarIsDefault: true,
     };
     uni.setStorageSync('userInfo', info);
     userName.value = info.nickName;

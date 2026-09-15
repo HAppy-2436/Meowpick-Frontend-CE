@@ -156,12 +156,21 @@ $gradient-danger-soft: linear-gradient(135deg, rgba(178, 0, 53, 0.08) 0%, rgba(1
 $gradient-header: linear-gradient(180deg, rgba(255, 245, 246, 0.95) 0%, rgba(255, 245, 246, 0) 100%);
 
 // ---------- 描边 ----------
-$border-light: 1px solid #f0f0f0;
-$border-medium: 1px solid #e5e5e5;
-$border-strong-light: 1px solid #dddddd;  // 亮色强调边框（搜索框、输入框等）
-$border-brand: 1px solid rgba(178, 0, 53, 0.15);
-$border-dark: 1px solid #2a2a2a;
-$border-medium-dark: 1px solid #3e3e3e;  // 暗色中等边框（卡片边框、表单边框）
+// 颜色 token：用于 border-color / outline-color 等只取颜色的场景
+$border-color-light: $divider-light;          // #f0f0f0
+$border-color-medium-light: #e5e5e5;
+$border-color-strong-light: #dddddd;          // 亮色强调边框（搜索框、输入框等）
+$border-color-brand: rgba(178, 0, 53, 0.15);
+$border-color-dark: $divider-dark;            // #2a2a2a
+$border-color-medium-dark: $divider-card-dark; // #3e3e3e 暗色中等边框（卡片边框、表单边框）
+
+// 简写 token：仅在需要一次性设置 width/style/color 的 `border:` 场景使用
+$border-light: 1px solid $border-color-light;
+$border-medium: 1px solid $border-color-medium-light;
+$border-strong-light: 1px solid $border-color-strong-light;
+$border-brand: 1px solid $border-color-brand;
+$border-dark: 1px solid $border-color-dark;
+$border-medium-dark: 1px solid $border-color-medium-dark;
 
 // ---------- z-index 层级 ----------
 $z-base: 1;

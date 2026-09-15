@@ -1,7 +1,7 @@
 <template>
   <view class="proposal-detail-page" :class="themeStore.themeClass">
 
-    <TopNavBar title="新课提议详情" @back="goBack" />
+    <TopNavBar title="新课提案详情" />
 
     <view :style="{ height: navBarHeight + 'px' }"></view>
 
@@ -9,15 +9,15 @@
 
       <view class="proposal-card mwp-fade-up">
         <view class="card-header">
-          <view class="proposal-badge">提议中</view>
+          <view class="proposal-badge">提案中</view>
           <text class="proposal-date">{{ proposalData.date || '刚刚' }}</text>
         </view>
 
-        <text class="proposal-title">{{ proposalData.name || '未命名提议' }}</text>
+        <text class="proposal-title">{{ proposalData.name || '未命名提案' }}</text>
 
         <view class="proposal-info-row">
           <view class="info-item">
-            <text class="info-label">提议教师</text>
+            <text class="info-label">提案教师</text>
             <text class="info-value">{{ proposalData.teacher || '待定' }}</text>
           </view>
           <view class="info-item">
@@ -31,21 +31,21 @@
         </view>
 
         <view class="proposal-reason-box">
-          <text class="reason-label">提议理由</text>
+          <text class="reason-label">提案理由</text>
           <text class="reason-content">{{ proposalData.reason || '该用户未填写详细理由。' }}</text>
         </view>
 
         <view class="vote-area">
           <view class="vote-info">
             <text class="vote-count-big">{{ proposalData.voteCount || 0 }}</text>
-            <text class="vote-text">人支持此提议</text>
+            <text class="vote-text">人支持此提案</text>
           </view>
           <view
             class="vote-btn mwp-pressable"
             :class="{ 'is-voted': isVoted }"
             @click="handleVote"
           >
-            <text>{{ isVoted ? '已支持' : '🙋 支持提议' }}</text>
+            <text>{{ isVoted ? '已支持' : '🙋 支持提案' }}</text>
           </view>
         </view>
       </view>

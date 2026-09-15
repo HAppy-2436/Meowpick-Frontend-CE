@@ -28,9 +28,5 @@ export const PROPOSAL_PAGE_SIZE_DEFAULT = 10;
 export const PROPOSAL_FIELD_PAGE_SIZE_DEFAULT = 10;
 export const ADMIN_LOG_PAGE_SIZE_DEFAULT = 20;
 
-// Hot Recommendations
-export const DEFAULT_HOT_RECOMMENDATIONS = [
-    { keyword: '西方哲学智慧', tag: '高分课程' },
-    { keyword: '王老师', tag: '热门老师' },
-    { keyword: '大学物理', tag: '挂科重灾区' },
-] as const;
+// Search Filter Options (campus list is stable; category is search-based via API)
+export const CAMPUS_OPTIONS = ['闵行校区', '普陀校区', '滴水湖校区'];

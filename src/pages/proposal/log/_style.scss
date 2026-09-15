@@ -1,0 +1,23 @@
+@import "@/styles/index.scss";
+
+.log-page {
+  width: 100%;
+  height: 100vh;
+  background-color: $bg-page-light;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
+}
+
+.log-scroll {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: $space-5 $space-7;
+  box-sizing: border-box;
+}

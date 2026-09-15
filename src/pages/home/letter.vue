@@ -1,6 +1,6 @@
 <template>
   <view class="letter-container" :class="themeStore.themeClass">
-    <TopNavBar title="致用户的一封信" @back="goBack" />
+    <TopNavBar title="致用户的一封信" />
 
     <view :style="{ height: navBarHeight + 'px' }"></view>
 

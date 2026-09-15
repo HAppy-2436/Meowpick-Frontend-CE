@@ -59,10 +59,16 @@
       }
     },
     {
+      "path": "pages/proposal/log/log",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/course/proposal-detail/index",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTitleText": "提议详情"
+        "navigationBarTitleText": "提案详情"
       }
     }
   ]

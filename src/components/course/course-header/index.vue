@@ -60,8 +60,8 @@
       </view>
       
       <!-- 3. 标签/描述 (如果有) -->
-      <view class="tags-section" v-if="data.describe">
-          <text class="desc-text">{{ data.describe }}</text>
+      <view class="tags-section" v-if="description">
+          <text class="desc-text">{{ description }}</text>
       </view>
 
     </view>
@@ -70,23 +70,28 @@
 
 <script setup lang="ts">
 import { useThemeStore } from "@/config";
+import { teachersToStrings } from "@/utils/teacher-display";
 import type { DtoCourseVO, DtoTeacherVO } from "@/api/data-contracts";
 
 const themeStore = useThemeStore();
 
 type Props = {
   data: DtoCourseVO;
+  teachers?: string[];
 };
 const props = defineProps<Props>();
 
-// 教师名称列表（处理 DtoTeacherVO 对象数组）
+// 教师名称列表：优先使用父级归一化后的字符串数组，兼容字符串/对象两种返回
 const teacherNames = computed(() => {
+  if (props.teachers?.length) return props.teachers;
   if (!props.data) return [];
-  // Fallback: try teachers first, then teacherList (as used in search results)
-  const list = props.data.teachers || props.data.teacherList || [];
-  return list
-    .map((t: DtoTeacherVO) => t?.name || '')
-    .filter((name: string) => name !== '');
+  return teachersToStrings(props.data.teachers as Array<string | DtoTeacherVO>);
+});
+
+// 描述字段未在 DtoCourseVO 中声明，后端可能返回，做兼容读取
+const description = computed(() => {
+  const extra = props.data as DtoCourseVO & { describe?: string };
+  return extra?.describe || '';
 });
 </script>
 

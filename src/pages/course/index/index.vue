@@ -1,7 +1,7 @@
 <template>
   <layout class="background" :class="themeStore.themeClass" @on-bottom="handleBottom()">
 
-    <TopNavBar :title="course.data?.name || '课程详情'" @back="goBack" />
+    <TopNavBar :title="course.data?.name || '课程详情'" />
 
     <view :style="{ height: navBarHeight + 'px' }"></view>
 

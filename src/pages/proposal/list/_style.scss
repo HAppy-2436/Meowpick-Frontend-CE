@@ -1,10 +1,16 @@
 @import "@/styles/index.scss";
 
-.proposal-list-page {
-  min-height: 100vh;
+// =====================================================
+// 容器
+// =====================================================
+.proposal-container {
+  width: 100%;
+  height: 100vh;
   background-color: $bg-page-light;
-  // 为悬浮 FAB 预留底部空间（避免与 bottom Tab 50rpx + 按钮 110rpx + gap 20rpx 重叠）
-  padding-bottom: 320rpx;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
   transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {
@@ -12,123 +18,82 @@
   }
 }
 
-.tabs {
-  display: flex;
-  align-items: stretch;
-  padding: 0 $space-7;
-  background: $bg-card-light;
-  border-bottom: 1rpx solid $divider-light;
-  position: sticky;
+// =====================================================
+// 顶部固定搜索栏
+// =====================================================
+.dynamic-header {
+  position: fixed;
   top: 0;
-  z-index: $z-sticky;
+  left: 0;
+  width: 100%;
+  z-index: $z-navbar;
+  background: $bg-card-light;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
   transition: background-color $dur-medium $ease-standard,
-              border-color $dur-medium $ease-standard;
-  animation: mwp-fade-down 360ms $ease-decelerate 60ms both;
+              box-shadow $dur-medium $ease-standard;
 
   .dark-theme & {
     background: $bg-card-dark;
-    border-bottom-color: $divider-dark;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.20);
   }
 }
 
-.tab-item {
-  flex: 1;
+.search-bar-wrapper {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: $space-7;
+  box-sizing: border-box;
+  z-index: $z-navbar + 1;
+}
+
+.nav-back-btn {
+  width: 48rpx;
+  height: 48rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $space-2;
-  height: 88rpx;
-  font-size: $font-base;
-  color: $text-secondary-light;
-  font-weight: $weight-medium;
-  position: relative;
-  transition: all $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-secondary-dark;
-  }
-
-  &.active {
-    color: $text-primary-light;
-    font-weight: $weight-semibold;
-    .dark-theme & {
-      color: $text-primary-dark;
-    }
-  }
-}
-
-.tab-text {
-  white-space: nowrap;
-  text-align: center;
-}
-
-.tab-badge {
-  background: $brand-red;
-  color: $pure-white;
-  font-size: $font-xs;
-  font-weight: $weight-semibold;
-  padding: 2rpx $space-2;
-  border-radius: $radius-pill;
-  min-width: 32rpx;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.tab-indicator {
-  position: absolute;
-  bottom: 0;
-  width: 48rpx;
-  height: 4rpx;
-  background: $gradient-brand;
-  border-radius: $radius-pill;
-  transform: translateX(-50%);
-  transition: left $dur-medium $ease-emphasized;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: $space-4;
-  padding: $space-6 $space-7;
-  background-color: $bg-page-light;
-  transition: background-color $dur-medium $ease-standard;
-  animation: mwp-fade-down 320ms $ease-decelerate both;
-  position: sticky;
-  top: 88rpx;
-  z-index: $z-sticky;
-
-  .dark-theme & {
-    background-color: $bg-page-dark;
-  }
+  margin-right: $space-4;
+  flex-shrink: 0;
 }
 
 .search-input-box {
   flex: 1;
+  min-width: 0;
+  height: 72rpx;
+  background: $bg-muted-light;
+  border: 2rpx solid transparent;
+  border-radius: 36rpx;
   display: flex;
   align-items: center;
-  gap: $space-3;
-  height: 80rpx;
   padding: 0 $space-5;
-  background: $bg-card-light;
-  border: 1rpx solid $divider-light;
-  border-radius: $radius-pill;
-  box-shadow: $shadow-xs;
-  transition: all $dur-fast $ease-standard;
+  transition: all 150ms $ease-emphasized;
 
   .dark-theme & {
-    background: $bg-card-dark;
-    border-color: $divider-dark;
+    background: $bg-muted-dark;
+    border-color: $bg-muted-darker;
   }
 
-  &:focus-within {
+  &.is-focused {
+    background: $bg-card-light;
     border-color: rgba(178, 0, 53, 0.30);
     box-shadow: 0 0 0 4rpx rgba(178, 0, 53, 0.08);
+
+    .dark-theme & {
+      background: $bg-card-dark;
+      border-color: rgba(255, 77, 106, 0.70);
+    }
   }
 }
 
 .search-icon {
   font-size: $font-lg;
+  margin-right: $space-4;
   opacity: 0.5;
+  line-height: 1;
   flex-shrink: 0;
 }
 
@@ -147,80 +112,506 @@
   }
 }
 
-.clear-btn {
-  width: 48rpx;
-  height: 48rpx;
+.clear-icon {
+  width: 36rpx;
+  height: 36rpx;
+  background: $bg-page-light;
   border-radius: 50%;
-  background: $bg-muted-light;
-  color: $text-secondary-light;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $font-sm;
+  font-size: $font-lg;
+  color: $text-tertiary-light;
   flex-shrink: 0;
   transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-page-dark;
+    color: $text-tertiary-dark;
+  }
+
+  &:active {
+    background: $bg-muted-light;
+    transform: scale($press-scale-lg);
+    .dark-theme & { background: $bg-muted-dark; }
+  }
+}
+
+.placeholder-style {
+  color: $text-tertiary-light;
+  font-weight: $weight-regular;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+}
+
+// =====================================================
+// 筛选条 + 下拉（与 find 页统一）
+// =====================================================
+.filter-bar-wrapper {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  z-index: $z-base;
+  background: $bg-page-light;
+  overflow: visible;
+  transition: transform 250ms $ease-standard, opacity 200ms $ease-standard;
+
+  .dark-theme & {
+    background: $bg-page-dark;
+  }
+
+  &.is-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.filter-chip-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 12rpx 20rpx;
+  position: relative;
+  z-index: $z-sticky + 2;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  height: 56rpx;
+  padding: 0 $space-4;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  border-radius: $radius-pill;
+  box-shadow: $shadow-xs;
+  transition: border-color $dur-fast $ease-standard,
+              background $dur-fast $ease-standard,
+              box-shadow $dur-fast $ease-standard,
+              color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $divider-dark;
+    box-shadow: $shadow-xs-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.is-open {
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+    .dark-theme & { border-color: $brand-red-soft; }
+  }
+
+  &.has-value {
+    background: $gradient-brand;
+    border-color: transparent;
+    box-shadow: $shadow-brand-sm;
+    .dark-theme & { background: linear-gradient(135deg, $brand-red-deep 0%, $brand-red 100%); }
+  }
+
+  &.has-value.is-open {
+    background: $bg-card-light;
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+    .dark-theme & { background: $bg-card-dark; border-color: $brand-red-soft; }
+  }
+
+  &--expand {
+    flex-shrink: 0;
+    padding: 0 $space-4;
+    justify-content: center;
+  }
+}
+
+.chip-text {
+  font-size: $font-sm;
+  font-weight: $weight-medium;
+  color: $text-secondary-light;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .dark-theme & { color: $text-secondary-dark; }
+
+  .filter-chip.has-value:not(.is-open) & {
+    color: $pure-white;
+    font-weight: $weight-semibold;
+  }
+
+  .filter-chip.is-open & {
+    color: $brand-red;
+    font-weight: $weight-semibold;
+    .dark-theme & { color: $brand-red-soft; }
+  }
+}
+
+.chip-arrow {
+  flex-shrink: 0;
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  transition: transform 200ms $ease-standard, color $dur-fast $ease-standard;
+  line-height: 1;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+
+  .filter-chip.is-open & {
+    transform: rotate(180deg);
+    color: $brand-red;
+    .dark-theme & { color: $brand-red-soft; }
+  }
+
+  .filter-chip.has-value:not(.is-open) & {
+    color: $pure-white;
+  }
+}
+
+.filter-dropdown-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: $z-sticky + 1;
+}
+
+.filter-dropdown {
+  position: relative;
+  z-index: $z-sticky + 3;
+  background: $bg-card-light;
+  border-radius: 0 0 $radius-lg $radius-lg;
+  box-shadow: $shadow-md;
+  display: flex;
+  flex-direction: column;
+  animation: mwp-fade-down 200ms $ease-decelerate both;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-md-dark;
+  }
+}
+
+.fd-scroll {
+  padding: 28rpx 32rpx 0;
+  position: relative;
+  z-index: $z-popover;
+}
+
+.fd-group {
+  margin-bottom: $space-6;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.fd-label {
+  display: block;
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  color: $text-tertiary-light;
+  margin-bottom: $space-4;
+  letter-spacing: 2rpx;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.fd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.fd-tag {
+  height: 56rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-muted-light;
+  border: 1rpx solid transparent;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  color: $text-secondary-light;
+  font-weight: $weight-medium;
+  transition: border-color $dur-fast $ease-standard,
+              color $dur-fast $ease-standard,
+              background $dur-fast $ease-standard;
 
   .dark-theme & {
     background: $bg-muted-dark;
     color: $text-secondary-dark;
   }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.active {
+    background: $brand-red-tint;
+    border-color: $brand-red;
+    color: $brand-red;
+
+    .dark-theme & {
+      background: rgba(255, 77, 106, 0.12);
+      border-color: $brand-red-soft;
+      color: $brand-red-soft;
+    }
+  }
 }
 
-.filter-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-2;
-  height: 80rpx;
-  padding: 0 $space-5;
+// 内联搜索
+.fd-search {
+  margin-top: $space-3;
+  position: relative;
+}
+
+.fd-search-input {
+  width: 100%;
+  height: 72rpx;
+  padding: 0 $space-6;
   background: $bg-card-light;
-  border: 1rpx solid $divider-light;
+  border: 2rpx solid $brand-red-glow;
   border-radius: $radius-pill;
   font-size: $font-sm;
-  color: $text-secondary-light;
+  color: $text-primary-light;
+  box-sizing: border-box;
+  box-shadow: $shadow-brand-sm;
+  transition: border-color $dur-fast $ease-standard,
+              box-shadow $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    color: $text-primary-dark;
+    border-color: rgba(255, 77, 106, 0.3);
+  }
+
+  &:focus {
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-md;
+
+    .dark-theme & {
+      border-color: $brand-red-soft;
+    }
+  }
+}
+
+.fd-placeholder {
+  color: $text-tertiary-light;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.fd-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  height: 44rpx;
+  padding: 0 16rpx;
+  background: $brand-red-tint;
+  border: 1rpx solid rgba(178, 0, 53, 0.2);
+  border-radius: $radius-pill;
+
+  .dark-theme & {
+    background: rgba(255, 77, 106, 0.12);
+    border-color: rgba(255, 77, 106, 0.25);
+  }
+}
+
+.fd-selected-text {
+  font-size: $font-xs;
+  color: $brand-red;
   font-weight: $weight-medium;
-  flex-shrink: 0;
-  transition: all $dur-fast $ease-emphasized;
-  box-shadow: $shadow-xs;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+  }
+}
+
+.fd-selected-clear {
+  font-size: $font-base;
+  color: $text-tertiary-light;
+  padding: 0 2rpx;
+  line-height: 1;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+
+  &:active {
+    color: $brand-red;
+  }
+}
+
+.fd-selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-3;
+}
+
+.fd-suggest-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: $space-2;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
+  z-index: $z-popover;
 
   .dark-theme & {
     background: $bg-card-dark;
     border-color: $divider-dark;
-    color: $text-secondary-dark;
+    box-shadow: $shadow-lg;
+  }
+}
+
+.fd-suggest-item {
+  height: 64rpx;
+  padding: 0 $space-5;
+  display: flex;
+  align-items: center;
+  font-size: $font-sm;
+  color: $text-primary-light;
+  border-bottom: 1rpx solid $divider-light;
+  background: $bg-card-light;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+    background: $bg-card-dark;
+    border-bottom-color: $divider-dark;
   }
 
-  &.active {
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $bg-muted-light;
+    .dark-theme & {
+      background: $bg-muted-dark;
+    }
+  }
+}
+
+.fd-footer {
+  display: flex;
+  gap: $space-4;
+  padding: $space-5 $space-7;
+  border-top: 1rpx solid $divider-light;
+  flex-shrink: 0;
+  position: relative;
+  z-index: $z-base;
+
+  .dark-theme & {
+    border-top-color: $divider-dark;
+  }
+}
+
+.fd-btn {
+  height: 64rpx;
+  padding: 0 24rpx;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $dur-fast $ease-standard;
+
+  &--reset {
+    background: $bg-muted-light;
+    color: $text-secondary-light;
+
+    .dark-theme & {
+      background: $bg-muted-dark;
+      color: $text-secondary-dark;
+    }
+  }
+
+  &--confirm {
     background: $gradient-brand;
     color: $pure-white;
-    border-color: transparent;
     box-shadow: $shadow-brand-sm;
+    margin-left: auto;
+
+    .dark-theme & {
+      background: linear-gradient(135deg, $brand-red-deep 0%, $brand-red 100%);
+    }
+
+    &:active {
+      transform: scale($press-scale-sm);
+      box-shadow: $shadow-brand-md;
+    }
   }
 }
 
-.filter-icon {
-  font-size: $font-lg;
-  line-height: 1;
+// =====================================================
+// 内容滚动区
+// =====================================================
+.content-scroll {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  background: $bg-page-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & { background-color: $bg-page-dark; }
 }
 
-.filter-text {
-  font-weight: $weight-medium;
+// 顶部占位块：随内容一起滚动，避免 scroll-view padding 作为固定内边距产生遮挡间隙
+.content-spacer {
+  width: 100%;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+// =====================================================
+// Loading
+// =====================================================
+.loading-section {
+  padding: $space-12 0;
   text-align: center;
 }
 
-.list-scroll {
-  height: calc(100vh - 280rpx);
-  padding: 0 $space-7;
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 0 auto $space-5;
+  border: 4rpx solid rgba(178, 0, 53, 0.20);
+  border-top-color: $brand-red;
+  border-radius: 50%;
+  animation: mwp-spin 800ms linear infinite;
 }
 
-.list-container,
-.logs-container,
-.my-proposals-container {
-  padding: $space-5 0;
+.loading-text {
+  font-size: $font-base;
+  color: $text-secondary-light;
+  text-align: center;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-secondary-dark; }
 }
 
-.loading-state,
-.error-state,
-.empty-state {
+// =====================================================
+// 空状态
+// =====================================================
+.empty-section {
   padding: $space-12 $space-7;
   text-align: center;
   display: flex;
@@ -229,206 +620,187 @@
   gap: $space-4;
 }
 
+.empty-emoji {
+  font-size: 96rpx;
+  line-height: 1;
+}
+
+.empty-text {
+  font-size: $font-lg;
+  color: $text-primary-light;
+  font-weight: $weight-semibold;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-primary-dark; }
+}
+
+.empty-hint {
+  font-size: $font-sm;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+}
+
 .empty-btn {
-  margin-top: $space-3;
+  margin-top: $space-5;
   padding: 0 $space-9;
   height: 80rpx;
-  min-width: 240rpx;
+  min-width: 280rpx;
   background: $gradient-brand;
   color: $pure-white;
   border-radius: $radius-pill;
   font-size: $font-base;
   font-weight: $weight-semibold;
-  box-shadow: $shadow-brand-md;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.proposal-card {
-  background: $bg-card-light;
-  border-radius: $radius-lg;
-  padding: $space-7;
-  margin-bottom: $space-7;
-  box-shadow: $shadow-card;
-  position: relative;
-  transition: all $dur-base $ease-standard;
-  overflow: hidden;
-  border-left: 8rpx solid transparent;
-
-  .dark-theme & {
-    background: $bg-card-dark;
-    box-shadow: $shadow-sm-dark;
-  }
+  box-shadow: $shadow-brand-sm;
+  transition: all $dur-fast $ease-emphasized;
 
   &:active {
     transform: scale($press-scale-sm);
-  }
-
-  &.status-pending { border-left-color: $info; }
-  &.status-approved { border-left-color: $success; }
-  &.status-rejected {
-    border-left-color: $brand-red;
-    background: $gradient-danger-soft;
-    .dark-theme & {
-      background: linear-gradient(135deg, rgba(178, 0, 53, 0.08) 0%, $bg-card-dark 100%);
-    }
+    box-shadow: $shadow-brand-md;
   }
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: $space-4;
+// =====================================================
+// 结果区
+// =====================================================
+.result-section {
+  padding: 0 $space-7 $space-9;
+}
+
+.result-card {
   margin-bottom: $space-5;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  transition: transform $dur-fast $ease-emphasized;
+  animation: mwp-fade-up 320ms $ease-decelerate both;
+
+  &:active { transform: scale($press-scale-md); }
 }
 
-.course-name {
-  flex: 1;
-  font-size: $font-lg + 2rpx;
-  font-weight: $weight-bold;
-  color: $text-primary-light;
-  line-height: 1.4;
-  @include ellipsis(2);
-  transition: color $dur-fast $ease-standard;
+.result-card-wrapper {
+  background: $bg-card-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xs;
+  transition: background-color $dur-medium $ease-standard;
 
   .dark-theme & {
-    color: $text-primary-dark;
+    background: $bg-card-dark;
+    box-shadow: $shadow-xs-dark;
   }
 }
 
-.review-time {
-  margin-bottom: $space-4;
-  font-size: $font-sm;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+// =====================================================
+// 提案卡片（内联样式，复用 choose-course 视觉）
+// =====================================================
+.proposal-card {
+  padding: $space-5 $space-6;
 }
 
-.review-time-label {
-  color: $text-tertiary-light;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-}
-
-.review-time-value {
-  color: $text-secondary-light;
-  font-variant-numeric: tabular-nums;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-secondary-dark;
-  }
-}
-
-.reject-reason {
-  margin-bottom: $space-5;
-  padding: $space-4 $space-5;
-  background: $danger-soft;
-  border-radius: $radius-sm;
-  display: flex;
-  align-items: flex-start;
-  gap: $space-2;
-  animation: mwp-fade-up 280ms $ease-decelerate both;
-}
-
-.reject-reason-label {
-  font-size: $font-sm;
-  font-weight: $weight-semibold;
-  color: $brand-red;
-  flex-shrink: 0;
-}
-
-.reject-reason-content {
-  flex: 1;
-  font-size: $font-sm;
-  color: $text-primary-light;
-  line-height: 1.6;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-primary-dark;
-  }
-}
-
-.card-body {
+.proposal-content {
   display: flex;
   flex-direction: column;
   gap: $space-3;
 }
 
-.info-row {
+.proposal-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.proposal-name {
+  flex: 1;
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  line-height: 1.4;
+  @include ellipsis(2);
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-primary-dark; }
+}
+
+.proposal-status {
+  flex-shrink: 0;
+  font-size: $font-xs;
+  font-weight: $weight-semibold;
+  padding: 4rpx $space-3;
+  border-radius: $radius-pill;
+  line-height: 1.2;
+
+  &.status-pending {
+    background: $info-soft;
+    color: $info;
+  }
+  &.status-approved {
+    background: $success-soft;
+    color: $success;
+  }
+  &.status-rejected {
+    background: $danger-soft;
+    color: $brand-red;
+  }
+}
+
+.proposal-row-middle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3 $space-5;
+}
+
+.proposal-info-item {
   display: flex;
   align-items: center;
-  gap: $space-4;
+  gap: $space-2;
   font-size: $font-sm;
-  min-height: 36rpx;
-}
-
-.info-label {
-  width: 110rpx;
-  flex-shrink: 0;
-  color: $text-tertiary-light;
-  font-weight: $weight-medium;
-  text-align: left;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-}
-
-.info-value {
-  flex: 1;
   color: $text-secondary-light;
-  @include ellipsis;
-  text-align: left;
   transition: color $dur-fast $ease-standard;
 
-  .dark-theme & {
-    color: $text-secondary-dark;
-  }
+  .dark-theme & { color: $text-secondary-dark; }
 }
 
-.contributor-row {
-  margin-top: $space-4;
-  padding-top: $space-4;
+.info-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.proposal-row-contributor {
+  padding-top: $space-3;
   border-top: 1rpx dashed $divider-light;
   transition: border-color $dur-fast $ease-standard;
 
-  .dark-theme & {
-    border-top-color: $divider-dark;
-  }
+  .dark-theme & { border-top-color: $divider-dark; }
 }
 
 .contributor-text {
   font-size: $font-xs;
   color: $text-tertiary-light;
-  text-align: left;
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-tertiary-dark; }
 }
 
+// 查看课程
 .view-course-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: $space-5;
-  padding: $space-4 $space-5;
+  margin-top: $space-4;
+  padding: $space-3 $space-4;
   background: $gradient-success-soft;
   border-radius: $radius-md;
   border: 1rpx solid rgba(56, 142, 60, 0.15);
   transition: all $dur-fast $ease-standard;
 
-  &:active {
-    transform: scale($press-scale-sm);
-    background: linear-gradient(135deg, rgba(56, 142, 60, 0.12), rgba(56, 142, 60, 0.04));
-  }
+  &:active { transform: scale($press-scale-sm); }
 
   .dark-theme & {
     background: linear-gradient(135deg, rgba(56, 142, 60, 0.15), rgba(56, 142, 60, 0.05));
@@ -440,39 +812,31 @@
   font-size: $font-sm;
   font-weight: $weight-semibold;
   color: $success;
-
-  .dark-theme & {
-    color: #66bb6a;
-  }
+  .dark-theme & { color: #66bb6a; }
 }
 
 .view-course-arrow {
   font-size: $font-lg;
   color: $success;
   font-weight: $weight-bold;
-
-  .dark-theme & {
-    color: #66bb6a;
-  }
+  .dark-theme & { color: #66bb6a; }
 }
 
+// 管理员操作
 .admin-actions {
   display: flex;
   gap: $space-3;
-  margin-top: $space-7;
-  padding-top: $space-5;
+  margin-top: $space-4;
+  padding-top: $space-3;
   border-top: 1rpx solid $divider-light;
   transition: border-color $dur-fast $ease-standard;
 
-  .dark-theme & {
-    border-top-color: $divider-dark;
-  }
+  .dark-theme & { border-top-color: $divider-dark; }
 }
 
-// 用 <view> 而非 <button> —— 避免小程序 button 默认样式干扰
 .admin-btn {
   flex: 1;
-  height: 72rpx;
+  height: 64rpx;
   border-radius: $radius-pill;
   font-size: $font-sm;
   font-weight: $weight-semibold;
@@ -480,8 +844,6 @@
   align-items: center;
   justify-content: center;
   transition: all $dur-fast $ease-standard;
-  text-align: center;
-  line-height: 1;
 
   &--approve {
     background: linear-gradient(135deg, $success, #2e7d32);
@@ -503,20 +865,22 @@
   }
 }
 
-.no-more {
+// =====================================================
+// 底部提示
+// =====================================================
+.bottom-prompt {
   text-align: center;
-  padding: $space-9 0;
-}
-
-.no-more-text {
+  padding: $space-7 0 $space-4;
   font-size: $font-sm;
   color: $text-tertiary-light;
-  text-align: center;
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-tertiary-dark; }
 }
 
+// =====================================================
+// FAB
+// =====================================================
 .fab-group {
   position: fixed;
   right: $space-8;
@@ -537,26 +901,12 @@
   justify-content: center;
   font-size: 56rpx;
   color: $pure-white;
+  background: $gradient-brand;
   box-shadow: $shadow-brand-md;
   transition: transform $dur-fast $ease-emphasized,
               box-shadow $dur-medium $ease-standard;
 
-  &--add {
-    background: $gradient-brand;
-  }
-
-  &--log {
-    width: 90rpx;
-    height: 90rpx;
-    background: $bg-card-light;
-    box-shadow: $shadow-sm;
-    font-size: 40rpx;
-
-    .dark-theme & {
-      background: $bg-card-dark;
-      box-shadow: $shadow-sm-dark;
-    }
-  }
+  &:active { transform: scale($press-scale-sm); }
 }
 
 .fab-icon {
@@ -564,256 +914,13 @@
   text-align: center;
 }
 
-// ===== 筛选弹窗 =====
-.filter-modal {
-  position: fixed;
-  inset: 0;
-  background: $bg-overlay-light;
-  z-index: $z-modal;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: mwp-fade-in 240ms $ease-standard both;
-
-  .dark-theme & {
-    background: $bg-overlay-dark;
-  }
-}
-
-.filter-modal__sheet {
-  width: 100%;
-  max-height: 80vh;
-  background: $bg-card-light;
-  border-radius: $radius-lg $radius-lg 0 0;
-  display: flex;
-  flex-direction: column;
-  animation: mwp-slide-up 360ms $ease-decelerate both;
-  transition: background-color $dur-medium $ease-standard;
-
-  .dark-theme & {
-    background: $bg-card-dark;
-  }
-}
-
-.filter-modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $space-7;
-  border-bottom: 1rpx solid $divider-light;
-  transition: border-color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    border-bottom-color: $divider-dark;
-  }
-}
-
-.filter-modal__title {
-  font-size: $font-lg;
-  font-weight: $weight-bold;
-  color: $text-primary-light;
-  text-align: left;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-primary-dark;
-  }
-}
-
-.filter-modal__close {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-2xl;
-  color: $text-tertiary-light;
-  text-align: center;
-  line-height: 1;
-  transition: all $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-
-  &:active {
-    background: $bg-muted-light;
-    transform: scale($press-scale-lg);
-    .dark-theme & {
-      background: $bg-muted-dark;
-    }
-  }
-}
-
-.filter-modal__body {
-  flex: 1;
-  padding: $space-7;
-  max-height: 50vh;
-}
-
-.filter-section {
-  margin-bottom: $space-7;
-}
-
-.filter-label {
-  font-size: $font-base;
-  font-weight: $weight-medium;
-  color: $text-primary-light;
-  margin-bottom: $space-4;
-  display: block;
-  text-align: left;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-primary-dark;
-  }
-}
-
-.filter-required {
-  font-size: $font-xs;
-  color: $brand-red;
-  margin-left: 4rpx;
-  font-weight: $weight-regular;
-}
-
-.tags-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-4;
-}
-
-.tag-item {
-  padding: $space-3 $space-5;
-  background: $bg-muted-light;
-  border-radius: $radius-pill;
-  font-size: $font-sm;
-  color: $text-secondary-light;
-  border: 1rpx solid transparent;
-  font-weight: $weight-medium;
-  text-align: center;
-  line-height: 1.2;
-  transition: all $dur-fast $ease-emphasized;
-
-  .dark-theme & {
-    background: $bg-muted-dark;
-    color: $text-secondary-dark;
-  }
-
-  &:active {
-    transform: scale($press-scale-md);
-  }
-
-  &.active {
-    background: $gradient-brand;
-    color: $pure-white;
-    border-color: transparent;
-    box-shadow: $shadow-brand-sm;
-    transform: scale(1.02);
-  }
-}
-
-.form-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $space-3;
-  padding: $space-4 $space-5;
-  background: $bg-muted-light;
-  border-radius: $radius-md;
-  transition: all $dur-fast $ease-standard;
-
-  .dark-theme & {
-    background: $bg-muted-dark;
-  }
-
-  &:active {
-    background: rgba(178, 0, 53, 0.08);
-  }
-}
-
-.form-row-display {
-  flex: 1;
-  font-size: $font-base;
-  color: $text-primary-light;
-  text-align: left;
-  @include ellipsis;
-  transition: color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-primary-dark;
-  }
-
-  &.is-empty {
-    color: $text-placeholder-light;
-    .dark-theme & {
-      color: $text-placeholder-dark;
-    }
-  }
-}
-
-.arrow {
-  font-size: $font-2xl;
-  color: $text-tertiary-light;
-  line-height: 1;
-  flex-shrink: 0;
-  text-align: center;
-  transition: transform $dur-fast $ease-standard;
-
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-}
-
-.filter-modal__footer {
-  display: flex;
-  gap: $space-5;
-  padding: $space-5 $space-7 calc(#{$space-7} + env(safe-area-inset-bottom));
-  border-top: 1rpx solid $divider-light;
-  transition: border-color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    border-top-color: $divider-dark;
-  }
-}
-
-// 用 < view> 而非 <button> —— 避免小程序 button 默认样式
-.filter-modal__btn {
-  flex: 1;
-  height: 88rpx;
-  border-radius: $radius-pill;
-  font-size: $font-base;
-  font-weight: $weight-semibold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  line-height: 1;
-  transition: all $dur-fast $ease-standard;
-
-  &--ghost {
-    background: $bg-muted-light;
-    color: $text-secondary-light;
-    .dark-theme & {
-      background: $bg-muted-dark;
-      color: $text-secondary-dark;
-    }
-  }
-
-  &--primary {
-    background: $gradient-brand;
-    color: $pure-white;
-    box-shadow: $shadow-brand-sm;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .filter-modal,
-  .filter-modal__sheet,
-  .proposal-card,
+  .result-card,
   .fab-group,
-  .tabs,
-  .tab-indicator {
+  .loading-spinner,
+  .filter-dropdown,
+  .search-input-box,
+  .filter-chip {
     animation: none;
     transition: none;
   }

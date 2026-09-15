@@ -23,3 +23,12 @@ dist
 auto-imports.d.ts
 components.d.ts
 /full_project_source.txt
+
+# Windows / WSL 元数据
+*:Zone.Identifier
+
+# 编辑器 / 代理产生的备份
+*.bak
+*.bak[0-9]*
+*.orig
+*.rej

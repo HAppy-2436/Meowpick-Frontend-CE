@@ -33,8 +33,8 @@
 
 | 入口 | 操作 | 跳转 |
 |------|------|------|
-| 首页 | 点击搜索框→搜索结果→"亲自提议新课程" | `proposal/propose/propose` |
-| 我的页 | FAB"+"→选"新增提议" | `proposal/propose/propose` |
+| 首页 | 点击搜索框→搜索结果→"亲自提案新课程" | `proposal/propose/propose` |
+| 我的页 | FAB"+"→选"新增提案" | `proposal/propose/propose` |
 | 提案广场 | FAB"+" / 空态"发起提案"按钮 | `proposal/propose/propose` |
 
 ### 表单字段
@@ -47,7 +47,7 @@
 | 课程类别 | text | ✅ | 点击→SearchModal(field=category) |
 | 开课校区 | multi-select | ✅ | 点击标签切换（普陀/闵行/滴水湖） |
 | 授课教师 | list | ✅(≥1) | 点击→TeacherListModal→AddTeacherModal |
-| 提议理由 | textarea | ❌ | 直接输入，300字限制 |
+| 提案理由 | textarea | ❌ | 直接输入，300字限制 |
 | 展示昵称 | toggle | ✅ | 点击切换（展示/不展示） |
 
 ### API 调用
@@ -56,7 +56,7 @@
 POST /api/proposal/add
 Body: {
   title: string,           // 课程名称
-  content: string,         // 提议理由
+  content: string,         // 提案理由
   course: {
     name: string,
     code?: string,
@@ -225,7 +225,7 @@ Body: {
 | 课程类别 | ✅ | 同上 |
 | 开课校区 | ✅ | 标签切换 |
 | 授课教师 | ✅ | TeacherListModal 增删 |
-| 提议理由 | ❌ | 仅展示，不可编辑（admin模式下隐藏） |
+| 提案理由 | ❌ | 仅展示，不可编辑（admin模式下隐藏） |
 
 ### API 调用
 
@@ -334,14 +334,14 @@ Body: {
 ### 测试路径
 
 ```
-我的页 → 筛选"提议" → 长按提案卡片 → ActionSheet → "删除" → 确认
+我的页 → 筛选"提案" → 长按提案卡片 → ActionSheet → "删除" → 确认
 ```
 
 ### 操作流程
 
 | 步骤 | 操作 | 代码位置 |
 |------|------|---------|
-| 1 | 在"我的"页筛选显示提议列表 | profile-view 筛选胶囊 |
+| 1 | 在"我的"页筛选显示提案列表 | profile-view 筛选胶囊 |
 | 2 | 长按提案卡片 | `onLongPress(item)` |
 | 3 | 弹出 ActionSheet | `profile-view:454-478` |
 | 4 | 无票: ["修改", "删除"] | — |

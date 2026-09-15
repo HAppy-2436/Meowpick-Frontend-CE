@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import type { DtoCourseVO } from "@/api/data-contracts";
+import type { DtoCourseVO, HandlerResponseDtoGetCourseResp } from "@/api/data-contracts";
 import { useCourseStore, http } from "@/config";
 import { teachersToStrings } from "@/utils/teacher-display";
 
@@ -16,13 +16,12 @@ export function useCourse() {
     id.value = courseId;
 
     http.CourseController.courseDetail(courseId).then((res) => {
-      if (res.data && res.data.data) {
-        const courseData = res.data.data as DtoCourseVO;
-        course.value = { data: courseData };
-        if (courseData.teachers) {
-          teachers.value = teachersToStrings(courseData.teachers as Array<any>);
-        }
-      }
+      // 响应结构：res.data -> HandlerResponseDtoGetCourseResp -> .data -> DtoGetCourseResp -> .course -> DtoCourseVO
+      const payload = (res.data as HandlerResponseDtoGetCourseResp)?.data;
+      const courseData = payload?.course;
+      if (!courseData) return;
+      course.value = { data: courseData };
+      teachers.value = teachersToStrings(courseData.teachers as Array<any>);
     }).catch((err) => {
       console.error('[useCourse] fetch error:', err);
     });

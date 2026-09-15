@@ -18,7 +18,7 @@
 | 重新编辑模式（editProposalId） | ✅ | ❌ |
 | 管理员操作日志页 log.vue | ✅ 574 行 时间线+折叠 | ❌ |
 | 提案列表页 list.vue | ✅ 1108 行 +筛选+admin-btns | ❌（仅 feed 轻量版） |
-| 提议列表 admin 操作 | ✅ reject/withdraw 完整 | ❌ |
+| 提案列表 admin 操作 | ✅ reject/withdraw 完整 | ❌ |
 
 ---
 

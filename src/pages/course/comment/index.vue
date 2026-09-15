@@ -1,7 +1,7 @@
 <template>
   <view class="comment-publish-container" :class="themeStore.themeClass">
 
-    <TopNavBar title="发表吐槽" @back="goBack" />
+    <TopNavBar title="发表吐槽" />
 
     <view :style="{ height: navBarHeight + 'px' }"></view>
 

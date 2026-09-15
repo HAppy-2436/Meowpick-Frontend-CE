@@ -20,7 +20,7 @@
               </view>
 
               <view class="proposal-row-bottom">
-                  <text class="proposal-badge">提议新增</text>
+                  <text class="proposal-badge">提案新增</text>
                   <view class="vote-count-box" :class="{ 'is-liked': isLiked }" @click.stop="handleLike">
                       <image src="@/images/like_active.png" class="vote-icon" />
                       <text class="vote-num">{{ likeCount }}</text>

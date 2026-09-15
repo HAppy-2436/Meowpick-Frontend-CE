@@ -3,7 +3,7 @@
     <!-- 头像层：sticky 固定在视觉位置，不随内容滚动 -->
     <view class="user-info-sticky" :style="{ top: topReservedHeight + 'px' }">
       <button class="sticky-avatar-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-        <image v-if="avatarUrl && avatarUrl.startsWith('http')" :src="avatarUrl" class="sticky-avatar-img" mode="aspectFill" />
+        <image v-if="!isDefaultAvatar && avatarUrl" :src="avatarUrl" class="sticky-avatar-img" mode="aspectFill" />
         <image v-else :src="avatarUrl || defaultCatAvatar" class="sticky-avatar-default" mode="aspectFill" />
       </button>
       <view class="sticky-avatar-meta">
@@ -240,7 +240,7 @@
 
       <view class="modal-body">
         <view class="nickname-avatar-preview">
-          <image :src="avatarUrl && avatarUrl.startsWith('http') ? avatarUrl : defaultCatAvatar" class="preview-avatar" mode="aspectFill" />
+          <image :src="(!isDefaultAvatar && avatarUrl) ? avatarUrl : defaultCatAvatar" class="preview-avatar" mode="aspectFill" />
         </view>
         <text class="field-label">输入昵称（点击输入框可获取微信昵称建议）</text>
         <input
@@ -333,19 +333,24 @@ const generateDefaultName = () => {
     return '华师喵' + Math.floor(1000 + Math.random() * 9000);
 };
 
+const DEFAULT_AVATARS = [
+    defaultCatAvatar,
+    catGrinning,
+    catHeartEyes,
+    catGrinningEyes,
+    catKissing,
+    catCrying,
+    catPouting,
+    catHardcore,
+];
+const DEFAULT_AVATAR_SET = new Set<string>(DEFAULT_AVATARS);
+
 const generateDefaultAvatar = () => {
-    const avatars = [
-        defaultCatAvatar,
-        catGrinning,
-        catHeartEyes,
-        catGrinningEyes,
-        catKissing,
-        catCrying,
-        catPouting,
-        catHardcore,
-    ];
-    return avatars[Math.floor(Math.random() * avatars.length)];
+    return DEFAULT_AVATARS[Math.floor(Math.random() * DEFAULT_AVATARS.length)];
 };
+
+// 是否正在使用随机默认头像（用户主动选择过微信头像后为 false）
+const isDefaultAvatar = ref(true);
 
 const loadUserInfo = () => {
     const stored = uni.getStorageSync('userInfo');
@@ -353,13 +358,20 @@ const loadUserInfo = () => {
         if (stored.nickName) userName.value = stored.nickName;
         if (stored.avatarUrl) avatarUrl.value = stored.avatarUrl;
         if (stored.contribution !== undefined) contribution.value = stored.contribution;
+        if (typeof stored.avatarIsDefault === 'boolean') {
+            isDefaultAvatar.value = stored.avatarIsDefault;
+        } else if (stored.avatarUrl) {
+            // 兼容旧数据：本地默认头像资源视为默认，其余视为用户头像
+            isDefaultAvatar.value = DEFAULT_AVATAR_SET.has(stored.avatarUrl);
+        }
     }
     if (!userName.value || userName.value === '同学') {
         userName.value = generateDefaultName();
-    }    if (!avatarUrl.value) {
-        avatarUrl.value = generateDefaultAvatar();
     }
-
+    if (!avatarUrl.value) {
+        avatarUrl.value = generateDefaultAvatar();
+        isDefaultAvatar.value = true;
+    }
 };
 
 // ===== 核心数据 =====
@@ -407,8 +419,10 @@ const onGuideChooseAvatar = (e: any) => {
     const avatarUrlRes = e.detail?.avatarUrl;
     if (avatarUrlRes) {
         avatarUrl.value = avatarUrlRes;
+        isDefaultAvatar.value = false;
         const stored = uni.getStorageSync('userInfo') || {};
         stored.avatarUrl = avatarUrlRes;
+        stored.avatarIsDefault = false;
         uni.setStorageSync('userInfo', stored);
     }
     // 头像选完后打开昵称输入（type="nickname" 会自动建议微信昵称）
@@ -434,8 +448,10 @@ const onChooseAvatar = (e: any) => {
     const url = e.detail?.avatarUrl;
     if (url) {
         avatarUrl.value = url;
+        isDefaultAvatar.value = false;
         const stored = uni.getStorageSync('userInfo') || {};
         stored.avatarUrl = url;
+        stored.avatarIsDefault = false;
         uni.setStorageSync('userInfo', stored);
         uni.$emit('userInfoUpdated');
     }
@@ -472,6 +488,8 @@ const confirmNicknameChange = async () => {
         stored.nickName = trimmed;
         if (!stored.avatarUrl) {
             stored.avatarUrl = generateDefaultAvatar();
+            stored.avatarIsDefault = true;
+            isDefaultAvatar.value = true;
         }
         uni.setStorageSync('userInfo', stored);
         userName.value = trimmed;
@@ -1231,12 +1249,12 @@ onShow(() => {
              .vote-num {
                   font-size: 32rpx;
                   font-weight: 800;
-                  color: #b20035;
+                  color: $brand-red;
                   margin-right: 6rpx;
              }
              .vote-label {
                   font-size: 24rpx;
-                  color: #b20035;
+                  color: $brand-red;
                   opacity: 0.9;
                   font-weight: 500;
              }
@@ -1260,7 +1278,7 @@ onShow(() => {
             }
             &.status-rejected {
                 background: linear-gradient(90deg, rgba(178, 0, 53, 0.08), rgba(178, 0, 53, 0.04));
-                color: #b20035;
+                color: $brand-red;
                 border: 1px solid rgba(178, 0, 53, 0.05);
             }
         }
@@ -1375,7 +1393,7 @@ onShow(() => {
         width: 80rpx;
         height: 80rpx;
         margin: 0 auto 24rpx;
-        border: $border-strong-light;
+        border: 4rpx solid $border-color-strong-light;
         border-top-color: $brand-red;
         border-radius: 50%;
         animation: spin 1s linear infinite;

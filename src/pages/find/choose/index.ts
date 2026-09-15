@@ -5,7 +5,7 @@ import type {
   HandlerResponseDtoListCoursesResp,
   DtoProposalSuggestionsVO
 } from "@/api/data-contracts";
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { http } from "@/config";
 import { SEARCH_PAGE_SIZE } from "@/utils/constants";
 
@@ -45,10 +45,37 @@ export function useChoose() {
   const proposalPage = ref(0);
   const loading = ref(false);
   const proposalLoading = ref(false);
-  const proposalsLoaded = ref(false); // 标记是否已加载过提议
+  const proposalsLoaded = ref(false); // 标记是否已加载过提案
 
-  const filterCampus = ref<string>("");
-  const filterDepart = ref<string>("");
+  const filterForm = reactive({
+    campus: [] as string[],
+    department: [] as string[],
+    category: [] as string[],
+  });
+
+  // 从搜索结果中动态补充校区选项，避免遗漏后端新增校区
+  const filterOptions = reactive({
+    campuses: [] as string[],
+  });
+
+  function normalizeCampus(name: string): string {
+    return (name || '').replace(/校区$/, '').trim();
+  }
+
+  function collectFilterOptions(list: MixedResult[], reset: boolean) {
+    if (reset) {
+      filterOptions.campuses = [];
+    }
+    const campuses = new Set(filterOptions.campuses);
+    for (const item of list) {
+      if (item.resultType !== 'course') continue;
+      (item.campuses || []).forEach((c) => {
+        if (c && c !== '两校区通用') campuses.add(c);
+      });
+    }
+    filterOptions.campuses = Array.from(campuses);
+  }
+
 
   function jump(item: MixedResult) {
     if (item.resultType === 'teacher') {
@@ -76,7 +103,7 @@ export function useChoose() {
     if (reload) {
       page.value = 1;
       resultList.value = [];
-      // 重置提议相关状态
+      // 重置提案相关状态
       proposalPage.value = 0;
       proposalList.value = [];
       proposalsLoaded.value = false;
@@ -88,11 +115,10 @@ export function useChoose() {
       page: page.value,
       pageSize: SEARCH_PAGE_SIZE,
       type: "course" as "course" | "teacher",
-      // TODO: 后端如支持 campus/depart 过滤，需改为: campus: filterCampus.value, depart: filterDepart.value
       sort: sortType
     };
 
-    // 只搜索课程和教师，不搜索提议（提议延迟到点击按钮后）
+    // 只搜索课程和教师，不搜索提案（提案延迟到点击按钮后）
     // 注意：swagger v2.0 的 DtoListCoursesReq 只有 page/pageSize，
     // keyword/type/sort 是后端实际支持但 swagger 未声明的参数
     Promise.all([
@@ -110,11 +136,23 @@ export function useChoose() {
 
       let combined: MixedResult[] = [...apiCourses, ...apiTeachers];
 
-      if (filterCampus.value) {
-        combined = combined.filter((c) => c.campus === filterCampus.value || c.campus === '两校区通用' || !c.campus);
+      // 收集可筛选选项（在筛选前，基于完整结果集）
+      collectFilterOptions(combined, page.value === 1);
+
+      // 客户端筛选
+      if (filterForm.campus.length > 0) {
+        const wanted = filterForm.campus.map(normalizeCampus);
+        combined = combined.filter((c) => {
+          if (!c.campuses || c.campuses.length === 0) return true;
+          if (c.campuses.includes('两校区通用')) return true;
+          return c.campuses.some(camp => wanted.includes(normalizeCampus(camp)));
+        });
       }
-      if (filterDepart.value) {
-        combined = combined.filter((c) => c.department && c.department.includes(filterDepart.value));
+      if (filterForm.department.length > 0) {
+        combined = combined.filter((c) => c.department && filterForm.department.includes(c.department));
+      }
+      if (filterForm.category.length > 0) {
+        combined = combined.filter((c) => c.category && filterForm.category.includes(c.category));
       }
 
       if (page.value === 1) {
@@ -129,7 +167,7 @@ export function useChoose() {
     })
   }
 
-  // 延迟加载提议（点击"查看其他同学提议"按钮后调用）
+  // 延迟加载提案（点击"查看其他同学提案"按钮后调用）
   function loadProposals(reload: boolean = false) {
     if (proposalsLoaded.value && !reload) {
       // 已经加载过，不需要重复加载
@@ -167,7 +205,7 @@ export function useChoose() {
     })
   }
 
-  // 加载更多提议
+  // 加载更多提案
   function loadMoreProposals() {
     if (proposalLoading.value) return;
     proposalPage.value++;
@@ -186,7 +224,7 @@ export function useChoose() {
     doSearch,
     loadProposals,
     loadMoreProposals,
-    filterCampus,
-    filterDepart
+    filterForm,
+    filterOptions
   };
 }

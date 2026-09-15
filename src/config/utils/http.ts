@@ -7,6 +7,7 @@ import { Like } from "@/api/Like";
 import { Proposal } from "@/api/Proposal";
 import { Teacher } from "@/api/Teacher";
 import { Auth } from "@/api/Auth";
+import { ChangeLog } from "@/api/ChangeLog";
 import { waitForLogin } from "@/utils/init";
 import { useTokenStore } from "@/config";
 import axios, { AxiosAdapter, AxiosRequestConfig, AxiosResponse } from "axios";
@@ -117,6 +118,7 @@ class HttpRequest<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
   public ProposalController = new Proposal(this);
   public TeacherController = new Teacher(this);
   public AuthController = new Auth(this);
+  public ChangeLogController = new ChangeLog(this);
 
   // 绕过 adapter 直接用 uni.request，避免与 waitForLogin 死锁
   async sign_in(data: any): Promise<void> {

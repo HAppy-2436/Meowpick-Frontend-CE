@@ -76,18 +76,18 @@
 |------|------|------|
 | 点击搜索框 | `find/index` | — |
 | 点击"致用户的一封信" | `home/letter` | — |
-| 点击"提议广场" | `proposal/list/list` | — |
+| 点击"提案广场" | `proposal/list/list` | — |
 | 点击"我要反馈" | 打开 feedback-modal | — |
 
 #### 2. 我的 (profile-view)
 | 触发 | 目标 | 参数 |
 |------|------|------|
-| ⋯菜单→提议广场 | `proposal/list/list` | — |
+| ⋯菜单→提案广场 | `proposal/list/list` | — |
 | ⋯菜单→更新日志 | `home/update-log` | — |
 | 点击评论卡片 | `course/index/index` | `?id={commentId}` |
 | 点击提案卡片 | `course/proposal-detail` | `?data={json}` |
 | FAB+（吐槽筛选） | `find/index` | `?mode=add-comment` |
-| FAB+（提议筛选） | `proposal/propose` | — |
+| FAB+（提案筛选） | `proposal/propose` | — |
 | 长按提案→修改 | `proposal/propose` | `?editProposalId={id}` |
 
 #### 3. 搜索页 (find)
@@ -96,7 +96,7 @@
 | 点击课程结果 | `course/index` | `?id={courseId}` |
 | 点击课程结果(add-comment模式) | `course/comment` | `?data={json}` |
 | 点击提案结果 | `course/proposal-detail` | `?data={json}` |
-| 点击"亲自提议新课程" | `proposal/propose` | — |
+| 点击"亲自提案新课程" | `proposal/propose` | — |
 
 #### 4. 提案广场 (proposal/list)
 | 触发 | 目标 | 参数 |
@@ -145,7 +145,7 @@
 
 | 页面 | 选项 | 触发 |
 |------|------|------|
-| 我的 | ["新增吐槽", "新增提议"] | FAB+（全部筛选时） |
+| 我的 | ["新增吐槽", "新增提案"] | FAB+（全部筛选时） |
 | 我的(提案0票) | ["修改", "删除"] | 长按提案卡片 |
 | 我的(提案有票) | ["查看详情", "修改(清空票数)", "删除"] | 长按提案卡片 |
 | 我的(评论) | ["查看详情", "修改", "删除"] | 长按评论卡片 |

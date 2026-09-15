@@ -1,9 +1,8 @@
 <template>
   <view class="container" :class="themeStore.themeClass">
     <TopNavBar
-      :title="isApproveMode ? '最终确认提案' : (editProposalId ? '重新编辑提案' : '新增提议')"
+      :title="isApproveMode ? '最终确认提案' : (editProposalId ? '重新编辑提案' : '新增提案')"
       :subtitle="quotaSubtitle"
-      @back="goBack"
     />
 
     <view :style="{ height: navBarHeight + 'px' }"></view>
@@ -118,9 +117,9 @@
          </view>
       </view>
 
-      <!-- Section 3: 提议理由 -->
+      <!-- Section 3: 提案理由 -->
       <view class="card">
-         <view class="card-title">提议理由</view>
+         <view class="card-title">提案理由</view>
           <textarea
             class="reason-area"
             v-model="formData.reason"
@@ -154,7 +153,7 @@
 
       <!-- 提交按钮 -->
       <button class="submit-btn" @click="submit" :disabled="submitting || (quotaInfo?.remaining ?? 1) <= 0">
-        {{ submitting ? '提交中...' : (isApproveMode ? '通过提案' : (editProposalId ? '重新提交' : '发布提议')) }}
+        {{ submitting ? '提交中...' : (isApproveMode ? '通过提案' : (editProposalId ? '重新提交' : '发布提案')) }}
       </button>
       <view class="safe-area-bottom"></view>
 

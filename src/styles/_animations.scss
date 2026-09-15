@@ -142,7 +142,7 @@
   width: 64rpx;
   height: 64rpx;
   border: 4rpx solid rgba(178, 0, 53, 0.18);
-  border-top-color: #b20035;
+  border-top-color: $brand-red;
   border-radius: 50%;
   animation: mwp-spin 800ms linear infinite;
 }

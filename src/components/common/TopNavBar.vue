@@ -4,7 +4,6 @@
       <view
         v-if="showBack"
         class="back-btn-wrapper"
-        @click="onBack"
         :style="{ width: menuButtonInfo.height + 'px', height: '100%' }"
       >
         <BackBtn />
@@ -24,7 +23,7 @@
 /**
  * 统一顶部导航栏：自动适配胶囊、显隐返回按钮、可附 subtitle、可附右侧操作
  * 用法：
- *   <TopNavBar title="提议广场" :subtitle="`${total} 条记录`" />
+ *   <TopNavBar title="提案广场" :subtitle="`${total} 条记录`" />
  *   <TopNavBar title="详情" @back="goBack">
  *     <template #right><view @click="onShare">分享</view></template>
  *   </TopNavBar>
@@ -59,8 +58,6 @@ try {
 } catch (e) {}
 
 const navBarHeight = computed(() => (menuButtonInfo.top || 0) + (menuButtonInfo.height || 0) + 12);
-
-const onBack = () => emit("back");
 </script>
 
 <style lang="scss" scoped>
@@ -70,13 +67,12 @@ const onBack = () => emit("back");
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   z-index: $z-navbar;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
-  @include glass;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
 
   .dark-theme & {
-    background: rgba(30, 30, 30, 0.78);
+    background: rgba(30, 30, 30, 0.95);
     box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.20);
   }
 }

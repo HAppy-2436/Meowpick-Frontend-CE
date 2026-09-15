@@ -11,13 +11,13 @@
             class="search-bar-wrapper"
             :style="searchBarWrapperStyle"
         >
-            <!-- 左侧：返回按钮 (直接上移) -->
-            <view class="nav-back-btn" @click="goBack" :style="navBackBtnStyle">
+            <!-- 左侧：返回按钮 -->
+            <view class="nav-back-btn" @click="goBack" :style="{ height: menuButtonInfo.height + 'px', width: menuButtonInfo.height + 'px' }">
                 <BackBtn />
             </view>
 
-            <!-- 中间：搜索框 (上移同时控制右边距) -->
-            <view class="search-input-box" :style="searchInputBoxStyle">
+            <!-- 中间：搜索框 -->
+            <view class="search-input-box" :class="{ 'is-focused': isFocused }">
                 <text class="search-icon">🔍</text>
                 <input
                 v-model="searchText"
@@ -38,101 +38,92 @@
 
             <!-- 移除右侧搜索按钮 -->
         </view>
-        
-        <!-- Filter Bar (Only in Result Mode) -->
-        <!-- Inject into header so it stays fixed if needed, or put in scroll view? -->
-        <!-- Design choice: usually filter bar is below header. -->
-        <!-- But to stick, we can put it here if we want sticky header behavior easily. -->
-        <!-- Let's put it in the header container but only visible when Result Mode -->
-                <view v-if="isResultMode" class="filter-bar-wrapper" :style="{ top: headerHeight + 'px' }">
-                    <view class="filter-bar">
-                        <view 
-                            class="filter-item" 
-                            :class="{ active: currentSort === 'default' }"
-                            @click="changeSort('default')"
-                        >综合</view>
-                        <view 
-                            class="filter-item" 
-                            :class="{ active: currentSort === 'hot' }"
-                            @click="changeSort('hot')"
-                        >热度</view>
-                        <view 
-                            class="filter-item" 
-                            :class="{ active: currentSort === 'time' }"
-                            @click="changeSort('time')"
-                        >时间</view>
+    </view>
+    
+    <!-- 筛选条（仅结果模式，移至dynamic-header外部） -->
+    <view v-if="isResultMode" class="filter-bar-wrapper" :class="{ 'is-hidden': isFilterHidden }" :style="{ top: headerHeight + 'px' }">
+        <view class="filter-chip-bar">
+                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.campuses.length, 'is-open': openDropdown === 'campus' || openDropdown === 'all' }" @click="toggleDropdown('campus')">
+                    <text class="chip-text">{{ filterState.campuses.length ? filterState.campuses.map(c => c.replace('校区','')).join('+') : '校区' }}</text>
+                    <text class="chip-arrow">▾</text>
+                </view>
+                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.departments.length, 'is-open': openDropdown === 'department' || openDropdown === 'all' }" @click="toggleDropdown('department')">
+                    <text class="chip-text">{{ filterState.departments.length ? (filterState.departments.length > 1 ? filterState.departments.length + '个院系' : filterState.departments[0]) : '院系' }}</text>
+                    <text class="chip-arrow">▾</text>
+                </view>
+                <view class="filter-chip" style="flex:1 1 auto;min-width:0" :class="{ 'has-value': filterState.categories.length, 'is-open': openDropdown === 'category' || openDropdown === 'all' }" @click="toggleDropdown('category')">
+                    <text class="chip-text">{{ filterState.categories.length ? (filterState.categories.length > 1 ? filterState.categories.length + '个分类' : filterState.categories[0]) : '分类' }}</text>
+                    <text class="chip-arrow">▾</text>
+                </view>
+                <view class="filter-chip filter-chip--expand" :class="{ 'is-open': openDropdown === 'all' }" @click="toggleDropdown('all')">
+                    <text class="chip-arrow">▾</text>
+                </view>
+            </view>
 
-                        <view class="filter-action" @click="toggleFilterPanel">
-                            <image src="@/images/choose-icon.png" style="width:28rpx;height:28rpx;margin-right:8rpx;" />
-                            <text>筛选</text>
+            <!-- 下拉面板（从筛选条下方展开） -->
+            <view v-if="isDropdownOpen" class="filter-dropdown-mask" @click="closeDropdown" />
+            <view v-if="isDropdownOpen" class="filter-dropdown" @click.stop>
+                <view class="fd-scroll">
+                    <view class="fd-group" v-if="openDropdown === 'campus' || openDropdown === 'all'">
+                        <text class="fd-label">校区</text>
+                        <view class="fd-tags">
+                            <view
+                                v-for="campus in campusOptions"
+                                :key="campus"
+                                class="fd-tag"
+                                :class="{ active: filterState.campuses.includes(campus) }"
+                                @click="toggleCampus(campus)"
+                            >{{ campus.replace('校区', '') }}</view>
                         </view>
                     </view>
-
-                    <!-- Filter panel overlay -->
-                    <!-- 修改：Dropdown 模式 -->
-                    <!-- 遮罩层：top offset by headerHeight + filterBarHeight (approx 44px) -->
-                    <!-- 其实可以直接放在 filter-bar-wrapper 内部，利用 absolute 定位 -->
-                    <view v-if="showFilterPanel" 
-                        class="mask-overlay" 
-                        @click="toggleFilterPanel"
-                        :style="{ top: (headerHeight + 44) + 'px' }"
-                    >
-                        <view class="dropdown-panel" @click.stop>
-                            <!-- Remove Header with title/close as it's a dropdown now -->
-                            
-                            <scroll-view scroll-y class="dropdown-scroll-content">
-                                <view class="filter-group">
-                                    <text class="group-title">校区选择</text>
-                                    <view class="tags-container">
-                                        <view 
-                                            class="filter-tag" 
-                                            :class="{ active: filterState.campuses.includes('闵行') }" 
-                                            @click="toggleCampus('闵行')"
-                                        >闵行校区</view>
-                                        <view 
-                                            class="filter-tag" 
-                                            :class="{ active: filterState.campuses.includes('普陀') }" 
-                                            @click="toggleCampus('普陀')"
-                                        >普陀校区</view>
-                                    </view>
-                                </view>
-
-                                <view class="filter-group">
-                                    <text class="group-title">内容类型</text>
-                                    <view class="tags-container">
-                                        <view 
-                                            class="filter-tag" 
-                                            :class="{ active: filterState.types.includes('course') }" 
-                                            @click="toggleType('course')"
-                                        >课程评价</view>
-                                        <view 
-                                            class="filter-tag" 
-                                            :class="{ active: filterState.types.includes('proposal') }" 
-                                            @click="toggleType('proposal')"
-                                        >新课提议</view>
-                                    </view>
-                                </view>
-                            </scroll-view>
-
-                            <view class="dropdown-footer">
-                                <button class="btn-common btn-reset" @click="resetFilters">重置</button>
-                                <button class="btn-common btn-confirm" @click="applyFilters">确定</button>
+                    <view class="fd-group" v-if="openDropdown === 'department' || openDropdown === 'all'">
+                        <text class="fd-label">院系</text>
+                        <view v-if="filterState.departments.length" class="fd-selected-tags">
+                            <view v-for="d in filterState.departments" :key="d" class="fd-selected">
+                                <text class="fd-selected-text">{{ d }}</text>
+                                <text class="fd-selected-clear" @click="removeDepartment(d)">×</text>
+                            </view>
+                        </view>
+                        <view class="fd-search">
+                            <input class="fd-search-input" placeholder="搜索院系..." placeholder-class="fd-placeholder" v-model="deptKeyword" @input="onDeptSearch" />
+                            <view v-if="deptResults.length" class="fd-suggest-list">
+                                <view v-for="item in deptResults" :key="item.value" class="fd-suggest-item" @click="selectDept(item)">{{ item.label || item.value }}</view>
                             </view>
                         </view>
                     </view>
-
+                    <view class="fd-group" v-if="openDropdown === 'category' || openDropdown === 'all'">
+                        <text class="fd-label">分类</text>
+                        <view v-if="filterState.categories.length" class="fd-selected-tags">
+                            <view v-for="cat in filterState.categories" :key="cat" class="fd-selected">
+                                <text class="fd-selected-text">{{ cat }}</text>
+                                <text class="fd-selected-clear" @click="removeCategory(cat)">×</text>
+                            </view>
+                        </view>
+                        <view class="fd-search">
+                            <input class="fd-search-input" placeholder="搜索分类..." placeholder-class="fd-placeholder" v-model="categoryKeyword" @input="onCategorySearch" />
+                            <view v-if="categoryResults.length" class="fd-suggest-list">
+                                <view v-for="item in categoryResults" :key="item.value" class="fd-suggest-item" @click="selectCategory(item)">{{ item.label || item.value }}</view>
+                            </view>
+                        </view>
+                    </view>
                 </view>
-    </view>
+                <view class="fd-footer">
+                    <view class="fd-btn fd-btn--reset" @click="resetFilters">重置</view>
+                    <view class="fd-btn fd-btn--confirm" @click="applyFilters">确定</view>
+                </view>
+            </view>
+        </view>
 
     <!-- 内容区域 -->
     <scroll-view 
         scroll-y 
         class="content-scroll" 
-        :style="{ paddingTop: isResultMode ? (headerHeight + 44) + 'px' : headerHeight + 'px' }" 
         @scroll="onScroll"
-        @scrolltolower="isResultMode ? handleScrollBottom : () => {}"
+        @scrolltolower="onScrollToLower"
     >
-      
+      <!-- 顶部占位（用可滚动元素而非 padding，保证滚动时内容能顶到 header 下方） -->
+      <view class="content-spacer" :style="{ height: contentPaddingTop }" />
+
       <!-- 场景 A: 有搜索词且不在结果模式 -> 显示建议列表 -->
       <view v-if="searchText && !isResultMode" class="suggest-section">
           <!-- 这里使用真实的模糊搜索列表展示 -->
@@ -165,14 +156,13 @@
 
       <!-- 场景 C: 结果模式 -> 显示 Result List -->
       <view v-else-if="isResultMode" class="result-section">
-        <view v-if="loading" class="loading-section">
+        <view v-if="loading && groupedRows.courses.length === 0" class="loading-section">
           <view class="loading-spinner" />
           <text class="loading-text">搜索中...</text>
         </view>
-        <view v-else class="list-content" style="padding-top: 15rpx;">
+        <view v-else class="list-content">
                 <!-- Courses Section -->
                 <view class="group-section" v-if="groupedRows.courses.length">
-                    <view class="group-title">课程</view>
                     <view v-for="(item, idx) in groupedRows.courses" :key="item.id" class="result-card" @click="onResultClick(item)">
                         <view class="result-card-wrapper course-card">
                             <choose-course :data="item" variant="course" />
@@ -180,30 +170,36 @@
                     </view>
                 </view>
 
-                <!-- 课程列表底部（无课程时也显示到底了） -->
+                <!-- 课程列表底部 -->
                 <template v-if="!showProposalsList">
-                    <view class="bottom">--- 到底了哟 ---</view>
-                    <view class="transition-text">没有找到心仪的课程？</view>
+                    <view v-if="loading" class="loading-more">
+                        <view class="loading-spinner loading-spinner--sm" />
+                        <text class="loading-text">加载中...</text>
+                    </view>
+                    <view v-else class="bottom">--- 到底了哟 ---</view>
                     <view class="show-proposals-tip" @click="toggleProposalsList">
-                        <text>查看其他同学的建课提议</text>
+                        <text>查看广场提案</text>
                         <image src="@/images/go-back.png" class="tip-arrow" />
                     </view>
                 </template>
 
-                <!-- Proposals Section (点击后，始终显示底部按钮) -->
+                <!-- Proposals Section（点击后显示在下方） -->
                 <template v-if="showProposalsList">
+                    <view v-if="proposalLoading && groupedRows.proposals.length === 0" class="loading-section">
+                        <view class="loading-spinner" />
+                        <text class="loading-text">加载提案中...</text>
+                    </view>
                     <view class="group-section" v-if="groupedRows.proposals.length">
-                        <view class="group-title">提议</view>
+                        <view class="group-title">提案</view>
                         <view v-for="(item, idx) in groupedRows.proposals" :key="item.id" class="result-card" @click="onResultClick(item)">
                             <view class="result-card-wrapper proposal-card">
                                 <choose-course :data="item" variant="proposal" />
                             </view>
                         </view>
                     </view>
-                    <view class="bottom">--- 到底了哟 ---</view>
-                    <view class="transition-text">以上提议都不是你想要的？</view>
-                    <view class="new-card" @click="goToProposal">
-                        <text class="new-card-text">亲自提议新课程</text>
+                    <view v-if="!proposalLoading" class="bottom">--- 到底了哟 ---</view>
+                    <view v-if="!proposalLoading" class="new-card" @click="goToProposal">
+                        <text class="new-card-text">新建提案</text>
                     </view>
                 </template>
         </view>
@@ -237,24 +233,25 @@
             <view v-if="historyList.length === 0" class="no-history">暂无搜索记录</view>
         </view>
         
-        <!-- 猜你想搜 -->
-        <view class="section-header" style="margin-top: 60rpx;">
-          <text class="section-title">猜你想搜</text>
-        </view>
-        <view class="recommend-list">
-           <view 
-              v-for="(item, index) in hotList" 
-              :key="index" 
+        <!-- 猜你想搜：最近审核通过的提案课程 -->
+        <template v-if="guessList.length">
+          <view class="section-header" style="margin-top: 60rpx;">
+            <text class="section-title">猜你想搜</text>
+          </view>
+          <view class="recommend-list">
+            <view
+              v-for="(name, index) in guessList"
+              :key="index"
               class="recommend-item"
-              @click="clickRecommend(item.keyword)"
+              @click="clickRecommend(name)"
             >
               <view class="recommend-icon">
-                 <text class="mini-icon">🔍</text>
+                <text class="mini-icon">🔍</text>
               </view>
-              <text class="recommend-word">{{ item.keyword }}</text>
-              <text class="recommend-tag" v-if="item.tag">{{ item.tag }}</text>
-           </view>
-        </view>
+              <text class="recommend-word">{{ name }}</text>
+            </view>
+          </view>
+        </template>
 
       </view>
 
@@ -267,9 +264,10 @@ import BackBtn from "@/components/common/BackBtn.vue";
 import { onMounted, onUnmounted, ref, watch, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { http, useThemeStore } from "@/config";
+import { useScrollDirection } from "@/composables/useScrollDirection";
 const themeStore = useThemeStore();
-import type { DtoSearchHistoryVO, DtoSearchSuggestionsVO } from "@/api/data-contracts";
-import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE, DEFAULT_HOT_RECOMMENDATIONS, EXPANDED_ROW_HEIGHT, HEADER_EXPANDED_PADDING } from "@/utils/constants";
+import type { DtoSearchHistoryVO, DtoProposalVO } from "@/api/data-contracts";
+import { DEBOUNCE_DELAY_MS, COLLAPSE_SCROLL_THRESHOLD, EXPAND_SCROLL_THRESHOLD, MAX_HISTORY_SIZE, EXPANDED_ROW_HEIGHT, HEADER_EXPANDED_PADDING, CAMPUS_OPTIONS } from "@/utils/constants";
 import type { MixedResult, SuggestItem } from "@/utils/types/search";
 
 // 防抖定时器
@@ -314,9 +312,8 @@ const HEADER_EXPANDED_HEIGHT = NAV_BAR_HEIGHT + EXPANDED_ROW_HEIGHT + HEADER_EXP
 // 3. 状态管理
 const isCollapsed = ref(false); // 是否收起
 const isFocused = ref(false); // 新增：是否聚焦
-const isResultMode = ref(false); // New State: Toggle between Search/Explore and Results
-const _resumeGuard = ref(false); // 从详情页返回时的保护标记，防止 onInputFocus 误切模式
-const currentSort = ref('default'); // From Result Page
+const isResultMode = ref(false);
+const _resumeGuard = ref(false);
 const showProposalsList = ref(false);
 
 // Import searchText and placeHolder from useInput
@@ -328,7 +325,13 @@ const { suggestList, suggestContent } = useSuggest(searchText);
 
 // Merge logic from useChoose
 import { useChoose } from "@/pages/find/choose/index";
-const { keyword: resultKeyword, jump, rows, page, loading, doSearch, loadProposals, loadMoreProposals, proposalLoading, proposalsLoaded, filterCampus, filterDepart, proposalRows } = useChoose();
+const { keyword: resultKeyword, jump, rows, page, loading, doSearch, loadProposals, loadMoreProposals, proposalLoading, proposalsLoaded, filterForm, filterOptions, proposalRows } = useChoose();
+
+// 校区：基础列表 + 搜索结果中出现的校区（避免遗漏后端新增校区）
+const campusOptions = computed(() => {
+    const set = new Set<string>([...CAMPUS_OPTIONS, ...filterOptions.campuses]);
+    return Array.from(set);
+});
 
 // Add exposed method for parent page to call onShow
 const resumeState = () => {
@@ -373,10 +376,8 @@ const groupedRows = computed(() => {
 });
 
 const toggleProposalsList = () => {
-    if (!proposalsLoaded.value) {
-        loadProposals(true);
-    }
     showProposalsList.value = true;
+    loadProposals(true);
 };
 
 // Auto-show proposals when they load and no courses exist
@@ -386,16 +387,28 @@ watch(() => groupedRows.value.proposals.length, (proposalCount) => {
     }
 });
 
-// Local filter panel state
-const showFilterPanel = ref(false)
+// 筛选状态
 const filterState = reactive({
     campuses: [] as string[],
-    types: [] as string[]
+    departments: [] as string[],
+    categories: [] as string[]
 })
+const openDropdown = ref('')
+const isDropdownOpen = computed(() => openDropdown.value !== '')
 
-const toggleFilterPanel = () => {
-    showFilterPanel.value = !showFilterPanel.value
+// 院系 / 分类：均通过后端字段建议接口按关键词搜索（后端无全量列表接口，避免硬编码）
+const deptKeyword = ref('')
+const deptResults = ref<any[]>([])
+const categoryKeyword = ref('')
+const categoryResults = ref<any[]>([])
+let deptTimer: ReturnType<typeof setTimeout> | null = null
+let categoryTimer: ReturnType<typeof setTimeout> | null = null
+
+const toggleDropdown = (name: string) => {
+    openDropdown.value = openDropdown.value === name ? '' : name
 }
+
+const closeDropdown = () => { openDropdown.value = '' }
 
 const toggleCampus = (c: string) => {
     const idx = filterState.campuses.indexOf(c)
@@ -403,28 +416,68 @@ const toggleCampus = (c: string) => {
     else filterState.campuses.push(c)
 }
 
-const toggleType = (t: string) => {
-    const idx = filterState.types.indexOf(t)
-    if (idx > -1) filterState.types.splice(idx, 1)
-    else filterState.types.push(t)
+const removeDepartment = (d: string) => {
+    const idx = filterState.departments.indexOf(d)
+    if (idx > -1) filterState.departments.splice(idx, 1)
+}
+
+const removeCategory = (c: string) => {
+    const idx = filterState.categories.indexOf(c)
+    if (idx > -1) filterState.categories.splice(idx, 1)
+}
+
+async function fetchFieldSuggestions(field: 'department' | 'category', keyword: string): Promise<any[]> {
+    try {
+        const res: any = await http.ProposalController.proposalFieldSuggestionsList({ keyword, field })
+        return (res.data?.data?.suggestions ?? [])
+    } catch {
+        return []
+    }
+}
+
+const onDeptSearch = () => {
+    if (deptTimer) clearTimeout(deptTimer)
+    const kw = deptKeyword.value.trim()
+    deptTimer = setTimeout(async () => {
+        deptResults.value = kw ? await fetchFieldSuggestions('department', kw) : []
+    }, 300)
+}
+
+const selectDept = (item: any) => {
+    const val = item.value || item.label || ''
+    if (val && !filterState.departments.includes(val)) filterState.departments.push(val)
+    deptKeyword.value = ''
+    deptResults.value = []
+}
+
+const onCategorySearch = () => {
+    if (categoryTimer) clearTimeout(categoryTimer)
+    const kw = categoryKeyword.value.trim()
+    categoryTimer = setTimeout(async () => {
+        categoryResults.value = kw ? await fetchFieldSuggestions('category', kw) : []
+    }, 300)
+}
+
+const selectCategory = (item: any) => {
+    const val = item.value || item.label || ''
+    if (val && !filterState.categories.includes(val)) filterState.categories.push(val)
+    categoryKeyword.value = ''
+    categoryResults.value = []
 }
 
 const resetFilters = () => {
-    filterState.campuses = []
-    filterState.types = []
-    showFilterPanel.value = false
-    // 重置后重新搜索
-    if (searchText.value && isResultMode.value) {
-        performSearch(searchText.value)
-    }
+    const isAll = openDropdown.value === 'all'
+    if (isAll || openDropdown.value === 'campus') filterState.campuses = []
+    if (isAll || openDropdown.value === 'department') filterState.departments = []
+    if (isAll || openDropdown.value === 'category') filterState.categories = []
 }
 
 const applyFilters = () => {
-    showFilterPanel.value = false
-    // 筛选后重新搜索（会带上新的 filterState）
-    if (searchText.value && isResultMode.value) {
-        performSearch(searchText.value)
-    }
+    openDropdown.value = ''
+    filterForm.campus = [...filterState.campuses]
+    filterForm.department = [...filterState.departments]
+    filterForm.category = [...filterState.categories]
+    if (searchText.value && isResultMode.value) performSearch(searchText.value)
 }
 
 // 4. 动态样式计算
@@ -435,85 +488,62 @@ const headerHeight = computed(() => {
 
 const refinedSearchBarWrapperStyle = computed(() => {
     const gap = uni.upx2px(32);
-    // 右侧留白 = 胶囊区域宽度 (windowWidth - menuButtonInfo.left) + 32rpx 间距
     const paddingRight = (sysInfo.windowWidth - menuButtonInfo.left) + gap;
     
     return {
-        // 修改：这里原来似乎有问题，height 设为 headerHeight 会导致它被挤扁如果父容器也是这个高度
-        // 其实父容器 dynamic-header 的高度也是 headerHeight
-        // wrapper 应该也是这个高度
         height: headerHeight.value + 'px',
-        display: 'flex',
-        alignItems: 'center', // 修正：垂直居中，而不是 flex-start
-        // paddingTop: menuButtonInfo.top + 'px', // 修正：移除 paddingTop，改用 top 定位或 flex 居中
-        // 如果用 paddingTop 顶下来，内容高度会被挤压。
-        // 我们应该让 search-bar-wrapper 绝对定位或者充满 header
-        // 实际上 search-bar-wrapper 已经是 absolute left 0 width 100%。
-        // 它的高度完全等于 headerHeight。
-        // 它的内容应该位于 menuButton 的水平线上。
-        // menuButton 的 top 是已知的。
-        // 我们可以让 search-input-box 的 marginTop 等于 menuButton.top
-        // 或者更简单的，让 wrapper 顶对齐，paddingTop = menuButton.top, height = bottom + 12
-        paddingTop: menuButtonInfo.top + 'px', 
-        paddingBottom: '12px', // 底部留白
-        paddingLeft: '32rpx', 
+        paddingTop: menuButtonInfo.top + 'px',
+        paddingBottom: '12px',
         paddingRight: paddingRight + 'px',
-        boxSizing: 'border-box'
     };
-});
-
-const navBackBtnStyle = computed(() => {
-    return {
-        height: menuButtonInfo.height + 'px',
-        width: menuButtonInfo.height + 'px', 
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: '12rpx'
-    };
-});
-
-// 计算 input box 的宽度和位置
-const refinedSearchInputBoxStyle = computed((): Record<string, string> => {
-    return {
-        height: menuButtonInfo.height + 'px',
-        flex: '1',
-        borderRadius: (menuButtonInfo.height / 2) + 'px',
-        backgroundColor: '#f5f5f5',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 24rpx',
-        border: isFocused.value ? '2rpx solid #b20035' : '2rpx solid #e0e0e0',
-        boxShadow: isFocused.value ? '0 4rpx 12rpx rgba(178, 0, 53, 0.1)' : 'none',
-        transition: 'all 0.12s ease',
-        boxSizing: 'border-box'
-    }
 });
 
 const searchBarWrapperStyle = refinedSearchBarWrapperStyle;
-const searchInputBoxStyle = refinedSearchInputBoxStyle;
 
 // 5. 滚动监听
+const { isScrollingDown, onScroll: handleScrollDirection } = useScrollDirection(30)
+const isFilterHidden = ref(false)
+let lastScrollTop = 0
+
+// 筛选条实际高度 = 上下 padding(12rpx*2) + 胶囊高度(56rpx)
+const FILTER_BAR_HEIGHT = uni.upx2px(80)
+// 目标可见留白：与搜索栏底部 padding(12px) 一致。
+// 筛选栏自身还带有 12rpx 底部内边距（已含在 FILTER_BAR_HEIGHT 中），需扣除，
+// 这样「筛选栏→首卡」的可见间距才真正等于「搜索栏→筛选栏」。
+const FIRST_CARD_GAP = Math.max(0, 12 - uni.upx2px(12))
+const contentPaddingTop = computed(() => {
+    if (!isResultMode.value) return headerHeight.value + 'px'
+    const filterHeight = isFilterHidden.value ? 0 : FILTER_BAR_HEIGHT
+    return (headerHeight.value + filterHeight + FIRST_CARD_GAP) + 'px'
+})
+
 interface ScrollDetail { detail?: { scrollTop?: number } }
 const onScroll = (e: ScrollDetail) => {
-    // 简单的阈值判定：下滑超过 20px 即收起
-    const top = e.detail.scrollTop;
+    const top = e.detail.scrollTop ?? 0
     
-    // 防抖或节流可以优化性能，这里简化直接判断
+    // 检测滚动方向
+    handleScrollDirection(e)
+    
+    // 根据滚动方向控制筛选栏显隐
+    if (top > 50) {
+        isFilterHidden.value = isScrollingDown.value
+    } else {
+        isFilterHidden.value = false
+    }
+    
+    // 原有的 header 收起逻辑
     if (top > COLLAPSE_SCROLL_THRESHOLD && !isCollapsed.value) {
         isCollapsed.value = true;
     } else if (top < EXPAND_SCROLL_THRESHOLD && isCollapsed.value) {
-        // 只有回到顶部才展开
         isCollapsed.value = false;
     }
-};
+}
 
 // 获取搜索历史
 const historyList = ref<string[]>(uni.getStorageSync('searchHistory') || []);
-const hotList = ref<{ keyword: string; tag: string }[]>([]);
 
 function fetchSearchHistory() {
-    http.SearchController.searchRecentList().then((res) => {
+    return http.SearchController.searchRecentList().then((res) => {
         const histories = res.data?.data?.histories || [];
         historyList.value = histories.map((h: DtoSearchHistoryVO) => {
             if (typeof h === 'string') return h;
@@ -524,40 +554,41 @@ function fetchSearchHistory() {
     });
 }
 
-// 获取猜你想搜的推荐（从搜索建议 API 获取）
-function fetchHotRecommendations() {
-    const defaultKeywords = ['课程', '老师', '必修', '选修'];
-    const recommendations: { keyword: string; tag: string }[] = [];
+// 猜你想搜：展示最近审核通过的提案对应课程，确保能搜到且便于评论
+const GUESS_PROPOSAL_LIMIT = 6;
+const guessList = ref<string[]>([]);
 
-    Promise.all(defaultKeywords.map(keyword =>
-        http.SearchController.searchSuggestList({ keyword })
-            .then((res) => res?.data?.data?.suggestions || [])
-            .catch(() => [])
-    )).then(results => {
-        results.forEach((suggestions: DtoSearchSuggestionsVO[]) => {
-            if (Array.isArray(suggestions)) {
-                suggestions.slice(0, 3).forEach((item: DtoSearchSuggestionsVO) => {
-                    if (item?.name) {
-                        recommendations.push({ keyword: item.name, tag: item.type === 'course' ? '课程' : '教师' });
-                    }
-                });
+function fetchGuessProposals() {
+    return http.ProposalController.proposalListList({ status: 'approved', page: 1, pageSize: 20 })
+        .then((res) => {
+            const proposals = ((res.data as any)?.data?.proposals ?? []) as DtoProposalVO[];
+            const sorted = [...proposals].sort((a, b) => {
+                const ta = new Date(b.updatedAt || b.createdAt || 0).getTime();
+                const tb = new Date(a.updatedAt || a.createdAt || 0).getTime();
+                return ta - tb;
+            });
+            const names: string[] = [];
+            const seen = new Set<string>();
+            for (const p of sorted) {
+                const name = (p.finalCourse?.name || p.course?.name || p.title || '').trim();
+                if (!name) continue;
+                const key = name.toLowerCase();
+                if (seen.has(key)) continue;
+                seen.add(key);
+                names.push(name);
+                if (names.length >= GUESS_PROPOSAL_LIMIT) break;
             }
+            guessList.value = names;
+        })
+        .catch((err) => {
+            console.error('[find] fetchGuessProposals error:', err);
+            guessList.value = [];
         });
-        // Use API results if available, even if fewer than expected
-        if (recommendations.length > 0) {
-            hotList.value = recommendations.slice(0, 6);
-        } else {
-            hotList.value = DEFAULT_HOT_RECOMMENDATIONS;
-        }
-    }).catch(() => {
-        // Only use fallback if API call failed
-        hotList.value = DEFAULT_HOT_RECOMMENDATIONS;
-    });
 }
 
 onMounted(() => {
     fetchSearchHistory();
-    fetchHotRecommendations();
+    fetchGuessProposals();
 });
 
 onUnmounted(() => {
@@ -635,6 +666,7 @@ const performSearch = (keyword: string) => {
 
     // Close toggles from previous search
     showProposalsList.value = false;
+    proposalsLoaded.value = false;
 
     // 1. Add History (persist to storage)
     const historySet = new Set(historyList.value);
@@ -667,31 +699,31 @@ const clearHistory = () => {
     uni.removeStorageSync('searchHistory');
 };
 
-// 排序方式切换
-const changeSort = (sortType: string) => {
-    if (currentSort.value === sortType) return;
-    uni.showToast({ title: '功能正在开发中', icon: 'none' });
+// 滚动到底部加载更多
+const onScrollToLower = () => {
+    if (!isResultMode.value) return;
+    handleScrollBottom();
 };
 
-// 滚动到底部加载更多（加 loading 守卫防止重复触发）
 const handleScrollBottom = () => {
-    if (!isResultMode.value || loading.value) return;
     if (showProposalsList.value) {
+        if (proposalLoading.value) return;
         loadMoreProposals();
     } else {
+        if (loading.value) return;
         page.value++;
-        doSearch(false, currentSort.value);
+        doSearch(false);
     }
 };
 
-// 跳转到提议页面
+// 跳转到提案页面
 const goToProposal = () => {
     uni.navigateTo({
         url: '/pages/proposal/propose/propose' 
     });
 };
 
-// 提议卡片点击
+// 提案卡片点击
 const clickProposal = (proposal: Record<string, unknown>) => {
     const dataStr = encodeURIComponent(JSON.stringify(proposal));
     // 强制跳转到 course/proposal-detail
