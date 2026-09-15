@@ -35,30 +35,48 @@ const arrowStyle = computed(() => ({
 
 <style scoped lang="scss">
 
+// 圆形浅底 + 圆头 chevron：明确的点击热区，视觉更清晰
 .back-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  @include pressable(0.92);
+  border-radius: 50%;
+  background: $bg-muted-light;
+  transition: background-color $dur-fast $ease-standard,
+              transform $dur-fast $ease-emphasized,
+              box-shadow $dur-base $ease-standard;
+
+  &:active {
+    transform: scale(0.94);
+    background: $divider-light;
+  }
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+
+    &:active {
+      background: $bg-muted-darker;
+    }
+  }
 }
 
-// 圆头 chevron：两根圆角短棒绕同一顶点旋转，比「旋转方框」更精致
+// 圆头 chevron：两根圆角短棒绕同一顶点旋转
 .css-back-arrow {
   position: relative;
-  width: 24rpx;
-  height: 24rpx;
+  width: 26rpx;
+  height: 26rpx;
 
   &::before,
   &::after {
     content: "";
     position: absolute;
-    left: 4rpx;
+    left: 5rpx;
     top: 10rpx;
-    width: 14rpx;
-    height: 4rpx;
-    border-radius: 4rpx;
+    width: 16rpx;
+    height: 5rpx;
+    border-radius: 5rpx;
     background: $brand-red;
     transform-origin: 0 50%;
     transition: background-color $dur-fast $ease-standard;
