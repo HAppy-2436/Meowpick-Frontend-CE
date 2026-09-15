@@ -737,7 +737,7 @@ onShow(() => {
     align-items: center;
     gap: 7rpx;
     background-color: $bg-card-light;
-    border-radius: 100rpx;
+    border-radius: $radius-pill;
     box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.06);
     flex-shrink: 0;
     transition: transform 0.15s $ease-standard, box-shadow 0.15s ease-out;
@@ -751,7 +751,7 @@ onShow(() => {
         width: 30rpx;
         height: 3rpx;
         background-color: $text-secondary-light;
-        border-radius: 2rpx;
+        border-radius: $radius-pill;
         display: block;
         transition: background-color 0.15s;
     }
@@ -944,7 +944,7 @@ onShow(() => {
     top: 50%;
     transform: translateY(-50%);
     padding: 0 24rpx;
-    border-radius: 60rpx;
+    border-radius: $radius-pill;
     font-size: 26rpx;
     font-weight: 600;
     color: $pure-white;
@@ -964,7 +964,7 @@ onShow(() => {
     align-items: center;
     height: 64rpx;
     background-color: $bg-card-light;
-    border-radius: 60rpx;
+    border-radius: $radius-pill;
     box-shadow: $shadow-sm;
     padding: 0 6rpx;
 }
@@ -1006,7 +1006,7 @@ onShow(() => {
     top: 280rpx;
     right: 24rpx;
     background-color: $bg-card-light;
-    border-radius: 24rpx;
+    border-radius: $radius-lg;
     box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
     padding: 12rpx 0;
     z-index: 1500;
@@ -1139,7 +1139,7 @@ onShow(() => {
         margin-bottom: 32rpx;
         background: $bg-page-light;
         padding: 20rpx 24rpx;
-        border-radius: 16rpx;
+        border-radius: $radius-md;
         
         .course-info-item {
              display: flex;
@@ -1198,7 +1198,7 @@ onShow(() => {
              align-items: center;
              background: linear-gradient(90deg, #fff0f2, #fff5f6);
              padding: 10rpx 24rpx;
-             border-radius: 30rpx;
+             border-radius: $radius-pill;
              border: 1px solid rgba(178, 0, 53, 0.05);
              
              .vote-icon {
@@ -1333,7 +1333,7 @@ onShow(() => {
     width: 100%;
     max-width: 680rpx;
     background-color: $bg-card-light;
-    border-radius: 32rpx;
+    border-radius: $radius-card;
     overflow: hidden;
     box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.15);
 }
@@ -1394,7 +1394,7 @@ onShow(() => {
     width: 100%;
     height: 96rpx;
     background-color: $bg-muted-light;
-    border-radius: 16rpx;
+    border-radius: $radius-md;
     padding: 0 28rpx;
     font-size: 32rpx;
     color: $text-primary-light;
@@ -1495,6 +1495,7 @@ onShow(() => {
 .guide-overlay.dark-theme .guide-header .guide-subtitle { color: $text-tertiary-dark; }
 .guide-overlay.dark-theme .guide-step .step-title { color: $text-primary-dark; }
 .guide-overlay.dark-theme .guide-step .step-desc { color: $text-tertiary-dark; }
+.guide-overlay.dark-theme .guide-footer .guide-skip { color: $text-tertiary-dark; }
 .dark-theme .guide-overlay.dark-theme .guide-footer .start-btn { opacity: 0.85; }
 
 .profile-container.dark-theme .sticky-bar .filter-pill.active { color: $pure-white; }
@@ -1534,7 +1535,7 @@ onShow(() => {
   width: 100%;
   max-width: 600rpx;
   background-color: $bg-card-light;
-  border-radius: 32rpx;
+  border-radius: $radius-card;
   padding: 48rpx 40rpx;
   box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
 }
@@ -1576,7 +1577,7 @@ onShow(() => {
     width: 64rpx;
     height: 64rpx;
     background: $brand-red-tint;
-    border-radius: 20rpx;
+    border-radius: $radius-lg;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1615,7 +1616,7 @@ onShow(() => {
     color: $pure-white;
     font-size: 32rpx;
     font-weight: 600;
-    border-radius: 44rpx;
+    border-radius: $radius-pill;
     border: none;
     box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
 
@@ -1633,7 +1634,7 @@ onShow(() => {
     color: $pure-white;
     font-size: 32rpx;
     font-weight: 600;
-    border-radius: 44rpx;
+    border-radius: $radius-pill;
     border: none;
     box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.3);
     text-align: center;
