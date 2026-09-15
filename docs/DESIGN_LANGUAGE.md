@@ -64,6 +64,74 @@
 
 ---
 
+## 灰度色阶规范（Normative）
+
+灰度是本设计系统的骨架。以下色阶为**唯一事实源**，任何页面不得再引入新的灰值；`_tokens.scss` 必须与此表一致。
+
+### 亮色灰度阶
+
+| Token | 值 | 用途 | 白底对比度 |
+|---|---|---|---|
+| `$bg-card-light` | `#ffffff` | 画布 / 卡片 / 弹窗 | — |
+| `$bg-page-light` | `#f6f6f6` | 页面底色 | — |
+| `$bg-muted-light` | `#efefef` | 内嵌区块 / 次级面 / 输入底 | — |
+| `$divider-light` | `#e4e4e4` | 分割线 / 卡片描边 | — |
+| `$border-color-strong-light` | `#cfcfcf` | 强调边框（输入、搜索框） | — |
+| `$text-placeholder-light` | `#b0b0b0` | 占位符 | 2.1 |
+| `$text-tertiary-light` | `#767676` | 辅助/说明文字 | **4.5 ✓** |
+| `$text-secondary-light` | `#595959` | 次级正文 | 7.0 |
+| `$text-primary-light` | `#1a1a1a` | 主文本 / 标题 | 16.9 |
+
+规则：
+- **必须中性**（R=G=B），不得出现偏蓝/偏冷灰（旧的 `#f7f8fa` 已废弃）。
+- 相邻面之间的差异必须肉眼可辨：page 与 muted 至少相差 ~6 阶亮度，divider 不得与 muted 同值。
+- 正文与辅助文字必须 ≥ 4.5:1；占位符允许更低但不得低于 ~2:1。
+
+### 暗色灰度阶
+
+| Token | 值 | 用途 |
+|---|---|---|
+| `$bg-page-dark` | `#121212` | 页面底色 |
+| `$bg-card-dark` | `#1e1e1e` | 卡片 / 弹窗 |
+| `$bg-muted-dark` | `#282828` | 内嵌区块 / 次级面 |
+| `$bg-muted-darker` | `#333333` | 按压态 / 更深的次级面 |
+| `$divider-dark` | `#333333` | 分割线 |
+| `$divider-card-dark` | `#3d3d3d` | 卡片级细分割线（比全局分割线更亮一点以在卡上可见） |
+| `$text-placeholder-dark` | `#6b6b6b` | 占位符 |
+| `$text-tertiary-dark` | `#9a9a9a` | 辅助文字 |
+| `$text-secondary-dark` | `#c4c4c4` | 次级正文 |
+| `$text-primary-dark` | `#ededed` | 主文本 / 标题 |
+
+规则：
+- 暗色同样必须**中性**，且用“更深的灰”重建与亮色一致的层次，而非简单反转。
+- 面与面的关系：page < card < muted，逐级变亮；分割线不得等于同层面值。
+
+### 层次表达
+
+- **面（surface）** 承担层次：page → card → muted 三级足够，不要发明第四级中间灰。
+- **阴影**只用于“悬浮”部件（卡片、导航、FAB、模态、浮层），共 5 档：`$shadow-xs/sm/md/lg/xl`。禁止 one-off 阴影字面量。
+- **边框**只用于“非悬浮”的细控件（输入框、tag），卡片优先用阴影而非 border；**不要同时用 border + 阴影**表达同一层次。
+
+### 圆角规则
+
+- 圆角与面积成正比：卡片 `$radius-xl(28rpx)`、内嵌块/输入 `$radius-md(16rpx)`、chip/tag `$radius-pill`、小图标 `$radius-xs/sm`。
+- 禁止 `2vw`、`60rpx`、`24rpx` 这类脱离 token 的散值。
+
+### 动效规则
+
+- 时长只用 `$dur-instant/fast/base/medium/slow`；曲线只用 5 条 `$ease-*`。
+- 禁止 `transition: all`；只声明需要变化的属性。
+- 列表错峰节奏统一为 **60ms**。
+- 所有动效必须有 `prefers-reduced-motion` 降级。
+
+### 采用规则
+
+- 通用组件（`Button / EmptyState / StatusBadge / SkeletonCard`）为唯一实现；页面不得再手写等价结构。
+- 不允许 `<button>`（小程序默认样式无法覆盖）；交互元素用 `<view class="mwp-pressable">` 或 `Button`。
+- 暗色模式统一用 `.dark-theme &` 嵌套；禁止全局 `<style>` 覆盖块与 `!important`。
+
+---
+
 ## 暗色模式
 
 暗色模式不是简单地反转颜色，而是用更深的灰色重新建立同样的层次关系：
