@@ -154,7 +154,7 @@
   z-index: $z-base;
   background: $bg-page-light;
   overflow: visible;
-  transition: transform 250ms $ease-standard, opacity $dur-base $ease-standard;
+  transition: transform $dur-medium $ease-standard, opacity $dur-base $ease-standard;
 
   .dark-theme & {
     background: $bg-page-dark;
