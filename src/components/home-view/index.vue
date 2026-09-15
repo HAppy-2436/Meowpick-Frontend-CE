@@ -85,7 +85,7 @@
           </view>
         </view>
         <view class="guide-footer">
-          <Button tone="brand" block size="lg" @click="onGuideDismiss">我知道了</Button>
+          <MwpButton tone="brand" block size="lg" @click="onGuideDismiss">我知道了</MwpButton>
         </view>
       </view>
     </view>

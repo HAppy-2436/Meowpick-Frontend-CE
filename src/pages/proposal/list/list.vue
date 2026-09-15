@@ -119,7 +119,7 @@
         desc="快来发起第一个吧"
       >
         <template #action>
-          <Button tone="brand" @click="goToPropose">发起提案</Button>
+          <MwpButton tone="brand" @click="goToPropose">发起提案</MwpButton>
         </template>
       </EmptyState>
 

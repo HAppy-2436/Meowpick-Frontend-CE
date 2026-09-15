@@ -7,7 +7,7 @@
 
     <EmptyState v-else-if="error" tone="danger" emoji="⚠️" title="加载失败" compact>
       <template #action>
-        <Button tone="danger" @click="$emit('retry')">重试</Button>
+        <MwpButton tone="danger" @click="$emit('retry')">重试</MwpButton>
       </template>
     </EmptyState>
 

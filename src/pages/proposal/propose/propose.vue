@@ -152,7 +152,7 @@
       </view>
 
       <!-- 提交按钮 -->
-      <Button
+      <MwpButton
         class="submit-btn"
         tone="brand"
         size="lg"
@@ -162,7 +162,7 @@
         @click="submit"
       >
         {{ submitting ? '提交中...' : (isApproveMode ? '通过提案' : (editProposalId ? '重新提交' : '发布提案')) }}
-      </Button>
+      </MwpButton>
       <view class="safe-area-bottom"></view>
 
     </view>
