@@ -3,8 +3,8 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",
     "navigationStyle": "custom",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "backgroundColor": "#F6F6F6",
     "animationType": "fade-in",
     "animationDuration": 220
   },
@@ -16,20 +16,20 @@
       }
     },
     {
-      "path": "pages/course/index/index",
+      "path": "pages/course/detail",
       "style": {
         "navigationStyle": "custom",
         "navigationBarTitleText": "课程详情"
       }
     },
     {
-      "path": "pages/course/comment/index",
+      "path": "pages/course/comment",
       "style": {
         "enablePullDownRefresh": true
       }
     },
     {
-      "path": "pages/find/index/index",
+      "path": "pages/find/index",
       "style": {}
     },
     {
@@ -47,25 +47,25 @@
       }
     },
     {
-      "path": "pages/proposal/propose/propose",
+      "path": "pages/proposal/propose",
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/proposal/list/list",
+      "path": "pages/proposal/list",
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/proposal/log/log",
+      "path": "pages/proposal/log",
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/course/proposal-detail/index",
+      "path": "pages/course/proposal-detail",
       "style": {
         "navigationStyle": "custom",
         "navigationBarTitleText": "提案详情"

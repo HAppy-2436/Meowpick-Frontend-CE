@@ -139,13 +139,13 @@ src/pages/
 └── proposal/                  # list (权限感知 3Tab) + propose (3 模式)
 ```
 
-**路由总数 9 条**（pages.json）。
+**路由总数 10 条**（pages.json）。
 
 ### 关键页面说明
 
-- **`proposal/list/list.vue`**：**权限感知主入口**。管理员看到 3 Tab（全部提案 / 操作记录 / 我的提案），普通用户看到 2 Tab。FAB 浮动。
-- **`proposal/propose/propose.vue`**：3 模式（普通提交 / `?editProposalId=` 重编辑 / `?approveProposalId=` 管理员审批）。
-- **`profile-view/index.vue`**：合并 feature/proposal 的"my-comments" +"我的"+ 昵称编辑 + 30 天冷却 + 每日配额。
+- **`pages/proposal/list.vue`**：**权限感知主入口**。管理员看到 3 Tab（全部提案 / 操作记录 / 我的提案），普通用户看到 2 Tab。FAB 浮动。
+- **`pages/proposal/propose.vue`**：3 模式（普通提交 / `?editProposalId=` 重编辑 / `?approveProposalId=` 管理员审批）。
+- **`components/profile/ProfileView.vue`**：合并"我的"+ 昵称编辑 + 30 天冷却 + 每日配额。
 
 ---
 
@@ -348,7 +348,6 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app';  // ← 正确
 | 🔴 | 后端 2.0 上线后跑联调 | - |
 | 🟡 | 缓存 mechanism（`useRequest` composable）| 半天 |
 | 🟡 | SkeletonCard 多形态（卡片 / 列表 / 表单） | 半天 |
-| 🟢 | 优化少数残留硬编码（home-view, choose-course） | 1 小时 |
 | 🟢 | 暗色模式主题切换加平滑过渡 | 2 小时 |
 
 ---
@@ -359,14 +358,13 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app';  // ← 正确
 - `src/styles/_tokens.scss` —— 完整设计令牌
 - `src/styles/_animations.scss` —— 动效库
 - `src/components/common/TopNavBar.vue` —— 最佳实践范本
-- `src/pages/proposal/list/list.vue` —— 权限感知页面范本
+- `src/pages/proposal/list.vue` —— 权限感知页面范本
 - `src/composables/useMenuButton.ts` —— composable 范本
 
 ### 文档
-- `docs/FRONTEND_QUALITY.md` —— 设计 + 动效全面超越报告
-- `docs/PROPOSAL_PARITY.md` —— 与 feature/proposal 对比
-- `docs/API_CHANGES.md` —— 接口层变更
-- `docs/UX_REVIEW.md` —— 用户视角评论
+- `docs/PROJECT_OVERVIEW.md` —— 页面路由、跳转关系、交互清单
+- `docs/DESIGN_LANGUAGE.md` —— 设计语言与视觉规范
+- `docs/BACKEND_INTEGRATION.md` —— 后端对接说明
 
 ### 关键配置
 - `vite.config.ts` —— `additionalData` 注入 tokens（核心）
@@ -388,7 +386,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app';  // ← 正确
 | 动效 keyframes | 14 | ✅ |
 | 设计 tokens | 122 | ✅ |
 | SCSS mixins | 11 | ✅ |
-| 路由数 | 9 | ✅ |
+| 路由数 | 10 | ✅ |
 
 ---
 

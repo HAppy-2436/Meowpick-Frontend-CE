@@ -1,0 +1,846 @@
+
+// =====================================================
+// 容器
+// =====================================================
+.proposal-container {
+  width: 100%;
+  height: 100vh;
+  background-color: $bg-page-light;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color $dur-medium $ease-standard;
+
+  &.dark-theme {
+    background-color: $bg-page-dark;
+  }
+}
+
+// =====================================================
+// 顶部固定搜索栏
+// =====================================================
+.dynamic-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: $z-navbar;
+  background: $bg-card-light;
+  border-radius: 0 0 $radius-card $radius-card;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.20);
+  }
+}
+
+.search-bar-wrapper {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: $space-7;
+  box-sizing: border-box;
+  z-index: $z-navbar + 1;
+}
+
+.nav-back-btn {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: $space-4;
+  flex-shrink: 0;
+  @include pressable($press-scale-md);
+}
+
+.search-input-box {
+  flex: 1;
+  min-width: 0;
+  // height 由 useMenuButton.contentHeight 以内联 px 给出：
+  // 手机端 = 胶囊高度，宽屏按 rpx 比例放大
+  background: $bg-muted-light;
+  border: 2rpx solid transparent;
+  border-radius: $radius-control;
+  display: flex;
+  align-items: center;
+  padding: 0 $space-5;
+  @include mwp-transition($dur-fast, $ease-emphasized);
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+    border-color: $bg-muted-darker;
+  }
+
+  &.is-focused {
+    background: $bg-card-light;
+    border-color: rgba(178, 0, 53, 0.30);
+    box-shadow: 0 0 0 4rpx rgba(178, 0, 53, 0.08);
+
+    .dark-theme & {
+      background: $bg-card-dark;
+      border-color: rgba(255, 77, 106, 0.70);
+    }
+  }
+}
+
+// 搜索按钮（仅无胶囊环境，如 PC 端）：占在搜索框右侧空出来的位置
+.nav-search-btn {
+  flex-shrink: 0;
+  height: 72rpx;
+  margin-left: $space-5;
+  padding: 0 $space-6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $gradient-brand;
+  color: $pure-white;
+  font-size: $font-base;
+  font-weight: $weight-semibold;
+  letter-spacing: 1rpx;
+  border-radius: $radius-control;
+  @include pressable($press-scale-sm);
+}
+
+.search-icon {
+  font-size: $font-lg;
+  margin-right: $space-4;
+  opacity: 0.5;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  font-size: $font-base;
+  color: $text-primary-light;
+  background: transparent;
+  border: none;
+  outline: none;
+  height: 100%;
+  text-align: left;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.clear-icon {
+  width: 36rpx;
+  height: 36rpx;
+  background: $bg-page-light;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-lg;
+  color: $text-tertiary-light;
+  flex-shrink: 0;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-page-dark;
+    color: $text-tertiary-dark;
+  }
+
+  &:active {
+    background: $bg-muted-light;
+    transform: scale($press-scale-lg);
+    .dark-theme & { background: $bg-muted-dark; }
+  }
+}
+
+.placeholder-style {
+  color: $text-tertiary-light;
+  font-weight: $weight-regular;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+}
+
+// =====================================================
+// 筛选条 + 下拉（与 find 页统一）
+// =====================================================
+.filter-bar-wrapper {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  // 与模糊搜索浮层上边缘对齐（与 find 页保持一致）
+  margin-top: $space-5;
+  z-index: $z-base;
+  overflow: visible;
+  transition: transform $dur-medium $ease-standard, opacity $dur-base $ease-standard;
+
+  &.is-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.filter-chip-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 12rpx 20rpx;
+  position: relative;
+  z-index: $z-sticky + 2;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  height: 56rpx;
+  padding: 0 $space-4;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  border-radius: $radius-pill;
+  box-shadow: $shadow-xs;
+  transition: border-color $dur-fast $ease-standard,
+              background $dur-fast $ease-standard,
+              box-shadow $dur-fast $ease-standard,
+              color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $divider-dark;
+    box-shadow: $shadow-xs-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.is-open {
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+    .dark-theme & { border-color: $brand-red-soft; }
+  }
+
+  &.has-value {
+    background: $gradient-brand;
+    border-color: transparent;
+    box-shadow: $shadow-brand-sm;
+    .dark-theme & { background: $gradient-brand-dark; }
+  }
+
+  &.has-value.is-open {
+    background: $bg-card-light;
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+    .dark-theme & { background: $bg-card-dark; border-color: $brand-red-soft; }
+  }
+
+  &--expand {
+    flex-shrink: 0;
+    padding: 0 $space-4;
+    justify-content: center;
+  }
+}
+
+.chip-text {
+  font-size: $font-sm;
+  font-weight: $weight-medium;
+  color: $text-secondary-light;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .dark-theme & { color: $text-secondary-dark; }
+
+  .filter-chip.has-value:not(.is-open) & {
+    color: $pure-white;
+    font-weight: $weight-semibold;
+  }
+
+  .filter-chip.is-open & {
+    color: $brand-red;
+    font-weight: $weight-semibold;
+    .dark-theme & { color: $brand-red-soft; }
+  }
+}
+
+.chip-arrow {
+  flex-shrink: 0;
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  transition: transform $dur-base $ease-standard, color $dur-fast $ease-standard;
+  line-height: 1;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+
+  .filter-chip.is-open & {
+    transform: rotate(180deg);
+    color: $brand-red;
+    .dark-theme & { color: $brand-red-soft; }
+  }
+
+  .filter-chip.has-value:not(.is-open) & {
+    color: $pure-white;
+  }
+}
+
+.filter-dropdown-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: $z-sticky + 1;
+}
+
+.filter-dropdown {
+  position: relative;
+  z-index: $z-sticky + 3;
+  margin: 0 $space-5;
+  background: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-md;
+  display: flex;
+  flex-direction: column;
+  animation: mwp-fade-down $dur-base $ease-decelerate backwards;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-md-dark;
+  }
+}
+
+.fd-scroll {
+  padding: 28rpx 32rpx 0;
+  position: relative;
+  z-index: $z-popover;
+}
+
+.fd-group {
+  margin-bottom: $space-6;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.fd-label {
+  display: block;
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  color: $text-tertiary-light;
+  margin-bottom: $space-4;
+  letter-spacing: 2rpx;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.fd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.fd-tag {
+  height: 56rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-muted-light;
+  border: 1rpx solid transparent;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  color: $text-secondary-light;
+  font-weight: $weight-medium;
+  transition: border-color $dur-fast $ease-standard,
+              color $dur-fast $ease-standard,
+              background $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+    color: $text-secondary-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.active {
+    background: $brand-red-tint;
+    border-color: $brand-red;
+    color: $brand-red;
+
+    .dark-theme & {
+      background: rgba(255, 77, 106, 0.12);
+      border-color: $brand-red-soft;
+      color: $brand-red-soft;
+    }
+  }
+}
+
+// 内联搜索
+.fd-search {
+  margin-top: $space-3;
+  position: relative;
+}
+
+.fd-search-input {
+  width: 100%;
+  height: 72rpx;
+  padding: 0 $space-6;
+  background: $bg-card-light;
+  border: 2rpx solid $brand-red-glow;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  color: $text-primary-light;
+  box-sizing: border-box;
+  box-shadow: $shadow-brand-sm;
+  transition: border-color $dur-fast $ease-standard,
+              box-shadow $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    color: $text-primary-dark;
+    border-color: rgba(255, 77, 106, 0.3);
+  }
+
+  &:focus {
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-md;
+
+    .dark-theme & {
+      border-color: $brand-red-soft;
+    }
+  }
+}
+
+.fd-placeholder {
+  color: $text-tertiary-light;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.fd-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  height: 44rpx;
+  padding: 0 16rpx;
+  background: $brand-red-tint;
+  border: 1rpx solid rgba(178, 0, 53, 0.2);
+  border-radius: $radius-pill;
+
+  .dark-theme & {
+    background: rgba(255, 77, 106, 0.12);
+    border-color: rgba(255, 77, 106, 0.25);
+  }
+}
+
+.fd-selected-text {
+  font-size: $font-xs;
+  color: $brand-red;
+  font-weight: $weight-medium;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+  }
+}
+
+.fd-selected-clear {
+  font-size: $font-base;
+  color: $text-tertiary-light;
+  padding: 0 2rpx;
+  line-height: 1;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+
+  &:active {
+    color: $brand-red;
+  }
+}
+
+.fd-selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-3;
+}
+
+.fd-suggest-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: $space-2;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
+  z-index: $z-popover;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $divider-dark;
+    box-shadow: $shadow-lg;
+  }
+}
+
+.fd-suggest-item {
+  height: 64rpx;
+  padding: 0 $space-5;
+  display: flex;
+  align-items: center;
+  font-size: $font-sm;
+  color: $text-primary-light;
+  border-bottom: 1rpx solid $divider-light;
+  background: $bg-card-light;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+    background: $bg-card-dark;
+    border-bottom-color: $divider-dark;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $bg-muted-light;
+    .dark-theme & {
+      background: $bg-muted-dark;
+    }
+  }
+}
+
+.fd-footer {
+  display: flex;
+  gap: $space-4;
+  padding: $space-5 $space-7;
+  flex-shrink: 0;
+  position: relative;
+  z-index: $z-base;
+}
+
+.fd-btn {
+  height: 64rpx;
+  padding: 0 24rpx;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include pressable($press-scale-sm);
+
+  &--reset {
+    background: $bg-muted-light;
+    color: $text-secondary-light;
+
+    .dark-theme & {
+      background: $bg-muted-dark;
+      color: $text-secondary-dark;
+    }
+  }
+
+  &--confirm {
+    background: $gradient-brand;
+    color: $pure-white;
+    box-shadow: $shadow-brand-sm;
+    margin-left: auto;
+
+    .dark-theme & {
+      background: $gradient-brand-dark;
+    }
+
+    &:active {
+      transform: scale($press-scale-sm);
+      box-shadow: $shadow-brand-md;
+    }
+  }
+}
+
+// =====================================================
+// 内容滚动区
+// =====================================================
+.content-scroll {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  background: $bg-page-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & { background-color: $bg-page-dark; }
+}
+
+// 顶部占位块：随内容一起滚动，避免 scroll-view padding 作为固定内边距产生遮挡间隙
+.content-spacer {
+  width: 100%;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+
+
+// =====================================================
+// 结果区
+// =====================================================
+.result-section {
+  padding: 0 $space-7 $space-9;
+}
+
+.skeleton-wrap {
+  padding: 0 $space-7;
+}
+
+.result-card {
+  margin-bottom: $space-6;
+  border-radius: $radius-card;
+  overflow: hidden;
+  transition: transform $dur-fast $ease-emphasized;
+  animation: mwp-fade-in $motion-enter $ease-decelerate backwards;
+
+  &:active { transform: scale($press-scale-md); }
+}
+
+.result-card-wrapper {
+  background: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-base $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+}
+
+// =====================================================
+// 提案卡片（内联样式，复用 choose-course 视觉）
+// =====================================================
+.proposal-card {
+  padding: $space-5 $space-6;
+}
+
+.proposal-content {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.proposal-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.proposal-name {
+  flex: 1;
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  line-height: 1.4;
+  @include ellipsis(2);
+  text-align: left;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-primary-dark; }
+}
+
+
+.proposal-row-middle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3 $space-5;
+}
+
+.proposal-info-item {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-sm;
+  color: $text-secondary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-secondary-dark; }
+}
+
+.info-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.proposal-row-contributor {
+  padding-top: $space-3;
+  @include dashed-divider;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & { border-top-color: $divider-dark; }
+}
+
+.contributor-text {
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+}
+
+// 查看课程
+.view-course-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $space-4;
+  padding: $space-3 $space-4;
+  background: $success-soft;
+  border-radius: $radius-md;
+  border: 1rpx solid rgba(56, 142, 60, 0.15);
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  &:active { transform: scale($press-scale-sm); }
+
+  .dark-theme & {
+    border-color: rgba(56, 142, 60, 0.25);
+  }
+}
+
+.view-course-text {
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  color: $success;
+  .dark-theme & { color: $success-text-dark; }
+}
+
+.view-course-arrow {
+  font-size: $font-lg;
+  color: $success;
+  font-weight: $weight-bold;
+  .dark-theme & { color: $success-text-dark; }
+}
+
+// 管理员操作
+.admin-actions {
+  display: flex;
+  gap: $space-3;
+  margin-top: $space-4;
+  padding-top: $space-3;
+  border-top: 1rpx solid $divider-light;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & { border-top-color: $divider-dark; }
+}
+
+.admin-btn {
+  flex: 1;
+  height: 64rpx;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include pressable($press-scale-sm);
+
+  &--approve {
+    background: $success;
+    color: $pure-white;
+    box-shadow: 0 4rpx 12rpx rgba(56, 142, 60, 0.30);
+  }
+  &--reject {
+    background: $gradient-danger;
+    color: $pure-white;
+    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.30);
+  }
+  &--withdraw {
+    background: $bg-muted-light;
+    color: $text-secondary-light;
+    .dark-theme & {
+      background: $bg-muted-dark;
+      color: $text-secondary-dark;
+    }
+  }
+}
+
+// =====================================================
+// 底部提示
+// =====================================================
+.bottom-prompt {
+  text-align: center;
+  padding: $space-7 0 $space-4;
+  font-size: $font-sm;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & { color: $text-tertiary-dark; }
+}
+
+// =====================================================
+// FAB
+// =====================================================
+.fab-group {
+  position: fixed;
+  right: $space-8;
+  bottom: calc(120rpx + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  z-index: $z-tabbar + 1;
+  animation: mwp-fade-up $motion-heart $ease-decelerate $motion-pop backwards;
+}
+
+.fab-btn {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  color: $pure-white;
+  background: $gradient-brand;
+  box-shadow: $shadow-brand-md;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-medium $ease-standard;
+
+  &:active { transform: scale($press-scale-sm); }
+}
+
+.fab-icon {
+  line-height: 1;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-card,
+  .fab-group,
+  .filter-dropdown,
+  .search-input-box,
+  .filter-chip {
+    animation: none;
+    transition: none;
+  }
+}
+
+// hover-class 按压态
+.result-hover {
+  transform: scale($press-scale-md);
+}

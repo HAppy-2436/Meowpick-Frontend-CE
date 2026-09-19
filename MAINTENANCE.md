@@ -59,26 +59,35 @@
 src/
 ├── api/                    # ⚠️ 自动生成，禁止手动编辑
 │   ├── http-client.ts     # Axios 客户端（含拦截器）
-│   └── data-contracts.ts # TypeScript 类型定义
-├── components/             # Vue 组件（unplugin-vue-components 全局自动导入）
-│   ├── home-view/        # 首页组件
-│   ├── find/             # 搜索组件
-│   ├── profile-view/     # "我的"页面组件
-│   └── common/           # 通用组件（BackBtn 等）
+│   └── data-contracts.ts  # TypeScript 类型定义
+├── components/             # Vue 组件（PascalCase，全局自动导入）
+│   ├── home/              # 首页 HomeView / UpdateLogTimeline
+│   ├── find/              # 搜索 FindView
+│   ├── profile/           # 我的 ProfileView
+│   ├── course/            # 课程详情头部 / 评论列表
+│   ├── choose/            # 搜索结果卡片 ChooseCourse
+│   ├── layout/            # 主布局容器 Layout
+│   └── common/            # 通用组件（BackBtn / 弹窗等）
+├── composables/            # useCourse / useChoose / useFind / useMenuButton
 ├── config/
-│   └── store/            # Pinia stores（含持久化）
-├── pages/
-│   ├── layout/main.vue   # TabBar 主布局（首页/我的 左右滑动）
+│   ├── store/             # Pinia stores（含持久化，文件名小写）
+│   └── utils/             # http / pubsub
+├── pages/                  # 扁平式：模块/页面.vue
+│   ├── layout/main.vue    # TabBar 主布局（首页/我的 左右滑动）
 │   ├── course/
-│   │   ├── index/       # 课程详情页
-│   │   └── comment/      # 吐槽发布页
-│   ├── find/index/       # 搜索入口页（转发 mode 参数）
-│   └── proposal/
-│       └── propose/      # 新增提议页
+│   │   ├── detail.vue     # 课程详情页
+│   │   ├── comment.vue    # 吐槽发布页
+│   │   └── proposal-detail.vue  # 提议详情页
+│   ├── find/index.vue     # 搜索入口页（转发 mode 参数）
+│   ├── home/              # letter.vue / update-log.vue
+│   └── proposal/          # propose.vue / list.vue / log.vue
 ├── utils/
-├── swagger.json           # ⚠️ API 契约源文件
-└── MAINTENANCE.md       # 本文档
+├── styles/                 # 设计 token / mixin / 动画
+├── swagger.json            # ⚠️ API 契约源文件
+└── pages.json / manifest.json
 ```
+
+> 项目级文档（本文件、README、docs/）位于 `new/` 根目录。
 
 ### 2.3 路径别名
 
@@ -106,7 +115,7 @@ src/
            ▼
 ┌─────────────────┐    ┌─────────────────┐
 │    首页         │    │    我的          │
-│  home-view     │    │  profile-view   │
+│  HomeView      │    │  ProfileView    │
 └─────────────────┘    └─────────────────┘
            │                    │
            ▼                    ▼
@@ -114,9 +123,9 @@ src/
     (find/index)              (actionSheet)
            │
            ▼
-    搜索结果页 (find/choose)
+    搜索结果卡片 (components/choose)
            │
-           ├─► 课程详情页 (course/index)
+           ├─► 课程详情页 (course/detail)
            │        │
            │        └─► 吐槽发布页 (course/comment)
            │
@@ -180,7 +189,7 @@ if (saved && saved.searchText) {
 
 ```
 "我的"页面 → FAB点击 → actionSheet选择"新增吐槽"
-  → navigateTo(/pages/find/index/index?mode=add-comment)
+  → navigateTo(/pages/find/index?mode=add-comment)
     → 搜索组件检测 mode === 'add-comment' → 显示提示横幅
     → 用户搜索并点击课程卡片
     → clickCourse() 检测 mode === 'add-comment'
@@ -309,13 +318,13 @@ const navBarStyle = computed(() => ({
 
 ### 5.4 组件内联原则 ⚠️ 重要
 
-**问题背景**：uni-app 编译时，`home-view` 组件内使用 `<GuideModal />` 会导致 `home-view/index.json` 生成 `usingComponents` 引用路径解析在微信小程序环境下存在兼容性问题（`component not found in the path`）。
+**问题背景**：uni-app 编译时，`HomeView` 组件内使用 `<GuideModal />` 会导致组件 `usingComponents` 引用路径解析在微信小程序环境下存在兼容性问题（`component not found in the path`）。
 
 **解决原则**：将组件代码直接内联到父组件中，不作为子组件引用。
 
 **已内联的组件**：
-- 首次使用引导弹窗 → 代码直接内联到 `home-view/index.vue`
-- 帮助提示弹窗 → 代码直接内联到 `profile-view/index.vue` 和 `find/index.vue`
+- 首次使用引导弹窗 → 代码直接内联到 `components/home/HomeView.vue`
+- 帮助提示弹窗 → 代码直接内联到 `components/profile/ProfileView.vue` 和 `components/find/FindView.vue`
 
 **内联实现要点**：
 1. 模板部分直接写在父组件 `<template>` 中

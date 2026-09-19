@@ -4,55 +4,62 @@
     <swiper
       class="content-swiper"
       :current="currentIndex"
+      :duration="300"
       @change="onSwiperChange"
       @transition="onSwiperTransition"
       @animationfinish="onSwiperAnimationFinish"
-      duration="300"
     >
       <!-- 首页 -->
       <swiper-item>
         <scroll-view scroll-y class="scroll-view">
-          <home-view />
+          <HomeView />
         </scroll-view>
       </swiper-item>
 
       <!-- 我的 -->
       <swiper-item>
-        <scroll-view scroll-y class="scroll-view" @scroll="onMyScroll">
-          <profile-view :scroll-top="myScrollTop" />
+        <scroll-view scroll-y class="scroll-view">
+          <ProfileView />
         </scroll-view>
       </swiper-item>
     </swiper>
 
     <!-- 头像层已移至 profile-view 内部（sticky 实现覆盖效果） -->
 
-<!-- 底部导航栏 -->
-    <view class="bottom-tab-bar safe-area-bottom" :class="themeStore.themeClass" :style="safeBottom === 0 ? { paddingBottom: '24rpx' } : {}">
-
+    <!-- 底部导航栏 -->
+    <view
+      class="bottom-tab-bar safe-area-bottom"
+      :class="themeStore.themeClass"
+      :style="[
+        safeBottom === 0 ? { paddingBottom: '24rpx' } : {},
+        {
+          borderTopLeftRadius: radius + 'px',
+          borderTopRightRadius: radius + 'px'
+        }
+      ]"
+    >
       <!-- 文字容器 -->
       <view class="tabs-container">
         <view
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 0 }]"
+          hover-class="mwp-hover"
           @click="switchTab(0)"
-         hover-class="mwp-hover">
+        >
           首页
         </view>
         <view
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
+          hover-class="mwp-hover"
           @click="onMyTabClick"
-         hover-class="mwp-hover">
+        >
           我的
         </view>
       </view>
 
       <!-- 指示条 (独立图层) -->
-      <view
-        class="indicator-line"
-        :style="{ left: indicatorLeft + '%' }"
-      ></view>
-
+      <view class="indicator-line" :style="{ left: indicatorLeft + '%' }" />
     </view>
 
     <!-- More Button (☰) - 移至 profile-view 内部，与筛选胶囊同步滚动 -->
@@ -60,17 +67,30 @@
     <!-- Popover 由 profile-view 触发 -->
 
     <!-- 临时管理员验证弹窗 -->
-    <view v-if="showAdminVerify" class="admin-verify-overlay" @click="showAdminVerify = false">
-      <view class="admin-verify-card" :class="themeStore.themeClass" @click.stop>
+    <view
+      v-if="showAdminVerify"
+      class="admin-verify-overlay"
+      @click="showAdminVerify = false"
+    >
+      <view
+        class="admin-verify-card"
+        :class="themeStore.themeClass"
+        @click.stop
+      >
         <view class="admin-verify-header">
           <text class="admin-verify-title">管理员验证</text>
-          <view class="admin-verify-close" @click="showAdminVerify = false" hover-class="mwp-hover">×</view>
+          <view
+            class="admin-verify-close"
+            hover-class="mwp-hover"
+            @click="showAdminVerify = false"
+            >×</view
+          >
         </view>
         <view class="admin-verify-body">
           <text class="admin-verify-label">请输入管理员密码</text>
           <input
-            class="admin-verify-input"
             v-model="adminPassword"
+            class="admin-verify-input"
             type="text"
             password
             placeholder="请输入密码"
@@ -78,38 +98,50 @@
           />
         </view>
         <view class="admin-verify-footer">
-          <view class="admin-verify-btn admin-verify-btn--cancel" @click="showAdminVerify = false" hover-class="mwp-hover">取消</view>
-          <view class="admin-verify-btn admin-verify-btn--confirm" @click="verifyAdminPassword" hover-class="mwp-hover">确认</view>
+          <view
+            class="admin-verify-btn admin-verify-btn--cancel"
+            hover-class="mwp-hover"
+            @click="showAdminVerify = false"
+            >取消</view
+          >
+          <view
+            class="admin-verify-btn admin-verify-btn--confirm"
+            hover-class="mwp-hover"
+            @click="verifyAdminPassword"
+            >确认</view
+          >
         </view>
       </view>
     </view>
-
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onShow, onLoad } from '@dcloudio/uni-app';
-import HomeView from '@/components/home-view/index.vue';
-import ProfileView from '@/components/profile-view/index.vue';
+import HomeView from '@/components/home/HomeView.vue';
+import ProfileView from '@/components/profile/ProfileView.vue';
 import { useThemeStore } from '@/config';
+import { useScreenScale } from '@/composables/useScreenScale';
+import { useViewport } from '@/composables/useViewport';
 const themeStore = useThemeStore();
+
+// 启动视口监听：窗口尺寸变化时下面的 computed 会自动重算
+const viewport = useViewport();
 
 const currentIndex = ref(0);
 const indicatorLeft = ref(25); // 初始值 25%
-let windowWidth = 0;
-
+// 滑动距离基准：跟随窗口宽度变化
+const windowWidth = computed(() => viewport.width);
 // 菜单栏底部补偿：有小白条用 CSS safe-area，没有的补 24rpx
-const sys = uni.getSystemInfoSync();
-const pxPerRpx = sys.windowWidth / 750;
-const safeBottom = sys.safeAreaInsets?.bottom || 0;
+// 圆角与首页卡片/搜索框同源，避免父子圆角打架
+const radius = computed(() => useScreenScale().radius);
+const safeBottom = computed(() => useScreenScale().safeBottom);
 
 // ⋯ 按钮已迁回 profile-view 内部，与筛选胶囊同步滚动
 // showMoreMenu / toggleMoreMenu / handleMenuClick 在 profile-view 中定义
 
 onLoad(() => {
-  const sysInfo = uni.getSystemInfoSync();
-  windowWidth = sysInfo.windowWidth;
   // 清除上次的临时管理员身份
   uni.removeStorageSync('meowpick_temp_admin');
 });
@@ -129,7 +161,9 @@ function onMyTabClick() {
     showAdminVerify.value = true;
     adminPassword.value = '';
   } else {
-    tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
+    tapTimer = setTimeout(() => {
+      tapCount = 0;
+    }, 2000);
   }
 }
 
@@ -144,53 +178,45 @@ function verifyAdminPassword() {
   }
 }
 
-// "我的"页面滚动事件（传递滚动位置给 profile-view 控制覆盖遮罩）
-const myScrollTop = ref(0);
-
-function onMyScroll(e: any) {
-  myScrollTop.value = e.detail?.scrollTop ?? 0;
-}
-
 function switchTab(index: number) {
   currentIndex.value = index;
 }
 
-function onSwiperChange(e: any) {
+function onSwiperChange(e: { detail: { current?: number } }) {
   // 仅仅处理 current 更新，不处理 UI 逻辑，避免冲突
-  currentIndex.value = e.detail.current;
+  currentIndex.value = e.detail.current ?? 0;
 }
 
-function onSwiperTransition(e: any) {
+function onSwiperTransition(e: { detail: { dx?: number } }) {
   // 核心逻辑：指示条跟随滑动
   // 两个 Tab 中心点距离为 50% (25 -> 75)
   // 滑动全程 (dx = windowWidth) 对应指示条移动 50%
-  if (windowWidth === 0) return;
-  
-  const dx = e.detail.dx;
+  if (!windowWidth.value) return;
+
+  const dx = e.detail.dx ?? 0;
   // 计算移动百分比
-  const movePercent = (dx / windowWidth) * 50;
-  
+  const movePercent = (dx / windowWidth.value) * 50;
+
   // 基础位置：根据当前的 currentIndex 决定
   const baseLeft = currentIndex.value === 0 ? 25 : 75;
-  
+
   let targetLeft = baseLeft + movePercent;
 
   // 边界限制，防止快速滑动时因 currentIndex 切换导致计算值飞出
   // 强制限制在 [25, 75] 区间内
   targetLeft = Math.max(25, Math.min(75, targetLeft));
-  
+
   indicatorLeft.value = targetLeft;
 }
 
-function onSwiperAnimationFinish(e: any) {
+function onSwiperAnimationFinish(e: { detail: { current?: number } }) {
   // 动画结束后，强制校正位置，消除可能的浮点数误差
-  currentIndex.value = e.detail.current;
+  currentIndex.value = e.detail.current ?? 0;
   indicatorLeft.value = currentIndex.value === 0 ? 25 : 75;
 }
 </script>
 
 <style lang="scss" scoped>
-
 .main-container {
   display: flex;
   flex-direction: column;
@@ -246,11 +272,11 @@ function onSwiperAnimationFinish(e: any) {
   justify-content: flex-start;
   border-top: none;
   transition: background-color $dur-medium $ease-standard,
-              box-shadow $dur-medium $ease-standard;
+    box-shadow $dur-medium $ease-standard;
 
   &.dark-theme {
     background-color: rgba(30, 30, 30, 0.98);
-    box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.40);
+    box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.4);
   }
 
   .tabs-container {
@@ -300,7 +326,7 @@ function onSwiperAnimationFinish(e: any) {
     bottom: auto;
     width: 48rpx;
     height: 8rpx;
-    background: linear-gradient(90deg, $brand-red, $brand-red-soft);
+    background: $gradient-brand-horizontal;
     border-radius: $radius-pill;
     transform: translateX(-50%);
     transition: left $dur-instant linear;
@@ -319,11 +345,14 @@ function onSwiperAnimationFinish(e: any) {
   align-items: center;
   justify-content: center;
   padding: $space-9;
+  box-sizing: border-box;
 }
 
 .admin-verify-card {
   width: 100%;
   max-width: 600rpx;
+  max-height: 100%;
+  overflow-y: auto;
   background: $bg-card-light;
   border-radius: $radius-card;
   overflow: hidden;
@@ -422,13 +451,17 @@ function onSwiperAnimationFinish(e: any) {
 
   &--cancel {
     color: $text-secondary-light;
-    .dark-theme & { color: $text-tertiary-dark; }
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
   }
 
   &--confirm {
     color: $brand-red;
     border-left: 1rpx solid $divider-light;
-    .dark-theme & { border-left-color: $divider-card-dark; }
+    .dark-theme & {
+      border-left-color: $divider-card-dark;
+    }
 
     &:active {
       background: $danger-soft;

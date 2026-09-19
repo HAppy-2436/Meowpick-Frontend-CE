@@ -1,4 +1,4 @@
-import type { DtoTeacherVO } from "@/api/data-contracts";
+import type { DtoTeacherVO } from '@/api/data-contracts';
 
 /**
  * 后端 2.0 起 DtoCourseVO.teachers 变更为对象数组（DtoTeacherVO[]）；
@@ -10,19 +10,23 @@ import type { DtoTeacherVO } from "@/api/data-contracts";
  *
  * 全局单点兼容，避免在每个组件里写 if-else。
  */
-export function teacherToString(t: string | DtoTeacherVO | undefined | null): string {
-  if (t === undefined || t === null) return "";
-  if (typeof t === "string") return t.trim();
-  const name = (t.name || "").trim();
-  const title = (t.title || "").trim();
-  if (!name && !title) return "";
+export function teacherToString(
+  t: string | DtoTeacherVO | undefined | null
+): string {
+  if (t === undefined || t === null) return '';
+  if (typeof t === 'string') return t.trim();
+  const name = (t.name || '').trim();
+  const title = (t.title || '').trim();
+  if (!name && !title) return '';
   return title ? `${name} ${title}` : name;
 }
 
 /**
  * 把可能为 string[] | DtoTeacherVO[] 的教师数组映射为字符串数组。
  */
-export function teachersToStrings(list: Array<string | DtoTeacherVO> | undefined | null): string[] {
+export function teachersToStrings(
+  list: Array<string | DtoTeacherVO> | undefined | null
+): string[] {
   if (!Array.isArray(list)) return [];
   return list.map(teacherToString).filter(Boolean);
 }
@@ -32,7 +36,7 @@ export function teachersToStrings(list: Array<string | DtoTeacherVO> | undefined
  */
 export function joinTeachers(
   list: Array<string | DtoTeacherVO> | undefined | null,
-  sep = " / "
+  sep = ' / '
 ): string {
   return teachersToStrings(list).join(sep);
 }

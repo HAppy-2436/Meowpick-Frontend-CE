@@ -1,1 +1,6 @@
+.eslintrc.js
 src/wxcomponents
+src/api
+src/icons/index.ts
+dist
+node_modules

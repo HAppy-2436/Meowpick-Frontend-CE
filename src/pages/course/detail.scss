@@ -1,0 +1,164 @@
+
+.detail-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $bg-page-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  &.dark-theme {
+    background-color: $bg-page-dark;
+  }
+}
+
+.content-scroll {
+  flex: 1;
+  min-height: 0;
+  background-color: $bg-page-light;
+
+  .dark-theme & {
+    background-color: $bg-page-dark;
+  }
+}
+
+.detail-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: $z-navbar;
+  background: $bg-card-light;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  }
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    padding-left: $space-7;
+    position: relative;
+
+    .back-btn-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-2xl;
+      color: $text-primary-light;
+      margin-right: $space-3;
+      flex-shrink: 0;
+      transition: color $dur-fast $ease-standard;
+
+      .dark-theme & {
+        color: $text-primary-dark;
+      }
+    }
+
+    .title-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding-right: 100rpx;
+      animation: mwp-fade-in $motion-enter-sm $ease-decelerate backwards;
+
+      .page-title {
+        font-size: $font-lg + 2rpx;
+        font-weight: $weight-semibold;
+        color: $text-primary-light;
+        @include ellipsis;
+        transition: color $dur-fast $ease-standard;
+
+        .dark-theme & {
+          color: $text-primary-dark;
+        }
+      }
+    }
+  }
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: $z-base;
+  padding: $space-7 $space-7 $space-7;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate $dur-instant backwards;
+}
+
+.comment-section {
+  margin-top: $space-8;
+  animation: mwp-fade-up $motion-bounce $ease-decelerate $dur-fast backwards;
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: $space-7;
+
+    .header-icon {
+      margin-right: $space-3;
+      color: $brand-red;
+      transition: color $dur-fast $ease-standard;
+
+      .dark-theme & {
+        color: $brand-red-soft;
+      }
+    }
+
+    .section-title {
+      font-size: $font-xl;
+      font-weight: $weight-semibold;
+      color: $text-primary-light;
+      @include ellipsis;
+      transition: color $dur-fast $ease-standard;
+
+      .dark-theme & {
+        color: $text-primary-dark;
+      }
+    }
+
+    .section-subtitle {
+      font-size: $font-base;
+      color: $text-tertiary-light;
+      margin-left: $space-2;
+      font-weight: $weight-regular;
+      transition: color $dur-fast $ease-standard;
+
+      .dark-theme & {
+        color: $text-tertiary-dark;
+      }
+    }
+  }
+}
+
+.fab-btn {
+  position: fixed;
+  right: 48rpx;
+  bottom: 80rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background: $gradient-brand;
+  border-radius: 50%;
+  box-shadow: $shadow-brand-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-tabbar + 1;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-medium $ease-standard;
+  animation: mwp-bounce-in $motion-heart $ease-spring $motion-pop backwards;
+
+  .dark-theme & {
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.50);
+  }
+
+  &:active {
+    transform: scale($press-scale-lg);
+    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.30);
+  }
+
+  .fab-icon {
+    color: $pure-white;
+  }
+}

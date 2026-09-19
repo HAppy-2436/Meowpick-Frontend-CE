@@ -4,6 +4,9 @@ const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
 const { _, getInlineParseContent, getParseContent, parseSchema, getComponentByRef, require } = utils;
 const { parameters, path, method, payload, query, formData, security, requestParams } = route.request;
 const { type, errorType, contentTypes } = route.response;
+// 后端响应本身已是 {code,msg,data} 信封（HandlerResponse*）时不再套一层 JsonRet，
+// 否则 res.data.data 会多包一层，与运行时结构不符。
+const responseType = String(type).startsWith("HandlerResponse") ? type : `JsonRet<${type}>`;
 const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
 const routeDocs = includeFile("@base/route-docs", { config, route, utils });
 const queryName = (query && query.name) || "query";
@@ -88,7 +91,7 @@ const describeReturnType = () => {
 
  */
 <%~ route.routeName.usage.replace(/\d+$/, '') %> = (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> =>
-    <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ `JsonRet<${type}>` %>, <%~ errorType %>>({
+    <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ responseType %>, <%~ errorType %>>({
         path: `<%~ path %>`,
         method: '<%~ _.upperCase(method) %>',
         <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>

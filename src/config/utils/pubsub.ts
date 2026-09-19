@@ -73,13 +73,13 @@ export default new (class {
     if (flag === undefined) {
       // 如果没传递flag直接将所有消息清除
       this.callbackContainer = {};
-    } else if (typeof flag === "string" && flag.indexOf("event_") === 0) {
+    } else if (typeof flag === 'string' && flag.indexOf('event_') === 0) {
       // 如果传递的是一个token
       Object.values(this.callbackContainer).forEach((callbacks) => {
-        delete callbacks[flag];
+        Reflect.deleteProperty(callbacks, flag);
       });
     } else {
-      delete this.callbackContainer[flag];
+      Reflect.deleteProperty(this.callbackContainer, flag);
     }
   }
 })();

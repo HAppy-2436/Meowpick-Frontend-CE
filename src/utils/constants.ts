@@ -11,8 +11,6 @@ export const TOAST_DURATION_MS = 1500;
 export const COLLAPSE_SCROLL_THRESHOLD = 30;
 export const EXPAND_SCROLL_THRESHOLD = 10;
 export const MAX_HISTORY_SIZE = 50;
-export const EXPANDED_ROW_HEIGHT = 44; // 下方搜索栏的高度
-export const HEADER_EXPANDED_PADDING = 10; // 展开态额外高度
 
 // Sort Types
 export const SORT_DEFAULT = 'default';
@@ -30,3 +28,13 @@ export const ADMIN_LOG_PAGE_SIZE_DEFAULT = 20;
 
 // Search Filter Options (campus list is stable; category is search-based via API)
 export const CAMPUS_OPTIONS = ['闵行校区', '普陀校区', '滴水湖校区'];
+
+// Proposal plaza filter options (shared by proposal list page and cross-page filter handoff)
+export const PROPOSAL_CATEGORY_OPTIONS = [
+  '通识必修',
+  '通识选修',
+  '专业必修',
+  '专业选修',
+  '公共基础',
+  '实践环节'
+];

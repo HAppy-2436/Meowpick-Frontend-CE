@@ -9,18 +9,36 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
-    "types": ["@dcloudio/types", "node"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "types": [
+      "@dcloudio/types",
+      "@uni-helper/uni-app-types",
+      "node"
+    ],
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
     }
   },
+  "vueCompilerOptions": {
+    "plugins": ["@uni-helper/uni-app-types/volar-plugin"]
+  },
   "include": [
-    "./**/*.ts",
-    "./**.js",
-    "./**/*.json",
-    "./**/*.d.ts",
-    "./**/*.tsx",
-    "./**/*.vue"
+    "./src/**/*.ts",
+    "./src/**/*.js",
+    "./src/**/*.json",
+    "./src/**/*.d.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.vue",
+    "./*.ts",
+    "./*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/wxcomponents"
   ]
 }

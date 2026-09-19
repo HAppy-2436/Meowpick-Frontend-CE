@@ -6,9 +6,10 @@
       `size-${size}`,
       { 'is-block': block, 'is-loading': loading, 'is-disabled': disabled }
     ]"
+    hover-class="mwp-hover"
     @click="handleClick"
-   hover-class="mwp-hover">
-    <view v-if="loading" class="mwp-btn-spinner"></view>
+  >
+    <view v-if="loading" class="mwp-btn-spinner" />
     <text v-else-if="icon" class="mwp-btn-icon">{{ icon }}</text>
     <text class="mwp-btn-label"><slot /></text>
   </view>
@@ -22,30 +23,29 @@
  * size:  sm | md | lg
  * block: 通栏
  */
-import { withDefaults } from "vue";
+import { withDefaults } from 'vue';
 
 const props = withDefaults(
   defineProps<{
-    tone?: "brand" | "primary" | "ghost" | "danger" | "plain";
-    size?: "sm" | "md" | "lg";
+    tone?: 'brand' | 'primary' | 'ghost' | 'danger' | 'plain';
+    size?: 'sm' | 'md' | 'lg';
     block?: boolean;
     disabled?: boolean;
     loading?: boolean;
     icon?: string;
   }>(),
-  { tone: "brand", size: "md", block: false, disabled: false, loading: false }
+  { tone: 'brand', size: 'md', block: false, disabled: false, loading: false }
 );
 
-const emit = defineEmits<{ (e: "click", ev: any): void }>();
+const emit = defineEmits<{ (e: 'click', ev: { detail?: unknown }): void }>();
 
-const handleClick = (e: any) => {
+const handleClick = (e: { detail?: unknown }) => {
   if (props.disabled || props.loading) return;
-  emit("click", e);
+  emit('click', e);
 };
 </script>
 
 <style lang="scss" scoped>
-
 .mwp-btn {
   position: relative;
   display: inline-flex;
@@ -59,9 +59,8 @@ const handleClick = (e: any) => {
   white-space: nowrap;
   overflow: hidden;
   transition: transform $dur-fast $ease-emphasized,
-              box-shadow $dur-base $ease-standard,
-              background-color $dur-fast $ease-standard,
-              opacity $dur-fast $ease-standard;
+    box-shadow $dur-base $ease-standard,
+    background-color $dur-fast $ease-standard, opacity $dur-fast $ease-standard;
 
   &.is-block {
     display: flex;
@@ -75,7 +74,9 @@ const handleClick = (e: any) => {
   }
 
   &.is-loading {
-    .mwp-btn-label { opacity: 0.85; }
+    .mwp-btn-label {
+      opacity: 0.85;
+    }
   }
 
   &:active:not(.is-disabled):not([disabled]) {
@@ -84,13 +85,18 @@ const handleClick = (e: any) => {
 
   // 涟漪效果（点击时扩散）
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 10%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.5) 10%,
+      transparent 70%
+    );
     opacity: 0;
     transform: scale(0);
-    transition: opacity $dur-medium $ease-standard, transform $dur-medium $ease-standard;
+    transition: opacity $dur-medium $ease-standard,
+      transform $dur-medium $ease-standard;
     pointer-events: none;
   }
 
@@ -153,11 +159,11 @@ const handleClick = (e: any) => {
 .tone-danger {
   background: $danger-soft;
   color: $brand-red;
-  border-color: rgba(178, 0, 53, 0.20);
+  border-color: rgba(178, 0, 53, 0.2);
   .dark-theme & {
     background: rgba(255, 77, 106, 0.14);
     color: $brand-red-soft;
-    border-color: rgba(255, 77, 106, 0.30);
+    border-color: rgba(255, 77, 106, 0.3);
   }
 }
 
@@ -192,8 +198,12 @@ const handleClick = (e: any) => {
 @media (prefers-reduced-motion: reduce) {
   .mwp-btn {
     transition: none;
-    &::after { transition: none; }
-    &:active { transform: none; }
+    &::after {
+      transition: none;
+    }
+    &:active {
+      transform: none;
+    }
   }
   .mwp-btn-spinner {
     animation: none;

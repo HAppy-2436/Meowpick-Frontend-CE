@@ -1,90 +1,116 @@
 <template>
-  <view v-if="visible" class="teacher-modal" @click="handleClose" hover-class="mwp-hover">
+  <view v-if="visible" class="teacher-modal" @click="handleClose">
     <view class="teacher-modal__sheet" @click.stop>
       <view class="teacher-modal__header">
         <text class="teacher-modal__title">添加教师</text>
-        <view class="teacher-modal__close" @click="handleClose" hover-class="mwp-hover">×</view>
+        <view
+          class="teacher-modal__close"
+          hover-class="mwp-hover"
+          @click="handleClose"
+          >×</view
+        >
       </view>
 
       <scroll-view scroll-y class="teacher-modal__body">
-        <!-- 教师姓名搜索 -->
-        <view class="form-group">
-          <text class="form-label">教师姓名</text>
-          <view class="form-input-wrapper">
-            <text class="form-input-icon">🔍</text>
-            <input
-              v-model="nameKeyword"
-              class="form-input"
-              placeholder="请输入教师姓名"
-              placeholder-class="mwp-placeholder"
-              @input="handleNameSearch"
-            />
-          </view>
-          <scroll-view v-if="nameOptions.length || nameLoading" scroll-y class="form-options">
-            <view v-if="nameLoading" class="form-loading">
-              <view class="form-spinner"></view>
-              <text class="form-loading-text">搜索中...</text>
+        <view class="teacher-modal__inner">
+          <!-- 教师姓名搜索 -->
+          <view class="form-group">
+            <text class="form-label">教师姓名</text>
+            <view class="form-input-wrapper">
+              <text class="form-input-icon">🔍</text>
+              <input
+                v-model="nameKeyword"
+                class="form-input"
+                placeholder="请输入教师姓名"
+                placeholder-class="mwp-placeholder"
+                @input="handleNameSearch"
+              />
             </view>
-            <template v-else>
-              <view
-                v-for="(name, idx) in nameOptions"
-                :key="idx"
-                class="form-option mwp-stagger-item mwp-pressable"
-                :class="{ 'is-selected': draft.name === name }"
-                :style="{ animationDelay: `${Math.min(idx * 60, 180)}ms` }"
-                @click="selectName(name)"
-               hover-class="mwp-hover">
-                <text>{{ name }}</text>
-                <text v-if="draft.name === name" class="form-option__check">✓</text>
+            <scroll-view
+              v-if="nameOptions.length || nameLoading"
+              scroll-y
+              class="form-options"
+            >
+              <view v-if="nameLoading" class="form-loading">
+                <view class="form-spinner" />
+                <text class="form-loading-text">搜索中...</text>
               </view>
-            </template>
-          </scroll-view>
-        </view>
+              <template v-else>
+                <view
+                  v-for="(name, idx) in nameOptions"
+                  :key="idx"
+                  class="form-option mwp-pressable"
+                  :class="{ 'is-selected': draft.name === name }"
+                  hover-class="mwp-hover"
+                  @click="selectName(name)"
+                >
+                  <text>{{ name }}</text>
+                  <text v-if="draft.name === name" class="form-option__check"
+                    >✓</text
+                  >
+                </view>
+              </template>
+            </scroll-view>
+          </view>
 
-        <!-- 所属院系搜索 -->
-        <view class="form-group">
-          <text class="form-label">所属院系</text>
-          <view class="form-input-wrapper">
-            <text class="form-input-icon">🔍</text>
-            <input
-              v-model="deptKeyword"
-              class="form-input"
-              placeholder="搜索院系"
-              placeholder-class="mwp-placeholder"
-              @input="handleDeptSearch"
-            />
-          </view>
-          <scroll-view v-if="deptOptions.length || deptLoading" scroll-y class="form-options">
-            <view v-if="deptLoading" class="form-loading">
-              <view class="form-spinner"></view>
-              <text class="form-loading-text">搜索中...</text>
+          <!-- 所属院系搜索 -->
+          <view class="form-group">
+            <text class="form-label">所属院系 (选填)</text>
+            <view class="form-input-wrapper">
+              <text class="form-input-icon">🔍</text>
+              <input
+                v-model="deptKeyword"
+                class="form-input"
+                placeholder="搜索院系"
+                placeholder-class="mwp-placeholder"
+                @input="handleDeptSearch"
+              />
             </view>
-            <template v-else>
-              <view
-                v-for="(dept, idx) in deptOptions"
-                :key="idx"
-                class="form-option mwp-stagger-item mwp-pressable"
-                :class="{ 'is-selected': draft.department === dept }"
-                :style="{ animationDelay: `${Math.min(idx * 60, 180)}ms` }"
-                @click="selectDept(dept)"
-               hover-class="mwp-hover">
-                <text>{{ dept }}</text>
-                <text v-if="draft.department === dept" class="form-option__check">✓</text>
+            <scroll-view
+              v-if="deptOptions.length || deptLoading"
+              scroll-y
+              class="form-options"
+            >
+              <view v-if="deptLoading" class="form-loading">
+                <view class="form-spinner" />
+                <text class="form-loading-text">搜索中...</text>
               </view>
-            </template>
-          </scroll-view>
+              <template v-else>
+                <view
+                  v-for="(dept, idx) in deptOptions"
+                  :key="idx"
+                  class="form-option mwp-pressable"
+                  :class="{ 'is-selected': draft.department === dept }"
+                  hover-class="mwp-hover"
+                  @click="selectDept(dept)"
+                >
+                  <text>{{ dept }}</text>
+                  <text
+                    v-if="draft.department === dept"
+                    class="form-option__check"
+                    >✓</text
+                  >
+                </view>
+              </template>
+            </scroll-view>
+          </view>
         </view>
       </scroll-view>
 
       <view class="teacher-modal__footer">
-        <view class="teacher-modal__btn teacher-modal__btn--ghost mwp-pressable" @click="handleClose" hover-class="mwp-hover">
+        <view
+          class="teacher-modal__btn teacher-modal__btn--ghost mwp-pressable"
+          hover-class="mwp-hover"
+          @click="handleClose"
+        >
           <text>取消</text>
         </view>
         <view
           class="teacher-modal__btn teacher-modal__btn--primary mwp-pressable"
           :class="{ 'is-disabled': !canConfirm }"
+          hover-class="mwp-hover"
           @click="handleConfirm"
-         hover-class="mwp-hover">
+        >
           <text>确认添加</text>
         </view>
       </view>
@@ -97,8 +123,8 @@
  * 添加教师弹窗（提案填写用）
  * 包含教师姓名 + 院系两项搜索联动。
  */
-import { ref, reactive, watch, computed } from "vue";
-import { http } from "@/config";
+import { ref, reactive, watch, computed } from 'vue';
+import { http } from '@/config';
 
 export interface TeacherDraft {
   name: string;
@@ -109,14 +135,14 @@ export interface TeacherDraft {
 
 const props = defineProps<{ visible: boolean }>();
 const emit = defineEmits<{
-  "update:visible": [val: boolean];
-  confirm: [teacher: TeacherDraft];
-  close: [];
+  (e: 'update:visible', val: boolean): void;
+  (e: 'confirm', teacher: TeacherDraft): void;
+  (e: 'close'): void;
 }>();
 
-const draft = reactive<TeacherDraft>({ name: "", department: "" });
-const nameKeyword = ref("");
-const deptKeyword = ref("");
+const draft = reactive<TeacherDraft>({ name: '', department: '' });
+const nameKeyword = ref('');
+const deptKeyword = ref('');
 const nameOptions = ref<string[]>([]);
 const deptOptions = ref<string[]>([]);
 const nameLoading = ref(false);
@@ -124,20 +150,19 @@ const deptLoading = ref(false);
 let nameTimer: ReturnType<typeof setTimeout> | null = null;
 let deptTimer: ReturnType<typeof setTimeout> | null = null;
 
-const canConfirm = computed(() => {
-  return draft.name.trim() !== "" && draft.department !== "";
-});
+// 姓名必填；院系选填（后端 department 可为空）。以输入框为准，支持库外教师自由填写
+const canConfirm = computed(() => nameKeyword.value.trim() !== '');
 
 watch(
   () => props.visible,
   (val) => {
     if (val) {
-      draft.name = "";
-      draft.department = "";
-      draft.title = "";
-      draft.teacherId = "";
-      nameKeyword.value = "";
-      deptKeyword.value = "";
+      draft.name = '';
+      draft.department = '';
+      draft.title = '';
+      draft.teacherId = '';
+      nameKeyword.value = '';
+      deptKeyword.value = '';
       nameOptions.value = [];
       deptOptions.value = [];
     }
@@ -151,15 +176,14 @@ const fetchName = async (keyword: string) => {
   }
   nameLoading.value = true;
   try {
-    const res: any = await http.ProposalController.proposalFieldSuggestionsList({
-      field: "teacherName",
+    const res = await http.ProposalController.proposalFieldSuggestionsList({
+      field: 'teacherName',
       keyword,
       page: 0,
-      pageSize: 50,
+      pageSize: 50
     });
-    const data = res.data?.data;
-    const list = (data?.suggestions ?? data?.data?.suggestions ?? []) as any[];
-    nameOptions.value = list.map((s) => s.value || s.label || "");
+    const list = res.data?.data?.suggestions ?? [];
+    nameOptions.value = list.map((s) => s.value || s.label || '');
   } catch (e) {
     nameOptions.value = [];
   } finally {
@@ -168,6 +192,7 @@ const fetchName = async (keyword: string) => {
 };
 
 const handleNameSearch = () => {
+  // 不在输入过程中写响应式状态，避免 re-render 导致输入框抖动
   if (nameTimer) clearTimeout(nameTimer);
   nameTimer = setTimeout(() => fetchName(nameKeyword.value.trim()), 300);
 };
@@ -185,15 +210,14 @@ const fetchDept = async (keyword: string) => {
   }
   deptLoading.value = true;
   try {
-    const res: any = await http.ProposalController.proposalFieldSuggestionsList({
-      field: "department",
+    const res = await http.ProposalController.proposalFieldSuggestionsList({
+      field: 'department',
       keyword,
       page: 0,
-      pageSize: 50,
+      pageSize: 50
     });
-    const data = res.data?.data;
-    const list = (data?.suggestions ?? data?.data?.suggestions ?? []) as any[];
-    deptOptions.value = list.map((s) => s.value || s.label || "");
+    const list = res.data?.data?.suggestions ?? [];
+    deptOptions.value = list.map((s) => s.value || s.label || '');
   } catch (e) {
     deptOptions.value = [];
   } finally {
@@ -213,27 +237,28 @@ const selectDept = (dept: string) => {
 };
 
 const handleConfirm = () => {
-  const name = draft.name || nameKeyword.value.trim();
+  const name = nameKeyword.value.trim();
+  const department = deptKeyword.value.trim();
   if (!name) {
-    uni.showToast({ title: "请输入教师姓名", icon: "none" });
+    uni.showToast({ title: '请输入教师姓名', icon: 'none' });
     return;
   }
-  if (!draft.department) {
-    uni.showToast({ title: "请选择所属院系", icon: "none" });
-    return;
-  }
-  emit("confirm", { ...draft, name });
+  emit('confirm', {
+    name,
+    title: draft.title || '',
+    department,
+    teacherId: draft.teacherId || ''
+  });
   handleClose();
 };
 
 const handleClose = () => {
-  emit("close");
-  emit("update:visible", false);
+  emit('close');
+  emit('update:visible', false);
 };
 </script>
 
 <style lang="scss" scoped>
-
 .teacher-modal {
   position: fixed;
   inset: 0;
@@ -247,7 +272,8 @@ const handleClose = () => {
 
 .teacher-modal__sheet {
   width: 100%;
-  max-height: 85vh;
+  // 固定高度：建议列表出现/消失时不改变弹窗尺寸，避免输入时抖动
+  height: 80vh;
   background: $bg-card-light;
   border-radius: $radius-2xl $radius-2xl 0 0;
   display: flex;
@@ -310,8 +336,13 @@ const handleClose = () => {
 }
 
 .teacher-modal__body {
+  width: 100%;
   flex: 1;
-  max-height: 60vh;
+  min-height: 0;
+}
+
+// padding 放在内层：scroll-view 自身的 padding 会导致内容整体偏移
+.teacher-modal__inner {
   padding: $space-7;
 }
 
@@ -349,7 +380,7 @@ const handleClose = () => {
 
   &:focus-within {
     background: $bg-card-light;
-    border-color: rgba(178, 0, 53, 0.30);
+    border-color: rgba(178, 0, 53, 0.3);
     box-shadow: 0 0 0 4rpx rgba(178, 0, 53, 0.08);
     .dark-theme & {
       background: $bg-card-dark;
@@ -378,6 +409,7 @@ const handleClose = () => {
 }
 
 .form-options {
+  width: 100%;
   margin-top: $space-3;
   max-height: 240rpx;
 }
@@ -392,7 +424,7 @@ const handleClose = () => {
 .form-spinner {
   width: 32rpx;
   height: 32rpx;
-  border: 3rpx solid rgba(178, 0, 53, 0.20);
+  border: 3rpx solid rgba(178, 0, 53, 0.2);
   border-top-color: $brand-red;
   border-radius: 50%;
   animation: mwp-spin $motion-spin linear infinite;

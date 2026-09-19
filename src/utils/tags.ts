@@ -1,11 +1,11 @@
-import { ref } from "vue";
-import EasyCat from "@/images/cat-emoji/cat_face.png";
-import HardcoreCat from "@/images/cat-emoji/hardcore-cat.png";
-import TerribleCat from "@/images/cat-emoji/weary_cat.png";
-import NiceCat from "@/images/cat-emoji/heart-eyes-cat.png";
-import SeriousCat from "@/images/cat-emoji/pouting_cat.png";
-import HumorCat from "@/images/cat-emoji/cat_with_tears_of_joy.png";       
-import BoringCat from "@/images/cat-emoji/crying_cat.png";
+import { ref } from 'vue';
+import EasyCat from '@/images/cat-emoji/cat_face.png';
+import HardcoreCat from '@/images/cat-emoji/hardcore-cat.png';
+import TerribleCat from '@/images/cat-emoji/weary_cat.png';
+import NiceCat from '@/images/cat-emoji/heart-eyes-cat.png';
+import SeriousCat from '@/images/cat-emoji/pouting_cat.png';
+import HumorCat from '@/images/cat-emoji/cat_with_tears_of_joy.png';
+import BoringCat from '@/images/cat-emoji/crying_cat.png';
 
 export type Tags = {
   text: string;
@@ -14,14 +14,14 @@ export type Tags = {
 };
 
 export const TotalTags = ref<Tags[]>([
-  { text: "容易", icon: EasyCat, isSelected: false },
-  { text: "硬核", icon: HardcoreCat, isSelected: false },
-  { text: "避雷", icon: TerribleCat, isSelected: false },
-  { text: "推荐", icon: NiceCat, isSelected: false },
-  { text: "严谨", icon: SeriousCat, isSelected: false },
-  { text: "枯燥", icon: BoringCat, isSelected: false },
-  { text: "幽默", icon: HumorCat, isSelected: false },
-  { text: "好评", icon: NiceCat, isSelected: false }
+  { text: '容易', icon: EasyCat, isSelected: false },
+  { text: '硬核', icon: HardcoreCat, isSelected: false },
+  { text: '避雷', icon: TerribleCat, isSelected: false },
+  { text: '推荐', icon: NiceCat, isSelected: false },
+  { text: '严谨', icon: SeriousCat, isSelected: false },
+  { text: '枯燥', icon: BoringCat, isSelected: false },
+  { text: '幽默', icon: HumorCat, isSelected: false },
+  { text: '好评', icon: NiceCat, isSelected: false }
 ]);
 export function InitTags() {
   TotalTags.value.forEach((tag) => {
@@ -31,23 +31,23 @@ export function InitTags() {
 
 // 同义词映射：当 mock 数据使用了不同写法时，可以映射到标准标签
 const synonyms: Record<string, string> = {
-  easy: "容易",
-  recommend: "推荐",
-  recommended: "推荐",
-  hard: "硬核",
-  hardcore: "硬核",
-  boring: "枯燥",
-  funny: "幽默",
-  humor: "幽默",
-  avoid: "避雷",
-  "bad": "避雷",
-  "good": "好评",
-  "great": "好评",
-  "strict": "严谨"
+  easy: '容易',
+  recommend: '推荐',
+  recommended: '推荐',
+  hard: '硬核',
+  hardcore: '硬核',
+  boring: '枯燥',
+  funny: '幽默',
+  humor: '幽默',
+  avoid: '避雷',
+  bad: '避雷',
+  good: '好评',
+  great: '好评',
+  strict: '严谨'
 };
 
 export function Emoji(text: string) {
-  if (!text) return "";
+  if (!text) return '';
   const normalized = String(text).trim();
   // 首先精确匹配
   for (const tag of TotalTags.value) {
@@ -72,7 +72,10 @@ export function Emoji(text: string) {
   }
 
   // 最后再尝试把英文词（如 hard-core）拆分并映射
-  const words = normalized.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]+/g, " ").split(" ").filter(Boolean);
+  const words = normalized
+    .replace(/[^a-zA-Z0-9\u4e00-\u9fa5]+/g, ' ')
+    .split(' ')
+    .filter(Boolean);
   for (const w of words) {
     const lw = w.toLowerCase();
     if (synonyms[lw]) {

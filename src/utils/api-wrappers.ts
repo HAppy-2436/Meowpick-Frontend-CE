@@ -27,7 +27,7 @@ export const LIKE_TARGET = {
   PROPOSAL: '1',
   COMMENT: '2'
 } as const;
-export type LikeTargetType = typeof LIKE_TARGET[keyof typeof LIKE_TARGET];
+export type LikeTargetType = (typeof LIKE_TARGET)[keyof typeof LIKE_TARGET];
 
 /**
  * Creates properly typed like request body
@@ -69,5 +69,5 @@ export const API_PATHS = {
   PROPOSAL_SUGGEST: '/api/proposal/suggest',
   SEARCH: '/api/search',
   SEARCH_SUGGEST: '/api/search/suggest',
-  SEARCH_RECENT: '/api/search/recent',
+  SEARCH_RECENT: '/api/search/recent'
 } as const;

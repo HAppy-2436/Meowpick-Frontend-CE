@@ -1,17 +1,22 @@
 <template>
-  <view v-if="visible" class="search-modal" @click="handleClose" hover-class="mwp-hover">
+  <view v-if="visible" class="search-modal" @click="handleClose">
     <view class="search-modal__sheet" @click.stop>
       <view class="search-modal__header">
         <text class="search-modal__title">{{ title }}</text>
-        <view class="search-modal__close" @click="handleClose" hover-class="mwp-hover">×</view>
+        <view
+          class="search-modal__close"
+          hover-class="mwp-hover"
+          @click="handleClose"
+          >×</view
+        >
       </view>
 
       <view class="search-modal__input-row">
         <view class="search-modal__input-box">
           <text class="search-modal__input-icon">🔍</text>
           <input
-            class="search-modal__input"
             v-model="keyword"
+            class="search-modal__input"
             :placeholder="placeholder"
             placeholder-class="mwp-placeholder"
             confirm-type="search"
@@ -21,16 +26,21 @@
         <view
           v-if="allowAdd && keyword.trim()"
           class="search-modal__add-btn mwp-pressable"
+          hover-class="mwp-hover"
           @click="handleAddNew"
-         hover-class="mwp-hover">
-          <text class="search-modal__add-icon">+</text>
+        >
+          <PlusIcon
+            class="search-modal__add-icon"
+            size="28rpx"
+            thickness="4rpx"
+          />
           <text class="search-modal__add-text">新增</text>
         </view>
       </view>
 
       <scroll-view scroll-y class="search-modal__results">
         <view v-if="loading" class="search-modal__loading">
-          <view class="search-modal__spinner"></view>
+          <view class="search-modal__spinner" />
           <text class="search-modal__loading-text">搜索中...</text>
         </view>
 
@@ -40,10 +50,18 @@
             :key="idx"
             class="search-modal__item mwp-stagger-item mwp-pressable"
             :style="{ animationDelay: `${Math.min(idx * 60, 240)}ms` }"
+            hover-class="mwp-hover"
             @click="handleSelect(item)"
-           hover-class="mwp-hover">
-            <text class="search-modal__item-label">{{ item.label || item.value }}</text>
-            <view v-if="field === 'teacherName' && item.courses && item.courses.length" class="search-modal__courses">
+          >
+            <text class="search-modal__item-label">{{
+              item.label || item.value
+            }}</text>
+            <view
+              v-if="
+                field === 'teacherName' && item.courses && item.courses.length
+              "
+              class="search-modal__courses"
+            >
               <text
                 v-for="(c, ci) in item.courses.slice(0, 2)"
                 :key="ci"
@@ -87,14 +105,20 @@
  *     @select="(item) => formData.department = item.value"
  *   />
  */
-import { ref, watch } from "vue";
-import { http } from "@/config";
-import type { FieldSuggestionVO } from "@/api/data-contracts";
+import { ref, watch } from 'vue';
+import { http } from '@/config';
+import type { DtoFieldSuggestionVO } from '@/api/data-contracts';
 
 const props = withDefaults(
   defineProps<{
     visible: boolean;
-    field: "department" | "category" | "campus" | "courseName" | "courseCode" | "teacherName";
+    field:
+      | 'department'
+      | 'category'
+      | 'campus'
+      | 'courseName'
+      | 'courseCode'
+      | 'teacherName';
     title: string;
     placeholder: string;
     /** 是否允许"新增"按钮 */
@@ -106,13 +130,13 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  "update:visible": [val: boolean];
-  select: [item: FieldSuggestionVO];
-  close: [];
+  (e: 'update:visible', val: boolean): void;
+  (e: 'select', item: DtoFieldSuggestionVO): void;
+  (e: 'close'): void;
 }>();
 
-const keyword = ref("");
-const results = ref<FieldSuggestionVO[]>([]);
+const keyword = ref('');
+const results = ref<DtoFieldSuggestionVO[]>([]);
 const loading = ref(false);
 let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -120,7 +144,7 @@ watch(
   () => props.visible,
   (val) => {
     if (val) {
-      keyword.value = "";
+      keyword.value = '';
       results.value = [];
     }
   }
@@ -133,17 +157,16 @@ const fetchSuggestions = async (kw: string) => {
   }
   loading.value = true;
   try {
-    const res: any = await http.ProposalController.proposalFieldSuggestionsList({
+    const res = await http.ProposalController.proposalFieldSuggestionsList({
       field: props.field,
       keyword: kw,
       page: 0,
-      pageSize: 50,
+      pageSize: 50
     });
-    const data = res.data?.data;
-    const list = (data?.suggestions ?? data?.data?.suggestions ?? []) as FieldSuggestionVO[];
+    const list = res.data?.data?.suggestions ?? [];
     results.value = list;
   } catch (err) {
-    console.error("[SearchModal] fetch suggestions failed:", err);
+    console.error('[SearchModal] fetch suggestions failed:', err);
     results.value = [];
   } finally {
     loading.value = false;
@@ -160,29 +183,28 @@ const handleSearch = () => {
   searchTimer = setTimeout(() => fetchSuggestions(kw), 300);
 };
 
-const handleSelect = (item: FieldSuggestionVO) => {
-  emit("select", item);
-  emit("update:visible", false);
+const handleSelect = (item: DtoFieldSuggestionVO) => {
+  emit('select', item);
+  emit('update:visible', false);
 };
 
 const handleAddNew = () => {
   const value = keyword.value.trim();
   if (!value) {
-    uni.showToast({ title: "请输入内容", icon: "none" });
+    uni.showToast({ title: '请输入内容', icon: 'none' });
     return;
   }
-  emit("select", { value, label: value });
-  emit("update:visible", false);
+  emit('select', { value, label: value });
+  emit('update:visible', false);
 };
 
 const handleClose = () => {
-  emit("close");
-  emit("update:visible", false);
+  emit('close');
+  emit('update:visible', false);
 };
 </script>
 
 <style lang="scss" scoped>
-
 .search-modal {
   position: fixed;
   inset: 0;
@@ -280,7 +302,7 @@ const handleClose = () => {
 
   &:focus-within {
     background: $bg-card-light;
-    border-color: rgba(178, 0, 53, 0.30);
+    border-color: rgba(178, 0, 53, 0.3);
     box-shadow: 0 0 0 4rpx rgba(178, 0, 53, 0.08);
     .dark-theme & {
       background: $bg-card-dark;
@@ -316,7 +338,7 @@ const handleClose = () => {
   gap: 4rpx;
   padding: $space-2 $space-5;
   background: $danger-soft;
-  border: 1rpx solid rgba(178, 0, 53, 0.20);
+  border: 1rpx solid rgba(178, 0, 53, 0.2);
   border-radius: $radius-md;
   min-width: 96rpx;
   flex-shrink: 0;
@@ -328,10 +350,7 @@ const handleClose = () => {
 }
 
 .search-modal__add-icon {
-  font-size: $font-xl;
   color: $brand-red;
-  font-weight: $weight-bold;
-  line-height: 1;
 }
 
 .search-modal__add-text {
@@ -341,6 +360,7 @@ const handleClose = () => {
 }
 
 .search-modal__results {
+  width: 100%;
   flex: 1;
   max-height: 60vh;
 }
@@ -356,7 +376,7 @@ const handleClose = () => {
   width: 60rpx;
   height: 60rpx;
   margin: 0 auto $space-5;
-  border: 4rpx solid rgba(178, 0, 53, 0.20);
+  border: 4rpx solid rgba(178, 0, 53, 0.2);
   border-top-color: $brand-red;
   border-radius: 50%;
   animation: mwp-spin $motion-spin linear infinite;

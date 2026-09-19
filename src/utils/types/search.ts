@@ -3,7 +3,13 @@
  * Addresses remaining `any` types in find components
  */
 
-import type { DtoSearchHistoryVO, DtoSearchSuggestionsVO, DtoCourseVO, DtoProposalVO } from "@/api/data-contracts";
+import type {
+  DtoSearchHistoryVO,
+  DtoSearchSuggestionsVO,
+  DtoCourseVO,
+  DtoProposalVO,
+  DtoTeacherVO
+} from '@/api/data-contracts';
 
 // Search result item types
 export type SuggestItem = DtoSearchSuggestionsVO;
@@ -30,14 +36,16 @@ export type MixedResult = DtoCourseVO & {
   link?: string[][];
   point?: number;
   describe?: string;
-  teachers?: string[];
-  teacherList?: DtoCourseVO['teachers'];
+  teachers?: DtoTeacherVO[];
+  teacherList?: DtoTeacherVO[];
   campuses?: string[];
   tagCount?: Record<string, number>;
   reason?: string;
   agreeCount?: number;
   campus?: string;
   title?: string;
+  type?: string;
+  voteCount?: number;
 };
 
 // Click handler parameter types

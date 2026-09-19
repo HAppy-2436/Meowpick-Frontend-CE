@@ -1,0 +1,269 @@
+
+.course-header-container {
+  position: relative;
+  z-index: $z-sticky;
+}
+
+.header-card {
+  background-color: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  padding: $space-9 $space-7;
+  display: flex;
+  flex-direction: column;
+  transition: background-color $dur-medium $ease-standard,
+              box-shadow $dur-medium $ease-standard;
+  animation: mwp-fade-up $dur-slow $ease-decelerate backwards;
+  position: relative;
+  overflow: hidden;
+
+  // 顶部渐变装饰
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4rpx;
+    background: $gradient-brand;
+    opacity: 0;
+    transition: opacity $dur-medium $ease-standard;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  .dark-theme & {
+    background-color: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $space-9;
+
+  .course-title {
+    font-size: $font-2xl;
+    font-weight: $weight-semibold;
+    color: $text-primary-light;
+    line-height: 1.4;
+    flex: 1;
+    min-width: 0;
+    margin-right: $space-5;
+    @include ellipsis(2);
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-gap: $space-7 $space-5;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    transition: transform $dur-fast $ease-standard;
+
+    &:active {
+      transform: scale($press-scale-sm);
+    }
+
+    // 折叠态不展示图标，仅用标签区分；展开后恢复
+    .icon-wrapper {
+      display: none;
+      @include icon-tile(80rpx, $bg-muted-light, $radius-md);
+      margin-right: $space-5;
+      transition: transform $dur-base $ease-spring;
+
+      &:active {
+        transform: scale($press-scale-lg);
+      }
+
+      &.bg-blue { background-color: $tile-blue; }
+      &.bg-green { background-color: $tile-green; }
+      &.bg-orange { background-color: $tile-orange; }
+      &.bg-purple { background-color: $tile-purple; }
+
+      .dark-theme & {
+        &.bg-blue { background-color: $tile-blue-dark; }
+        &.bg-green { background-color: $tile-green-dark; }
+        &.bg-orange { background-color: $tile-orange-dark; }
+        &.bg-purple { background-color: $tile-purple-dark; }
+      }
+
+      .icon {
+        color: $text-secondary-light;
+
+        .dark-theme & {
+          color: $text-secondary-dark;
+        }
+      }
+    }
+
+    .info-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+
+      .label {
+        font-size: $font-sm;
+        color: $text-tertiary-light;
+        margin-bottom: 4rpx;
+        transition: color $dur-fast $ease-standard;
+
+        .dark-theme & {
+          color: $text-tertiary-dark;
+        }
+      }
+
+      .value {
+        font-size: $font-base;
+        color: $text-primary-light;
+        font-weight: $weight-medium;
+        @include ellipsis;
+        transition: color $dur-fast $ease-standard;
+
+        .dark-theme & {
+          color: $text-primary-dark;
+        }
+      }
+
+      .value-list {
+        display: flex;
+        flex-wrap: wrap;
+
+        .teacher-name {
+          margin-right: $space-3;
+          font-size: $font-base;
+          color: $text-primary-light;
+          font-weight: $weight-medium;
+          min-width: 0;
+          max-width: 100%;
+          transition: color $dur-fast $ease-standard;
+          @include ellipsis;
+
+          .dark-theme & {
+            color: $text-primary-dark;
+          }
+
+          &:not(:last-child)::after {
+            content: "、";
+          }
+        }
+      }
+    }
+  }
+
+  // 展开态：每项独占一行、显示图标，文本完整换行
+  &.is-expanded {
+    grid-template-columns: minmax(0, 1fr);
+    grid-gap: $space-6;
+
+    .info-item {
+      align-items: flex-start;
+
+      .icon-wrapper {
+        display: flex;
+      }
+
+      .info-content {
+        .value,
+        .value-list .teacher-name {
+          white-space: normal;
+          overflow: visible;
+          text-overflow: clip;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}
+
+.tags-section {
+  margin-top: $space-9;
+  padding-top: $space-6;
+  @include dashed-divider;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-color: $divider-dark;
+  }
+
+  .desc-text {
+    font-size: $font-sm + 2rpx;
+    color: $text-secondary-light;
+    line-height: 1.6;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+  }
+}
+
+.expand-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  margin-top: $space-7;
+  padding-top: $space-6;
+  @include dashed-divider;
+  transition: opacity $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-color: $divider-dark;
+  }
+
+  .toggle-text {
+    font-size: $font-sm;
+    color: $text-tertiary-light;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+
+  .toggle-chevron {
+    width: 14rpx;
+    height: 14rpx;
+    border-right: 3rpx solid $text-tertiary-light;
+    border-bottom: 3rpx solid $text-tertiary-light;
+    transform: translateY(-2rpx) rotate(45deg);
+    transition: transform $dur-base $ease-emphasized;
+
+    .dark-theme & {
+      border-color: $text-tertiary-dark;
+    }
+
+    &.is-expanded {
+      transform: translateY(2rpx) rotate(-135deg);
+    }
+  }
+}
+
+// 离屏测量文本：字体须与折叠态 .value 一致，才能量出真实自然宽度
+.measure-text {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  white-space: nowrap;
+  font-size: $font-base;
+  font-weight: $weight-medium;
+  opacity: 0;
+  pointer-events: none;
+}

@@ -209,7 +209,7 @@
 // 小程序 `view` 的 :active 不触发，按压反馈统一走 hover-class="mwp-hover"。
 // 该文件已注入每个组件，故本类在每个组件内都可用。
 .mwp-hover {
-  transform: scale(0.94);
+  transform: scale(0.97);
   opacity: 0.96;
   transition: transform $dur-instant $ease-emphasized, opacity $dur-instant $ease-standard;
 }
@@ -247,4 +247,53 @@
 }
 .dark-theme .mwp-placeholder {
   color: $text-placeholder-dark;
+}
+
+// ---------- 通用点击反馈 / 交互状态 ----------
+// 无色无边框：纯文字、图标类点击
+.mwp-tap-plain {
+  background: transparent;
+  border: 1rpx solid transparent;
+  color: $text-secondary-light;
+  @include mwp-transition($dur-fast, $ease-standard);
+  &:active {
+    opacity: 0.6;
+  }
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+// 灰色边框：输入框 / 次级控件默认态
+.mwp-tap-outline {
+  background: $bg-card-light;
+  border: 1rpx solid $border-color-strong-light;
+  color: $text-primary-light;
+  @include mwp-transition($dur-fast, $ease-standard);
+  &:active {
+    border-color: $brand-red;
+  }
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $border-color-medium-dark;
+    color: $text-primary-dark;
+  }
+}
+
+// 主题色边框：聚焦 / 选中态
+.mwp-tap-outline-brand {
+  background: $brand-red-tint;
+  border: 1rpx solid $brand-red;
+  color: $brand-red;
+  @include mwp-transition($dur-fast, $ease-standard);
+  .dark-theme & {
+    background: $danger-soft;
+    border-color: $brand-red-soft;
+    color: $brand-red-soft;
+  }
+}
+
+// 主题色渐变按钮
+.mwp-tap-gradient {
+  @include brand-button;
 }

@@ -6,24 +6,20 @@
       class="skeleton-card mwp-stagger-item"
       :style="{ animationDelay: `${(i - 1) * 60}ms` }"
     >
-      <view class="skeleton-line skeleton-title"></view>
+      <view class="skeleton-line skeleton-title" />
       <view class="skeleton-row">
-        <view class="skeleton-circle"></view>
+        <view class="skeleton-circle" />
         <view class="skeleton-text-block">
-          <view class="skeleton-line skeleton-text"></view>
-          <view class="skeleton-line skeleton-text short"></view>
+          <view class="skeleton-line skeleton-text" />
+          <view class="skeleton-line skeleton-text short" />
         </view>
       </view>
       <view class="skeleton-tags">
-        <view
-          v-for="j in 3"
-          :key="j"
-          class="skeleton-chip"
-        ></view>
+        <view v-for="j in 3" :key="j" class="skeleton-chip" />
       </view>
       <view class="skeleton-footer">
-        <view class="skeleton-line skeleton-action"></view>
-        <view class="skeleton-line skeleton-meta"></view>
+        <view class="skeleton-line skeleton-action" />
+        <view class="skeleton-line skeleton-meta" />
       </view>
     </view>
   </view>
@@ -38,7 +34,6 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
 </script>
 
 <style lang="scss" scoped>
-
 .skeleton-list {
   display: flex;
   flex-direction: column;
@@ -51,7 +46,7 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
   background: $bg-card-light;
   box-shadow: $shadow-card;
   transition: background-color $dur-medium $ease-standard,
-              box-shadow $dur-medium $ease-standard;
+    box-shadow $dur-medium $ease-standard;
 
   .dark-theme & {
     background: $bg-card-dark;

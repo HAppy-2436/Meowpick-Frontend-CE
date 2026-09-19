@@ -13,6 +13,11 @@ node_modules
 dist
 *.local
 !src/wxcomponents/vant-weapp/dist
+
+# 环境变量：.env 含本地配置不入库，模板见 .env.example
+.env
+.env.*
+!.env.example
 # Editor directories and files
 .idea
 *.suo
@@ -32,3 +37,9 @@ components.d.ts
 *.bak[0-9]*
 *.orig
 *.rej
+
+# 微信开发者工具本地私有配置（每人不同，不入库）
+project.private.config.json
+
+# 工具/代理本地状态
+.opencode/

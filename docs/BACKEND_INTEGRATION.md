@@ -387,9 +387,8 @@ yarn build:mp-weixin
 ## 12. 文档
 
 - `docs/DEV_GUIDE.md` —— 开发者完整指南
-- `docs/UX_REVIEW.md` —— 用户视角
-- `docs/FRONTEND_QUALITY.md` —— 设计超越报告
-- `docs/PROPOSAL_PARITY.md` —— 与 feature/proposal 对比
+- `docs/PROJECT_OVERVIEW.md` —— 页面路由与交互清单
+- `docs/DESIGN_LANGUAGE.md` —— 设计语言与视觉规范
 
 ---
 

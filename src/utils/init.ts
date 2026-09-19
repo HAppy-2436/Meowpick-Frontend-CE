@@ -1,12 +1,79 @@
-import { useTokenStore } from "@/config";
+import { useTokenStore } from '@/config';
 
 let isInitializing = false;
 let loginComplete = false;
+let loginPromise: Promise<string | null> | null = null;
+let reloginPromise: Promise<string | null> | null = null;
+let signInErrorShown = false;
 
-export function Init() {
-  if (isInitializing) {
-    return;
+const getBackendEnv = () => uni.getStorageSync('backendEnv') || 'test';
+
+function clearToken() {
+  const tokenStore = useTokenStore();
+  tokenStore.store('');
+  uni.removeStorageSync('token');
+}
+
+async function requestSignIn(code: string): Promise<string | null> {
+  try {
+    const res = await uni.request({
+      url: import.meta.env.VITE_SERVER_HOST_PORT + '/api/auth/sign_in',
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        'X-Xh-Env': getBackendEnv()
+      },
+      data: {
+        authType: 'wechat',
+        authId: 'miniapp_user',
+        verifyCode: code
+      }
+    });
+
+    const statusCode = (res as { statusCode?: number }).statusCode;
+    const body = res.data as {
+      code?: number;
+      msg?: string;
+      data?: { accessToken?: string; userId?: string; isAdmin?: boolean };
+    };
+    const accessToken = body?.data?.accessToken;
+
+    if (statusCode !== 200 || body?.code !== 0 || !accessToken) {
+      // 关键诊断信息：真机上直接弹窗显示，能看到后端拒绝原因
+      console.error('[auth] sign_in 失败', {
+        statusCode,
+        code: body?.code,
+        msg: body?.msg,
+        body
+      });
+      if (!signInErrorShown) {
+        signInErrorShown = true;
+        uni.showModal({
+          title: '登录失败',
+          content: `HTTP ${statusCode ?? '-'} / code ${body?.code ?? '-'}\n${
+            body?.msg || '后端未返回 accessToken'
+          }`,
+          showCancel: false,
+          confirmText: '知道了'
+        });
+      }
+      return null;
+    }
+
+    const tokenStore = useTokenStore();
+    tokenStore.store(accessToken);
+    uni.setStorageSync('token', accessToken);
+    if (body.data?.userId) tokenStore.setUserId(body.data.userId);
+    return accessToken;
+  } catch (err) {
+    console.error('[auth] sign_in 请求异常', err);
+    return null;
   }
+}
+
+export function Init(): Promise<string | null> {
+  if (isInitializing && loginPromise) return loginPromise;
+
   isInitializing = true;
   loginComplete = false;
 
@@ -18,64 +85,52 @@ export function Init() {
     }
     loginComplete = true;
     isInitializing = false;
-    return;
+    loginPromise = Promise.resolve(storedToken);
+    return loginPromise;
   }
 
-  uni.login({
-    provider: 'weixin',
-    success: (loginRes) => {
-      handleLogin(loginRes.code);
-    },
-    fail: (err) => {
-      console.error('uni.login fail:', err);
-      loginComplete = true;
-      isInitializing = false;
-    }
-  });
-}
-
-async function handleLogin(code: string) {
-  if (!code) {
-    loginComplete = true;
-    isInitializing = false;
-    return;
-  }
-
-  try {
-    const res: any = await uni.request({
-      url: import.meta.env.VITE_SERVER_HOST_PORT + '/api/auth/sign_in',
-      method: 'POST',
-      header: {
-        'Content-Type': 'application/json',
-        'X-Xh-Env': 'test'
+  loginPromise = new Promise((resolve) => {
+    uni.login({
+      provider: 'weixin',
+      success: async (loginRes) => {
+        if (!loginRes.code) {
+          console.error('[auth] uni.login 未返回 code', loginRes);
+          loginComplete = true;
+          isInitializing = false;
+          resolve(null);
+          return;
+        }
+        const token = await requestSignIn(loginRes.code);
+        loginComplete = true;
+        isInitializing = false;
+        resolve(token);
       },
-      data: {
-        authType: 'wechat',
-        authId: 'miniapp_user',
-        verifyCode: code
+      fail: (err) => {
+        console.error('[auth] uni.login 失败', err);
+        loginComplete = true;
+        isInitializing = false;
+        resolve(null);
       }
     });
+  });
 
-    const responseData = res.data;
-    const accessToken = responseData?.data?.accessToken;
+  return loginPromise;
+}
 
-    if (accessToken) {
-      const tokenStore = useTokenStore();
-      tokenStore.store(accessToken);
-      uni.setStorageSync('token', accessToken);
-      if (responseData.data.userId) {
-        tokenStore.setUserId(responseData.data.userId);
-      }
-    }
-    // 尝试获取微信用户信息（昵称+头像）
-    // 注：新版微信已废弃 getUserInfo，需通过 chooseAvatar + type="nickname" 组件获取
-    // 此处仅做兼容：如用户已授权过则读取缓存
-  } catch (err: any) {
-    console.error('[handleLogin] Login request failed:', err);
-  } finally {
-    loginComplete = true;
-    isInitializing = false;
-  }
+/**
+ * 清除失效 token 并重新登录。用于 401 时自动续期。
+ * 并发调用共享同一个登录流程，避免重复 uni.login。
+ */
+export function relogin(): Promise<string | null> {
+  if (reloginPromise) return reloginPromise;
+  clearToken();
+  loginComplete = false;
+  isInitializing = false;
+  loginPromise = null;
+  reloginPromise = Init().finally(() => {
+    reloginPromise = null;
+  });
+  return reloginPromise;
 }
 
 export function waitForLogin(): Promise<void> {

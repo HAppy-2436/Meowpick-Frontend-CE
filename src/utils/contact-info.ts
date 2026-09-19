@@ -12,10 +12,12 @@ export const CONTACT_INFO = {
 
 export function buildMailtoLink(): string {
   const { address, subject, body } = CONTACT_INFO.email;
-  return `mailto:${address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${address}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;
 }
 
-export async function copyToClipboard(text: string, successMsg = '已复制'): Promise<void> {
+export function copyToClipboard(text: string, successMsg = '已复制'): void {
   uni.setClipboardData({
     data: text,
     success: () => uni.showToast({ title: successMsg, icon: 'success' })

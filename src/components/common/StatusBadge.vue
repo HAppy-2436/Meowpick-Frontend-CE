@@ -1,9 +1,6 @@
 <template>
-  <view
-    class="status-badge"
-    :class="[`status-${tone}`, { 'is-pill': pill }]"
-  >
-    <view v-if="dot" class="status-dot"></view>
+  <view class="status-badge" :class="[`status-${tone}`, { 'is-pill': pill }]">
+    <view v-if="dot" class="status-dot" />
     <text class="status-text">{{ label }}</text>
   </view>
 </template>
@@ -15,11 +12,11 @@
  * tone: pending | approved | rejected | info | warning | neutral
  * pill: 是否胶囊样式（默认直角徽标）
  */
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const props = withDefaults(
   defineProps<{
-    status?: "pending" | "approved" | "rejected" | string;
+    status?: string;
     tone?: string;
     label?: string;
     pill?: boolean;
@@ -29,31 +26,30 @@ const props = withDefaults(
 );
 
 const TONE_MAP: Record<string, { label: string; tone: string }> = {
-  pending: { label: "审批中", tone: "warning" },
-  approved: { label: "已通过", tone: "success" },
-  rejected: { label: "已拒绝", tone: "danger" },
-  info: { label: "信息", tone: "info" },
-  warning: { label: "提醒", tone: "warning" },
-  danger: { label: "异常", tone: "danger" },
-  success: { label: "成功", tone: "success" },
-  neutral: { label: "中性", tone: "neutral" },
+  pending: { label: '审批中', tone: 'warning' },
+  approved: { label: '已通过', tone: 'success' },
+  rejected: { label: '已拒绝', tone: 'danger' },
+  info: { label: '信息', tone: 'info' },
+  warning: { label: '提醒', tone: 'warning' },
+  danger: { label: '异常', tone: 'danger' },
+  success: { label: '成功', tone: 'success' },
+  neutral: { label: '中性', tone: 'neutral' }
 };
 
 const tone = computed(() => {
   if (props.tone) return props.tone;
-  if (props.status) return TONE_MAP[props.status]?.tone ?? "neutral";
-  return "neutral";
+  if (props.status) return TONE_MAP[props.status]?.tone ?? 'neutral';
+  return 'neutral';
 });
 
 const label = computed(() => {
   if (props.label) return props.label;
   if (props.status) return TONE_MAP[props.status]?.label ?? props.status;
-  return "";
+  return '';
 });
 </script>
 
 <style lang="scss" scoped>
-
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -86,22 +82,30 @@ const label = computed(() => {
 .status-success {
   color: $success;
   background: $success-soft;
-  .dark-theme & { color: $success-text-dark; }
+  .dark-theme & {
+    color: $success-text-dark;
+  }
 }
 .status-warning {
   color: $warning-text;
   background: $warning-soft;
-  .dark-theme & { color: $warning-text-dark; }
+  .dark-theme & {
+    color: $warning-text-dark;
+  }
 }
 .status-danger {
   color: $danger;
   background: $danger-soft;
-  .dark-theme & { color: $brand-red-soft; }
+  .dark-theme & {
+    color: $brand-red-soft;
+  }
 }
 .status-info {
   color: $info;
   background: $info-soft;
-  .dark-theme & { color: $info-text-dark; }
+  .dark-theme & {
+    color: $info-text-dark;
+  }
 }
 .status-neutral {
   color: $text-secondary-light;

@@ -23,16 +23,16 @@
 | # | 页面 | 路径 | 描述 |
 |---|------|------|------|
 | 1 | 主布局（Tab容器） | `pages/layout/main` | Swiper 双栏布局：首页 + 我的 |
-| 2 | 首页 | `components/home-view`（嵌入 Tab 0） | 欢迎语、Logo、搜索入口、功能卡片、统计 |
-| 3 | 我的 | `components/profile-view`（嵌入 Tab 1） | 头像、昵称、更多菜单、筛选列表、FAB |
-| 4 | 搜索/发现 | `pages/find/index/index` | 可折叠搜索头、模糊建议、历史、筛选、结果列表 |
-| 5 | 课程详情 | `pages/course/index/index` | 课程信息 + 评论列表 + FAB 写评论 |
-| 6 | 发布评论 | `pages/course/comment/index` | 选标签 + 文字（200字）+ 提交 |
+| 2 | 首页 | `components/home/HomeView`（嵌入 Tab 0） | 欢迎语、Logo、搜索入口、功能卡片、统计 |
+| 3 | 我的 | `components/profile/ProfileView`（嵌入 Tab 1） | 头像、昵称、更多菜单、筛选列表、FAB |
+| 4 | 搜索/发现 | `pages/find/index` | 可折叠搜索头、模糊建议、历史、筛选、结果列表 |
+| 5 | 课程详情 | `pages/course/detail` | 课程信息 + 评论列表 + FAB 写评论 |
+| 6 | 发布评论 | `pages/course/comment` | 选标签 + 文字（200字）+ 提交 |
 | 7 | 致用户信 | `pages/home/letter` | 静态内容页（v4.0 重写说明） |
 | 8 | 更新日志 | `pages/home/update-log` | 版本时间线（v1.0.4 → v4.0.0） |
-| 9 | 提案表单 | `pages/proposal/propose/propose` | 三模式：新增提案 / 管理员审批 / 重新编辑 |
-| 10 | 提案广场 | `pages/proposal/list/list` | 多Tab：全部提案 / 操作记录 / 我的提案 |
-| 11 | 提案详情 | `pages/course/proposal-detail/index` | 提案信息 + 投票按钮 |
+| 9 | 提案表单 | `pages/proposal/propose` | 三模式：新增提案 / 管理员审批 / 重新编辑 |
+| 10 | 提案广场 | `pages/proposal/list` | 多Tab：全部提案 / 操作记录 / 我的提案 |
+| 11 | 提案详情 | `pages/course/proposal-detail` | 提案信息 + 投票按钮 |
 
 ### 导航图
 
@@ -41,59 +41,59 @@
 │                 pages/layout/main                  │
 │  ┌─────────────┐         ┌─────────────┐          │
 │  │  Tab 0:      │  swipe  │  Tab 1:      │          │
-│  │  home-view   │ ◄─────► │  profile-view│          │
+│  │  HomeView    │ ◄─────► │ ProfileView  │          │
 │  └──────┬──────┘         └──┬──┬──┬────┘          │
 └─────────┼───────────────────┼──┼──┼────────────────┘
           │                   │  │  │
           ▼                   │  │  │
   find/index                  │  │  │
   ?mode=add-comment           │  │  │
-   ├─► course/index           │  │  │
+   ├─► course/detail          │  │  │
    ├─► course/comment         │  │  │
-   ├─► proposal-detail        │  │  │
+   ├─► course/proposal-detail │  │  │
    └─► proposal/propose       │  │  │
                               │  │  │
   home/letter  ◄──────────────┤  │  │
   home/update-log ◄───────────┤  │  │
                               │  │  │
   proposal/list ◄─────────────┘  │  │
-   ├─► proposal-detail           │  │
-   ├─► course/index（查看课程）    │  │
+   ├─► course/proposal-detail    │  │
+   ├─► course/detail（查看课程）   │  │
    └─► proposal/propose          │  │
       ?approveProposalId=        │  │
       ?editProposalId=           │  │
                                  │  │
   proposal/propose ◄─────────────┘  │
                                     │
-  course/index ◄────────────────────┘
+  course/detail ◄───────────────────┘
    └─► course/comment
 ```
 
 ### 各页面跳转详情
 
-#### 1. 首页 (home-view)
+#### 1. 首页 (HomeView)
 | 触发 | 目标 | 参数 |
 |------|------|------|
 | 点击搜索框 | `find/index` | — |
 | 点击"致用户的一封信" | `home/letter` | — |
-| 点击"提案广场" | `proposal/list/list` | — |
-| 点击"我要反馈" | 打开 feedback-modal | — |
+| 点击"提案广场" | `proposal/list` | — |
+| 点击"我要反馈" | 打开 FeedbackModal | — |
 
-#### 2. 我的 (profile-view)
+#### 2. 我的 (ProfileView)
 | 触发 | 目标 | 参数 |
 |------|------|------|
-| ⋯菜单→提案广场 | `proposal/list/list` | — |
+| ⋯菜单→提案广场 | `proposal/list` | — |
 | ⋯菜单→更新日志 | `home/update-log` | — |
-| 点击评论卡片 | `course/index/index` | `?id={commentId}` |
+| 点击评论卡片 | `course/detail` | `?id={commentId}` |
 | 点击提案卡片 | `course/proposal-detail` | `?data={json}` |
 | FAB+（吐槽筛选） | `find/index` | `?mode=add-comment` |
 | FAB+（提案筛选） | `proposal/propose` | — |
 | 长按提案→修改 | `proposal/propose` | `?editProposalId={id}` |
 
-#### 3. 搜索页 (find)
+#### 3. 搜索页 (FindView)
 | 触发 | 目标 | 参数 |
 |------|------|------|
-| 点击课程结果 | `course/index` | `?id={courseId}` |
+| 点击课程结果 | `course/detail` | `?id={courseId}` |
 | 点击课程结果(add-comment模式) | `course/comment` | `?data={json}` |
 | 点击提案结果 | `course/proposal-detail` | `?data={json}` |
 | 点击"亲自提案新课程" | `proposal/propose` | — |
@@ -102,7 +102,7 @@
 | 触发 | 目标 | 参数 |
 |------|------|------|
 | 点击提案卡片 | `course/proposal-detail` | `?id={proposalId}` |
-| 点击"查看课程" | `course/index` | `?id={courseId}` |
+| 点击"查看课程" | `course/detail` | `?id={courseId}` |
 | 管理员点"通过" | `proposal/propose` | `?approveProposalId={id}` |
 | FAB / 空态按钮 | `proposal/propose` | — |
 
@@ -182,21 +182,17 @@
 
 | 组件 | 路径 | 用途 |
 |------|------|------|
-| CourseCard | business/course/ | 双模式卡片（课程/提案） |
-| choose-course | choose/ | 搜索结果卡片（含emoji标签） |
-| comment-item | comment/ | 评论卡片（头像/时间/标签/点赞） |
-| course-header | course/ | 课程详情头部 |
-| course-comment-list | course/ | 评论列表（分页/点赞/PubSub） |
-| course-comment-publish | course/ | 评论发布表单 |
-| star | course/ | 星级评分组件 |
-| find | find/ | 搜索页完整实现 |
-| feedback-modal | feedback/ | 反馈弹窗 |
-| home-view | home-view/ | 首页完整实现 |
-| profile-view | profile-view/ | 我的页完整实现 |
+| ChooseCourse | choose/ | 搜索结果卡片（含emoji标签） |
+| CourseHeader | course/ | 课程详情头部 |
+| CourseCommentList | course/ | 评论列表（分页/点赞/PubSub） |
+| CourseCommentBox | course/ | 单条评论卡片 |
+| FindView | find/ | 搜索页完整实现 |
+| FeedbackModal | feedback/ | 反馈弹窗 |
+| HomeView | home/ | 首页完整实现 |
+| ProfileView | profile/ | 我的页完整实现 |
+| UpdateLogTimeline | home/ | 更新日志时间线 |
+| InfiniteScroll | common/ | 可滚动容器（到底触发 bottom） |
 | ProposalLogTimeline | proposal/ | 操作日志时间线 |
-| scroll | scroll/ | 可滚动容器 |
-| fuzzy-search | fuzzy-search/ | 模糊搜索下拉 |
-| DebugPanel | 根目录 | 调试面板（环境切换） |
 
 ### Composables
 
@@ -354,9 +350,8 @@
 
 | 功能 | 状态 | 位置 |
 |------|------|------|
-| 搜索排序（综合/热度/时间） | Toast "开发中" | find/index.vue |
-| 评论修改 | Toast "开发中" | profile-view |
-| 昵称修改API对接 | Mock（setTimeout） | profile-view |
-| 深色模式部分硬编码颜色 | 待 token 化 | 多页面 |
-| 首页浮动布局改造 | TODO | home-view |
+| 搜索排序（综合/热度/时间） | Toast "开发中" | components/find/FindView.vue |
+| 评论修改 | Toast "开发中" | components/profile/ProfileView.vue |
+| 昵称修改API对接 | Mock（setTimeout） | components/profile/ProfileView.vue |
+| 首页浮动布局改造 | TODO | components/home/HomeView.vue |
 | 课程卡片字段自定义 | TODO | — |

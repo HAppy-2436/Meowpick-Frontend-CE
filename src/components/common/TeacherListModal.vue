@@ -1,37 +1,135 @@
 <template>
-  <view v-if="visible" class="teacher-list-modal" @click="handleClose" hover-class="mwp-hover">
+  <view v-if="visible" class="teacher-list-modal" @click="handleClose">
     <view class="teacher-list-modal__sheet" @click.stop>
       <view class="teacher-list-modal__header">
         <text class="teacher-list-modal__title">授课教师</text>
-        <view class="teacher-list-modal__close" @click="handleClose" hover-class="mwp-hover">×</view>
+        <view
+          class="teacher-list-modal__close"
+          hover-class="mwp-hover"
+          @click="handleClose"
+          >×</view
+        >
       </view>
 
       <scroll-view scroll-y class="teacher-list-modal__body">
-        <view v-if="teachers.length" class="teacher-list">
-          <view
-            v-for="(t, idx) in teachers"
-            :key="idx"
-            class="teacher-item mwp-stagger-item"
-            :style="{ animationDelay: `${Math.min(idx * 60, 240)}ms` }"
-          >
-            <view class="teacher-info">
-              <text class="teacher-name">{{ t.name }}</text>
-              <text v-if="t.title" class="teacher-title">{{ t.title }}</text>
-              <text v-if="t.department" class="teacher-dept">{{ t.department }}</text>
-            </view>
-            <view class="teacher-remove mwp-pressable" @click.stop="handleRemove(idx)" hover-class="mwp-hover">
-              <text>×</text>
+        <view class="teacher-list-modal__inner">
+          <!-- 已添加教师 -->
+          <view v-if="teachers.length" class="teacher-list">
+            <view v-for="(t, idx) in teachers" :key="idx" class="teacher-item">
+              <view class="teacher-info">
+                <text class="teacher-name">{{ t.name }}</text>
+                <text v-if="t.title" class="teacher-title">{{ t.title }}</text>
+                <text v-if="t.department" class="teacher-dept">{{
+                  t.department
+                }}</text>
+              </view>
+              <view
+                class="teacher-remove mwp-pressable"
+                hover-class="mwp-hover"
+                @click.stop="handleRemove(idx)"
+              >
+                <text>×</text>
+              </view>
             </view>
           </view>
-        </view>
 
-        <EmptyState v-else emoji="👩‍🏫" title="暂无教师信息" desc="请点击下方按钮添加" compact />
+          <EmptyState
+            v-else
+            title="暂无教师信息"
+            desc="请在下方添加授课教师"
+            compact
+          />
+
+          <!-- 内联添加表单 -->
+          <view class="add-form">
+            <text class="add-form__title">添加教师</text>
+
+            <text class="form-label">教师姓名</text>
+            <view class="form-input-wrapper">
+              <text class="form-input-icon">🔍</text>
+              <input
+                v-model="nameKeyword"
+                class="form-input"
+                placeholder="请输入教师姓名"
+                placeholder-class="mwp-placeholder"
+                @input="handleNameSearch"
+              />
+            </view>
+            <scroll-view
+              v-if="nameOptions.length || nameLoading"
+              scroll-y
+              class="form-options"
+            >
+              <view v-if="nameLoading" class="form-loading">
+                <view class="form-spinner" />
+                <text class="form-loading-text">搜索中...</text>
+              </view>
+              <template v-else>
+                <view
+                  v-for="(name, idx) in nameOptions"
+                  :key="idx"
+                  class="form-option mwp-pressable"
+                  :class="{ 'is-selected': selectedName === name }"
+                  hover-class="mwp-hover"
+                  @click="selectName(name)"
+                >
+                  <text>{{ name }}</text>
+                  <text v-if="selectedName === name" class="form-option__check"
+                    >✓</text
+                  >
+                </view>
+              </template>
+            </scroll-view>
+
+            <text class="form-label">所属院系 (选填)</text>
+            <view class="form-input-wrapper">
+              <text class="form-input-icon">🔍</text>
+              <input
+                v-model="deptKeyword"
+                class="form-input"
+                placeholder="搜索院系"
+                placeholder-class="mwp-placeholder"
+                @input="handleDeptSearch"
+              />
+            </view>
+            <scroll-view
+              v-if="deptOptions.length || deptLoading"
+              scroll-y
+              class="form-options"
+            >
+              <view v-if="deptLoading" class="form-loading">
+                <view class="form-spinner" />
+                <text class="form-loading-text">搜索中...</text>
+              </view>
+              <template v-else>
+                <view
+                  v-for="(dept, idx) in deptOptions"
+                  :key="idx"
+                  class="form-option mwp-pressable"
+                  :class="{ 'is-selected': selectedDept === dept }"
+                  hover-class="mwp-hover"
+                  @click="selectDept(dept)"
+                >
+                  <text>{{ dept }}</text>
+                  <text v-if="selectedDept === dept" class="form-option__check"
+                    >✓</text
+                  >
+                </view>
+              </template>
+            </scroll-view>
+          </view>
+        </view>
       </scroll-view>
 
       <view class="teacher-list-modal__footer">
-        <view class="add-btn mwp-pressable" @click="handleAdd" hover-class="mwp-hover">
-          <text class="add-icon">+</text>
-          <text class="add-text">添加教师</text>
+        <view
+          class="add-btn mwp-pressable"
+          :class="{ 'is-disabled': !canAdd }"
+          hover-class="mwp-hover"
+          @click="handleAdd"
+        >
+          <PlusIcon class="add-icon" size="32rpx" thickness="4rpx" />
+          <text class="add-text">确定添加</text>
         </view>
       </view>
     </view>
@@ -40,33 +138,155 @@
 
 <script setup lang="ts">
 /**
- * 教师列表弹窗（提案填写页打开）
- * 接受受控的 teachers 数组 + add/remove 事件。
+ * 授课教师弹窗（提案填写用）
+ * 列表 + 内联添加表单合一，避免叠层弹窗。
  */
-import type { DtoProposalTeacherVO } from "@/api/data-contracts";
+import { ref, watch, computed } from 'vue';
+import { http } from '@/config';
+import type { DtoTeacherVO } from '@/api/data-contracts';
+
+export interface TeacherDraft {
+  name: string;
+  title?: string;
+  department: string;
+  teacherId?: string;
+}
 
 const props = defineProps<{
   visible: boolean;
-  teachers: DtoProposalTeacherVO[];
+  teachers: DtoTeacherVO[];
 }>();
 
 const emit = defineEmits<{
-  "update:visible": [val: boolean];
-  add: [];
-  remove: [index: number];
-  close: [];
+  (e: 'update:visible', val: boolean): void;
+  (e: 'add', teacher: TeacherDraft): void;
+  (e: 'remove', index: number): void;
+  (e: 'close'): void;
 }>();
 
-const handleAdd = () => emit("add");
-const handleRemove = (idx: number) => emit("remove", idx);
+const nameKeyword = ref('');
+const deptKeyword = ref('');
+const selectedName = ref('');
+const selectedDept = ref('');
+const nameOptions = ref<string[]>([]);
+const deptOptions = ref<string[]>([]);
+const nameLoading = ref(false);
+const deptLoading = ref(false);
+let nameTimer: ReturnType<typeof setTimeout> | null = null;
+let deptTimer: ReturnType<typeof setTimeout> | null = null;
+
+// 姓名必填；院系选填（后端 department 可为空）
+const canAdd = computed(() => nameKeyword.value.trim() !== '');
+
+const resetForm = () => {
+  nameKeyword.value = '';
+  deptKeyword.value = '';
+  selectedName.value = '';
+  selectedDept.value = '';
+  nameOptions.value = [];
+  deptOptions.value = [];
+  nameLoading.value = false;
+  deptLoading.value = false;
+};
+
+watch(
+  () => props.visible,
+  (val) => {
+    if (val) resetForm();
+  }
+);
+
+const fetchName = async (keyword: string) => {
+  if (!keyword) {
+    nameOptions.value = [];
+    return;
+  }
+  nameLoading.value = true;
+  try {
+    const res = await http.ProposalController.proposalFieldSuggestionsList({
+      field: 'teacherName',
+      keyword,
+      page: 0,
+      pageSize: 50
+    });
+    const list = res.data?.data?.suggestions ?? [];
+    nameOptions.value = list.map((s) => s.value || s.label || '');
+  } catch (e) {
+    nameOptions.value = [];
+  } finally {
+    nameLoading.value = false;
+  }
+};
+
+const handleNameSearch = () => {
+  if (nameTimer) clearTimeout(nameTimer);
+  nameTimer = setTimeout(() => fetchName(nameKeyword.value.trim()), 300);
+};
+
+const selectName = (name: string) => {
+  selectedName.value = name;
+  nameKeyword.value = name;
+  nameOptions.value = [];
+};
+
+const fetchDept = async (keyword: string) => {
+  if (!keyword) {
+    deptOptions.value = [];
+    return;
+  }
+  deptLoading.value = true;
+  try {
+    const res = await http.ProposalController.proposalFieldSuggestionsList({
+      field: 'department',
+      keyword,
+      page: 0,
+      pageSize: 50
+    });
+    const list = res.data?.data?.suggestions ?? [];
+    deptOptions.value = list.map((s) => s.value || s.label || '');
+  } catch (e) {
+    deptOptions.value = [];
+  } finally {
+    deptLoading.value = false;
+  }
+};
+
+const handleDeptSearch = () => {
+  if (deptTimer) clearTimeout(deptTimer);
+  deptTimer = setTimeout(() => fetchDept(deptKeyword.value.trim()), 300);
+};
+
+const selectDept = (dept: string) => {
+  selectedDept.value = dept;
+  deptKeyword.value = dept;
+  deptOptions.value = [];
+};
+
+const handleAdd = () => {
+  const name = nameKeyword.value.trim();
+  if (!name) {
+    uni.showToast({ title: '请输入教师姓名', icon: 'none' });
+    return;
+  }
+  emit('add', {
+    name,
+    department: deptKeyword.value.trim(),
+    teacherId: ''
+  });
+  resetForm();
+};
+
+const handleRemove = (idx: number) => {
+  emit('remove', idx);
+};
+
 const handleClose = () => {
-  emit("close");
-  emit("update:visible", false);
+  emit('close');
+  emit('update:visible', false);
 };
 </script>
 
 <style lang="scss" scoped>
-
 .teacher-list-modal {
   position: fixed;
   inset: 0;
@@ -76,11 +296,16 @@ const handleClose = () => {
   align-items: flex-end;
   justify-content: center;
   animation: mwp-fade-in $motion-pop $ease-standard backwards;
+
+  .dark-theme & {
+    background: $bg-overlay-dark;
+  }
 }
 
 .teacher-list-modal__sheet {
   width: 100%;
-  max-height: 85vh;
+  // 固定高度：建议列表出现/消失时不改变弹窗尺寸，避免输入时抖动
+  height: 80vh;
   background: $bg-card-light;
   border-radius: $radius-2xl $radius-2xl 0 0;
   display: flex;
@@ -98,13 +323,7 @@ const handleClose = () => {
   align-items: center;
   justify-content: space-between;
   padding: $space-7;
-  border-bottom: 1rpx solid $divider-light;
   flex-shrink: 0;
-  transition: border-color $dur-fast $ease-standard;
-
-  .dark-theme & {
-    border-bottom-color: $divider-dark;
-  }
 }
 
 .teacher-list-modal__title {
@@ -143,9 +362,14 @@ const handleClose = () => {
 }
 
 .teacher-list-modal__body {
+  width: 100%;
   flex: 1;
+  min-height: 0;
+}
+
+// padding 放在内层：scroll-view 自身的 padding 会导致内容整体偏移
+.teacher-list-modal__inner {
   padding: $space-7;
-  max-height: 60vh;
 }
 
 .teacher-list {
@@ -200,7 +424,6 @@ const handleClose = () => {
   border-radius: $radius-xs;
   text-align: center;
   align-self: flex-start;
-  align-self: flex-start;
 }
 
 .teacher-dept {
@@ -238,8 +461,154 @@ const handleClose = () => {
   }
 }
 
+// ---------- 内联添加表单 ----------
+.add-form {
+  margin-top: $space-7;
+  padding-top: $space-7;
+  @include dashed-divider;
 
+  .dark-theme & {
+    border-top-color: $divider-dark;
+  }
+}
 
+.add-form__title {
+  display: block;
+  font-size: $font-md;
+  font-weight: $weight-semibold;
+  color: $brand-red;
+  margin-bottom: $space-6;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+  }
+}
+
+.form-label {
+  display: block;
+  font-size: $font-base;
+  font-weight: $weight-medium;
+  color: $text-primary-light;
+  margin-bottom: $space-4;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.form-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  height: 80rpx;
+  padding: 0 $space-5;
+  margin-bottom: $space-5;
+  background: $bg-muted-light;
+  border: 2rpx solid transparent;
+  border-radius: $radius-pill;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+  }
+
+  &:focus-within {
+    background: $bg-card-light;
+    border-color: $brand-red-glow;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+      background: $bg-card-dark;
+    }
+  }
+}
+
+.form-input-icon {
+  font-size: $font-lg;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  font-size: $font-base;
+  color: $text-primary-light;
+  background: transparent;
+  border: none;
+  outline: none;
+  height: 100%;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.form-options {
+  width: 100%;
+  margin-top: -$space-3;
+  margin-bottom: $space-5;
+  max-height: 240rpx;
+}
+
+.form-loading {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-4 $space-5;
+}
+
+.form-spinner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 3rpx solid rgba(178, 0, 53, 0.2);
+  border-top-color: $brand-red;
+  border-radius: 50%;
+  animation: mwp-spin $motion-spin linear infinite;
+}
+
+.form-loading-text {
+  font-size: $font-sm;
+  color: $text-tertiary-light;
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.form-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 $space-5;
+  font-size: $font-base;
+  color: $text-primary-light;
+  background: $bg-muted-light;
+  border-radius: $radius-sm;
+  margin-bottom: $space-2;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    color: $text-primary-dark;
+    background: $bg-muted-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.is-selected {
+    background: $danger-soft;
+    color: $brand-red;
+    font-weight: $weight-medium;
+    border: 1rpx solid $border-color-brand;
+  }
+}
+
+.form-option__check {
+  color: $brand-red;
+  font-weight: $weight-bold;
+  font-size: $font-lg;
+}
 
 .teacher-list-modal__footer {
   padding: $space-5 $space-7 calc(#{$space-7} + env(safe-area-inset-bottom));
@@ -251,16 +620,20 @@ const handleClose = () => {
   align-items: center;
   justify-content: center;
   gap: $space-3;
-  height: 96rpx;
-  border-radius: $radius-md;
+  height: 88rpx;
+  border-radius: $radius-pill;
   @include brand-button;
   font-size: $font-base;
   font-weight: $weight-semibold;
+
+  &.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
 }
 
 .add-icon {
-  font-size: $font-2xl;
-  line-height: 1;
+  color: $pure-white;
 }
 
 .add-text {
@@ -271,7 +644,7 @@ const handleClose = () => {
 @media (prefers-reduced-motion: reduce) {
   .teacher-list-modal,
   .teacher-list-modal__sheet,
-  .teacher-item {
+  .form-spinner {
     animation: none;
   }
 }

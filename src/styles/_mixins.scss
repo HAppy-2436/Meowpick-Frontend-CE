@@ -55,7 +55,7 @@
 // ---------- 渐变品牌按钮 ----------
 @mixin brand-button($bg: $gradient-brand) {
   background: $bg;
-  color: #fff;
+  color: $pure-white;
   border: none;
   box-shadow: $shadow-brand-sm;
   transition: transform $dur-fast $ease-emphasized,

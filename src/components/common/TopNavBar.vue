@@ -1,12 +1,20 @@
 <template>
-  <view class="nav-bar" :style="{ height: navBarHeight + 'px', paddingTop: menuButtonInfo.top + 'px' }">
-    <view class="nav-content" :style="{ height: menuButtonInfo.height + 'px' }">
+  <view
+    class="nav-bar"
+    :class="themeStore.themeClass"
+    :style="{
+      height: navBarHeight + 'px',
+      paddingTop: menuButtonInfo.top + 'px'
+    }"
+  >
+    <!-- 用 minHeight：手机端行高 = 胶囊高度，标题带副标题时可撑高到下方留白里 -->
+    <view class="nav-content" :style="{ minHeight: contentHeight + 'px' }">
       <view
         v-if="showBack"
         class="back-btn-wrapper"
-        :style="{ width: menuButtonInfo.height + 'px', height: '100%' }"
+        :style="{ width: contentHeight + 'px', height: '100%' }"
       >
-        <BackBtn />
+        <BackBtn :intercept="interceptBack" @back="emit('back')" />
       </view>
       <view class="nav-title-container" :class="{ 'has-back': showBack }">
         <text v-if="title" class="nav-title">{{ title }}</text>
@@ -28,8 +36,11 @@
  *     <template #right><view @click="onShare" hover-class="mwp-hover">分享</view></template>
  *   </TopNavBar>
  */
-import { computed } from "vue";
-import BackBtn from "./BackBtn.vue";
+import BackBtn from './BackBtn.vue';
+import { useMenuButton } from '@/composables/useMenuButton';
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 const props = withDefaults(
   defineProps<{
@@ -38,42 +49,32 @@ const props = withDefaults(
     showBack?: boolean;
     /** 强制 light 样式（避免某些深色渐变背景吃掉白字） */
     forceLight?: boolean;
+    /** 拦截返回按钮，改为抛出 back 事件由页面自行处理 */
+    interceptBack?: boolean;
   }>(),
-  { showBack: true }
+  { showBack: true, interceptBack: false }
 );
 
-const emit = defineEmits<{ back: [] }>();
+const emit = defineEmits<{ (e: 'back'): void }>();
 
-// 胶囊位置计算
-const sysInfo = uni.getSystemInfoSync();
-let menuButtonInfo = {
-  top: sysInfo.statusBarHeight ? sysInfo.statusBarHeight + 4 : 48,
-  height: 32
-};
-try {
-  const res = uni.getMenuButtonBoundingClientRect();
-  if (res && res.top) {
-    menuButtonInfo = { top: res.top, height: res.height };
-  }
-} catch (e) {}
-
-const navBarHeight = computed(() => (menuButtonInfo.top || 0) + (menuButtonInfo.height || 0) + 12);
+// 胶囊位置与高度：统一走 composable，留白/行高按 rpx 换算，宽屏下不会被压扁
+const { menuButtonInfo, navBarHeight, contentHeight } = useMenuButton();
 </script>
 
 <style lang="scss" scoped>
-
 .nav-bar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
+  border-radius: 0 0 $radius-card $radius-card;
   z-index: $z-navbar;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
 
-  .dark-theme & {
+  &.dark-theme {
     background: rgba(30, 30, 30, 0.95);
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.20);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
   }
 }
 

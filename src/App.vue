@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Init } from "@/utils/init";
-import { useThemeStore } from "@/config";
-import { THEME_COLORS } from "@/config/theme-colors";
+import { Init } from '@/utils/init';
+import { useThemeStore } from '@/config';
+import { THEME_COLORS } from '@/config/theme-colors';
 const themeStore = useThemeStore();
 
 onLaunch(() => {
@@ -18,13 +18,14 @@ watch(
   }
 );
 
-function applyThemeToNativeBar(mode: "light" | "dark") {
+function applyThemeToNativeBar(mode: 'light' | 'dark') {
   const colors = THEME_COLORS[mode];
   try {
     uni.setNavigationBarColor({
-      frontColor: mode === "dark" ? "#ffffff" : "#000000",
+      // 微信原生 API 的 frontColor 仅接受 #ffffff / #000000，非设计 token
+      frontColor: mode === 'dark' ? '#ffffff' : '#000000',
       backgroundColor: colors.card,
-      animation: { duration: 0, timingFunc: "linear" }
+      animation: { duration: 0, timingFunc: 'linear' }
     });
     uni.setBackgroundColor?.({
       backgroundColor: colors.page,
@@ -40,7 +41,7 @@ function applyThemeToNativeBar(mode: "light" | "dark") {
   </view>
 </template>
 <style lang="scss">
-@import "nutui-uniapp/styles/index";
+@import 'nutui-uniapp/styles/index';
 
 page {
   width: 100%;

@@ -32,7 +32,11 @@ module.exports = {
   ],
   rules: {
     "vue/multi-word-component-names": "off",
+    "vue/require-default-prop": "off",
     "vue/valid-v-on": "error",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "@typescript-eslint/restrict-plus-operands": ["error", { "allowNumberAndString": true }],
+    "@typescript-eslint/restrict-template-expressions": ["error", { "allowNumber": true }],
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "no-unused-vars": "off",

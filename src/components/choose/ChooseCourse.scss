@@ -1,0 +1,356 @@
+
+.search-result-box {
+  margin-top: 0;
+  background-color: transparent;
+}
+
+// ============================================================
+// 提案卡片（左下角的"提案新增"）
+// ============================================================
+.proposal-card {
+  position: relative;
+  overflow: hidden;
+  padding: $space-7;
+  border-radius: $radius-card;
+  background: $gradient-brand-soft;
+  border: 1rpx solid rgba(178, 0, 53, 0.15);
+  box-shadow: $shadow-comp-glow;
+  transition: transform $dur-base $ease-emphasized,
+              box-shadow $dur-base $ease-standard,
+              border-color $dur-base $ease-standard;
+  will-change: transform;
+
+  @include corner-glow($opacity: 0.7);
+
+  &:active {
+    transform: scale($press-scale-sm);
+    box-shadow: 0 4rpx 12rpx rgba(178, 0, 53, 0.04);
+  }
+}
+
+.proposal-content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.proposal-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $space-6;
+}
+
+.proposal-name {
+  font-size: $font-xl;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  line-height: 1.4;
+  flex: 1;
+  margin-right: $space-5;
+  letter-spacing: 0.5rpx;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.proposal-row-middle {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: $space-7;
+  background: $bg-card-light;
+  padding: $space-5 $space-6;
+  border-radius: $radius-md;
+  border: 1rpx solid rgba(178, 0, 53, 0.08);
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: rgba(178, 0, 53, 0.15);
+  }
+}
+
+.proposal-info-item {
+  display: flex;
+  align-items: center;
+  font-size: $font-sm + 2rpx;
+  color: $text-secondary-light;
+  margin-right: $space-7;
+  font-weight: $weight-medium;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+
+  .info-icon {
+    width: 30rpx;
+    height: 30rpx;
+    margin-right: $space-3;
+    opacity: 0.85;
+    transition: opacity $dur-fast $ease-standard;
+  }
+}
+
+.proposal-row-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @include dashed-divider($deco-divider-dash-brand);
+  padding-top: $space-6;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-top-color: rgba(178, 0, 53, 0.25);
+  }
+}
+
+.proposal-badge {
+  font-size: $font-xs;
+  color: $brand-red;
+  background: $danger-soft;
+  padding: $space-3 $space-5;
+  border-radius: $radius-pill;
+  font-weight: $weight-semibold;
+  border: 1rpx solid rgba(178, 0, 53, 0.08);
+}
+
+.vote-count-box {
+  display: flex;
+  align-items: center;
+  background: $gradient-wash;
+  padding: $space-3 $space-6;
+  border-radius: $radius-pill;
+  border: 1rpx solid rgba(178, 0, 53, 0.06);
+  transition: background $dur-fast $ease-standard,
+              transform $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $gradient-wash-dark;
+    border-color: rgba(178, 0, 53, 0.15);
+  }
+
+  &:active {
+    transform: scale($press-scale-md);
+  }
+
+  &.is-liked {
+    background: $gradient-brand;
+    border-color: transparent;
+
+    .vote-icon { opacity: 1; }
+    .vote-num,
+    .vote-label { color: $bg-card-light; }
+
+    .vote-num {
+      animation: mwp-heart-beat $motion-heart $ease-spring;
+    }
+  }
+}
+
+.vote-icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: $space-3;
+  opacity: 0.85;
+  transition: opacity $dur-fast $ease-standard;
+}
+
+.vote-num {
+  font-size: $font-lg;
+  font-weight: $weight-black;
+  color: $brand-red;
+  margin-right: $space-2;
+}
+
+.vote-label {
+  font-size: $font-xs;
+  color: $brand-red;
+  opacity: 0.9;
+  font-weight: $weight-medium;
+}
+
+// ============================================================
+// 课程卡片
+// ============================================================
+.search-result {
+  width: 100%;
+  box-sizing: border-box;
+  padding: $space-7;
+  display: flex;
+  flex-direction: column;
+  background: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  position: relative;
+  will-change: transform;
+  transition: transform $dur-base $ease-emphasized,
+              box-shadow $dur-base $ease-standard;
+
+  // 顶部品牌高光线（active 显现）
+  @include card-top-line;
+
+  &:active {
+    transform: scale($press-scale-sm);
+    box-shadow: $shadow-xs;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+}
+
+.course-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.course-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $space-6;
+  gap: $space-3;
+}
+
+.course-name {
+  font-size: $font-lg + 2rpx;
+  font-weight: $weight-semibold;
+  color: $text-primary-light;
+  line-height: 1.5;
+  flex: 1;
+  margin-right: $space-5;
+  @include ellipsis(2);
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.course-category {
+  font-size: $font-xs;
+  color: $info;
+  background: $info-soft;
+  padding: $space-2 $space-4;
+  border-radius: $radius-pill;
+  white-space: nowrap;
+  font-weight: $weight-medium;
+  flex-shrink: 0;
+}
+
+.course-row-middle {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: $space-7;
+  gap: $space-7;
+}
+
+.course-info-item {
+  display: flex;
+  align-items: center;
+  font-size: $font-sm + 2rpx;
+  color: $text-secondary-light;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+
+  .info-icon {
+    width: 28rpx;
+    height: 28rpx;
+    margin-right: $space-3;
+    opacity: 0.7;
+    transition: opacity $dur-fast $ease-standard;
+  }
+
+  .teacher-name-list {
+    max-width: 320rpx;
+    @include ellipsis;
+  }
+}
+
+.course-row-bottom {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.025);
+  padding: $space-4 $space-5;
+  border-radius: $radius-md;
+  transition: background $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  padding: 6rpx $space-4;
+  border-radius: $radius-pill;
+  margin-right: $space-4;
+  margin-bottom: $space-2;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+  transition: transform $dur-fast $ease-emphasized,
+              border-color $dur-fast $ease-standard;
+
+  &:active {
+    transform: scale($press-scale-md);
+  }
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $border-color-medium-dark;
+  }
+
+  .emoji-icon {
+    width: 32rpx;
+    height: 32rpx;
+    margin-right: $space-2;
+    display: block;
+  }
+
+  .emoji-text {
+    font-size: $font-sm + 2rpx;
+    margin-right: $space-3;
+  }
+
+  .tag-count {
+    font-size: $font-xs;
+    color: $brand-red;
+    font-weight: $weight-semibold;
+  }
+}
+
+.desc {
+  width: 100%;
+  margin-top: $space-5;
+  font-size: $font-sm + 2rpx;
+  color: $text-tertiary-light;
+  line-height: 1.6;
+  @include ellipsis(2);
+  background: rgba(0, 0, 0, 0.02);
+  padding: $space-4;
+  border-radius: $radius-md;
+  @include quote-accent;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    background: rgba(255, 255, 255, 0.03);
+    color: $text-tertiary-dark;
+    border-left-color: rgba(178, 0, 53, 0.30);
+  }
+}

@@ -7,15 +7,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# Allow one concurrent deployment
 concurrency:
-  group: "pages"
+  group: build-mp
+  cancel-in-progress: false
 
 jobs:
 
@@ -25,9 +22,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Generate API
+        run: yarn api
+      - name: Type Check
+        run: yarn type-check
+      - name: Lint
+        run: yarn lint
       - name: Build Mini Program
-        run: yarn install && yarn api && yarn build:mp-weixin
+        run: yarn build:mp-weixin
       - name: Upload artifact
         run: node scripts/upload.mjs
 #      - name: Send Change Log

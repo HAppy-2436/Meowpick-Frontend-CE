@@ -1,9 +1,14 @@
 <template>
-  <view v-if="visible" class="reject-modal" @click="handleCancel" hover-class="mwp-hover">
+  <view v-if="visible" class="reject-modal" @click="handleCancel">
     <view class="reject-modal__sheet" @click.stop>
       <view class="reject-modal__header">
         <text class="reject-modal__title">拒绝提案</text>
-        <view class="reject-modal__close" @click="handleCancel" hover-class="mwp-hover">×</view>
+        <view
+          class="reject-modal__close"
+          hover-class="mwp-hover"
+          @click="handleCancel"
+          >×</view
+        >
       </view>
 
       <view class="reject-modal__body">
@@ -23,14 +28,19 @@
       </view>
 
       <view class="reject-modal__footer">
-        <view class="reject-modal__btn reject-modal__btn--ghost mwp-pressable" @click="handleCancel" hover-class="mwp-hover">
+        <view
+          class="reject-modal__btn reject-modal__btn--ghost mwp-pressable"
+          hover-class="mwp-hover"
+          @click="handleCancel"
+        >
           <text>取消</text>
         </view>
         <view
           class="reject-modal__btn reject-modal__btn--primary mwp-pressable"
           :class="{ 'is-disabled': !reason.trim() }"
+          hover-class="mwp-hover"
           @click="handleConfirm"
-         hover-class="mwp-hover">
+        >
           <text>确认拒绝</text>
         </view>
       </view>
@@ -45,39 +55,38 @@
  * 用法：
  *   <RejectModal v-model:visible="show" @confirm="onConfirm" />
  */
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue';
 
 const props = defineProps<{ visible: boolean }>();
 const emit = defineEmits<{
-  "update:visible": [val: boolean];
-  confirm: [reason: string];
-  cancel: [];
+  (e: 'update:visible', val: boolean): void;
+  (e: 'confirm', reason: string): void;
+  (e: 'cancel'): void;
 }>();
 
-const reason = ref("");
+const reason = ref('');
 
 watch(
   () => props.visible,
   (val) => {
-    if (val) reason.value = "";
+    if (val) reason.value = '';
   }
 );
 
 const handleCancel = () => {
-  emit("update:visible", false);
-  emit("cancel");
+  emit('update:visible', false);
+  emit('cancel');
 };
 
 const handleConfirm = () => {
   const trimmed = reason.value.trim();
   if (!trimmed) return;
-  emit("update:visible", false);
-  emit("confirm", trimmed);
+  emit('update:visible', false);
+  emit('confirm', trimmed);
 };
 </script>
 
 <style lang="scss" scoped>
-
 .reject-modal {
   position: fixed;
   inset: 0;
@@ -91,6 +100,8 @@ const handleConfirm = () => {
 
 .reject-modal__sheet {
   width: 100%;
+  // 宽屏/矮视口下 rpx 会放大，限制高度并让内容区滚动，避免顶部被裁
+  max-height: 85vh;
   background: $bg-card-light;
   border-radius: $radius-card $radius-card 0 0;
   padding-bottom: calc(#{$space-7} + env(safe-area-inset-bottom));
@@ -154,6 +165,9 @@ const handleConfirm = () => {
 
 .reject-modal__body {
   padding: $space-7;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
 }
 
 .reject-modal__label {
@@ -196,7 +210,7 @@ const handleConfirm = () => {
 
   &:focus {
     background: $bg-card-light;
-    border-color: rgba(178, 0, 53, 0.30);
+    border-color: rgba(178, 0, 53, 0.3);
     box-shadow: 0 0 0 4rpx rgba(178, 0, 53, 0.08);
     .dark-theme & {
       background: $bg-card-dark;
@@ -244,9 +258,9 @@ const handleConfirm = () => {
   }
 
   &--primary {
-    background: linear-gradient(135deg, #ff4d4f, #ff7875);
+    background: $gradient-danger;
     color: $pure-white;
-    box-shadow: 0 4rpx 12rpx rgba(255, 77, 79, 0.30);
+    box-shadow: 0 4rpx 12rpx rgba(255, 77, 79, 0.3);
   }
 
   &.is-disabled {

@@ -1,0 +1,905 @@
+
+.container {
+    min-height: 100vh;
+    background: $bg-page-light;
+    transition: background-color $dur-medium $ease-standard;
+
+    &.dark-theme {
+        background: $bg-page-dark;
+    }
+}
+
+// 表单主体：与「发表吐槽」页统一侧面留白
+.form-body {
+    padding: $space-7 $space-7 $space-9;
+    box-sizing: border-box;
+}
+
+// 卡片入场 stagger
+.card {
+    background: $bg-card-light;
+    border-radius: $radius-card;
+    padding: $space-7;
+    margin-bottom: $space-6;
+    box-shadow: $shadow-card;
+    @include mwp-transition($dur-base, $ease-standard);
+    animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
+
+    .dark-theme & {
+        background: $bg-card-dark;
+        box-shadow: $shadow-sm-dark;
+    }
+
+    &:nth-of-type(1) { animation-delay: 60ms; }
+    &:nth-of-type(2) { animation-delay: 120ms; }
+    &:nth-of-type(3) { animation-delay: 180ms; }
+    &:nth-of-type(4) { animation-delay: 240ms; }
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    margin-bottom: $space-6;
+}
+
+.section-title {
+    font-size: $font-xl;
+    font-weight: $weight-bold;
+    color: $brand-red;
+    text-align: left;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+        color: $brand-red-soft;
+    }
+}
+
+.section-subtitle {
+    font-size: $font-sm;
+    color: $text-tertiary-light;
+    text-align: right;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
+}
+
+// 分隔线只出现在相邻字段之间，单独一行不再多一条线
+.inline-field + .inline-field {
+    border-top: 1rpx solid $divider-light;
+
+    .dark-theme & {
+        border-top-color: $divider-dark;
+    }
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-6 0;
+    transition: border-color $dur-fast $ease-standard;
+
+    &:active {
+        background: rgba(0, 0, 0, 0.02);
+        .dark-theme & {
+            background: rgba(255, 255, 255, 0.02);
+        }
+    }
+
+    .label {
+        font-size: $font-base;
+        color: $text-primary-light;
+        width: 180rpx;
+        font-weight: $weight-medium;
+        transition: color $dur-fast $ease-standard;
+        flex-shrink: 0;
+
+        .dark-theme & {
+            color: $text-primary-dark;
+        }
+    }
+
+    .input {
+        flex: 1;
+        text-align: right;
+        font-size: $font-base;
+        color: $text-primary-light;
+        transition: color $dur-fast $ease-standard;
+
+        .dark-theme & {
+            color: $text-primary-dark;
+        }
+    }
+
+    .input-display {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: $space-2;
+        min-height: 44rpx;
+        transition: transform $dur-fast $ease-standard;
+    }
+
+    .input-display__text {
+        flex: 1;
+        text-align: right;
+        font-size: $font-base;
+        color: $text-primary-light;
+        font-weight: $weight-regular;
+        @include ellipsis;
+        transition: color $dur-fast $ease-standard;
+
+        .dark-theme & {
+            color: $text-primary-dark;
+        }
+
+        &.is-empty {
+            color: $text-placeholder-light;
+            .dark-theme & {
+                color: $text-placeholder-dark;
+            }
+        }
+    }
+
+    .arrow {
+        font-size: $font-2xl;
+        color: $text-tertiary-light;
+        line-height: 1;
+        flex-shrink: 0;
+        transition: transform $dur-fast $ease-standard, color $dur-fast $ease-standard;
+
+        .dark-theme & {
+            color: $text-tertiary-dark;
+        }
+    }
+
+    &:active .arrow {
+        transform: translateX(4rpx);
+        color: $brand-red;
+    }
+
+    .picker-display {
+        font-size: $font-base;
+        color: $text-primary-light;
+        display: inline-flex;
+        align-items: center;
+        gap: $space-2;
+        @include mwp-transition($dur-fast, $ease-standard);
+
+        .dark-theme & {
+            color: $text-primary-dark;
+        }
+
+        &.empty {
+            color: $text-placeholder-light;
+            .dark-theme & {
+                color: $text-placeholder-dark;
+            }
+        }
+
+        .arrow {
+            margin-left: $space-2;
+            color: $text-tertiary-light;
+            transition: transform $dur-fast $ease-standard;
+            .dark-theme & {
+                color: $text-tertiary-dark;
+            }
+        }
+
+        &:active .arrow {
+            transform: translateX(4rpx);
+        }
+    }
+
+    .show-username-options {
+        display: flex;
+        gap: $space-4;
+    }
+}
+
+// 模式提示 banner（管理员审批 / 重新编辑）
+.mode-banner {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    margin-bottom: $space-6;
+    padding: $space-4 $space-6;
+    background: $danger-soft;
+    border: 1rpx solid $border-color-brand;
+    border-radius: $radius-md;
+    font-size: $font-sm;
+    color: $brand-red;
+
+    .dark-theme & {
+        color: $brand-red-soft;
+    }
+
+    &--edit {
+        background: $info-soft;
+        border-color: $info-soft;
+        color: $info;
+
+        .dark-theme & {
+            color: $info-text-dark;
+        }
+    }
+
+    &__icon {
+        font-size: $font-lg;
+        flex-shrink: 0;
+    }
+
+    &__text {
+        font-weight: $weight-medium;
+    }
+}
+
+// 字段提示
+.field-hint {
+    display: block;
+    margin-top: $space-3;
+    font-size: $font-xs;
+    color: $text-tertiary-light;
+    line-height: 1.5;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
+}
+
+// 教师摘要 chips（左侧与「授课教师」标签对齐）
+.teacher-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    padding-left: $space-2;
+    margin-bottom: $space-7;
+
+    &__chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4rpx;
+        padding: $space-2 $space-3 $space-2 $space-4;
+        background: $danger-soft;
+        color: $brand-red;
+        border-radius: $radius-pill;
+        font-size: $font-xs;
+        font-weight: $weight-medium;
+
+        .dark-theme & {
+            color: $brand-red-soft;
+        }
+    }
+
+    &__title {
+        opacity: 0.85;
+        font-weight: $weight-regular;
+    }
+
+    &__remove {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32rpx;
+        height: 32rpx;
+        margin-left: 2rpx;
+        border-radius: 50%;
+        font-size: $font-lg;
+        line-height: 1;
+        color: inherit;
+        opacity: 0.7;
+        @include mwp-transition($dur-fast, $ease-standard);
+
+        &:active {
+            opacity: 1;
+            background: $brand-red-glow;
+        }
+    }
+}
+
+.teacher-list {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+}
+
+.teacher-row {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    animation: mwp-fade-up $motion-enter-sm $ease-decelerate backwards;
+}
+
+.teacher-input-group {
+    flex: 1;
+    display: flex;
+    gap: $space-4;
+}
+
+.teacher-name-input {
+    flex: 1;
+    height: 72rpx;
+    background: $bg-muted-light;
+    border: 1rpx solid transparent;
+    border-radius: $radius-sm;
+    padding: 0 $space-5;
+    font-size: $font-base;
+    color: $text-primary-light;
+    box-sizing: border-box;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        background: $bg-muted-dark;
+        color: $text-primary-dark;
+    }
+
+    &:focus {
+        background: $bg-card-light;
+        border-color: rgba(178, 0, 53, 0.30);
+        box-shadow: 0 0 0 4rpx rgba(178, 0, 53, 0.08);
+        .dark-theme & {
+            background: $bg-card-dark;
+        }
+    }
+}
+
+.teacher-title-picker {
+    min-width: 200rpx;
+    height: 72rpx;
+    line-height: 72rpx;
+    padding: 0 $space-5;
+    background: $bg-muted-light;
+    border: 1rpx solid transparent;
+    border-radius: $radius-sm;
+    font-size: $font-sm + 2rpx;
+    color: $text-primary-light;
+    box-sizing: border-box;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        background: $bg-muted-dark;
+        color: $text-primary-dark;
+    }
+
+    &.empty {
+        color: $text-placeholder-light;
+        .dark-theme & {
+            color: $text-placeholder-dark;
+        }
+    }
+
+    .arrow {
+        margin-left: $space-2;
+        color: $text-tertiary-light;
+        font-size: $font-xs + 4rpx;
+        transition: transform $dur-fast $ease-standard;
+        .dark-theme & {
+            color: $text-tertiary-dark;
+        }
+    }
+
+    &:active {
+        background: $bg-card-light;
+        .dark-theme & {
+            background: $bg-card-dark;
+        }
+        .arrow {
+            transform: translateY(2rpx);
+        }
+    }
+}
+
+.teacher-remove {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 50%;
+    background: $bg-muted-light;
+    color: $text-tertiary-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-2xl;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        background: $bg-muted-dark;
+        color: $text-tertiary-dark;
+    }
+
+    &:active {
+        transform: scale(0.88);
+        background: $danger-soft;
+        color: $brand-red;
+    }
+}
+
+.add-teacher-btn {
+    margin-top: $space-2;
+    height: 72rpx;
+    line-height: 72rpx;
+    background: rgba(178, 0, 53, 0.06);
+    color: $brand-red;
+    border-radius: $radius-sm;
+    border: $deco-dashed-box-brand;
+    font-size: $font-base;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        background: rgba(178, 0, 53, 0.10);
+        border-color: rgba(178, 0, 53, 0.40);
+    }
+
+    &:active {
+        transform: scale($press-scale-sm);
+        background: rgba(178, 0, 53, 0.12);
+    }
+}
+
+// 开课校区：标签 + 多选说明，选项居中排布
+.campus-field {
+    padding-bottom: $space-7;
+
+    // 与其它字段名完全对齐：同字号/颜色，同行高，内边距+透明边框对齐文字位置
+    &__label {
+        display: flex;
+        align-items: center;
+        gap: $space-3;
+        height: 96rpx;
+        padding: 0 $space-5;
+        border: 1rpx solid transparent;
+        font-size: $font-base;
+        color: $text-primary-light;
+
+        .dark-theme & {
+            color: $text-primary-dark;
+        }
+    }
+
+    &__hint {
+        font-size: $font-xs;
+        font-weight: $weight-regular;
+        color: $text-tertiary-light;
+
+        .dark-theme & {
+            color: $text-tertiary-dark;
+        }
+    }
+}
+
+.tags-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-5;
+
+    &--center {
+        justify-content: center;
+        gap: $space-7;
+    }
+}
+
+.tag-item {
+    padding: $space-3 $space-7;
+    background: $bg-muted-light;
+    border-radius: $radius-pill;
+    font-size: $font-sm + 2rpx;
+    color: $text-secondary-light;
+    border: 1rpx solid transparent;
+    @include mwp-transition($dur-fast, $ease-emphasized);
+
+    .dark-theme & {
+        background: $bg-muted-dark;
+        color: $text-secondary-dark;
+    }
+
+    &:active {
+        transform: scale($press-scale-md);
+    }
+
+    &.active {
+        background: $danger-soft;
+        color: $brand-red;
+        border-color: $brand-red-glow;
+        transform: scale(1.02);
+        box-shadow: $shadow-brand-sm;
+
+        .dark-theme & {
+            color: $brand-red-soft;
+        }
+    }
+}
+
+.input-box {
+    position: relative;
+    padding: $space-5;
+    background: $bg-muted-light;
+    border-radius: $radius-md;
+    border: 2rpx solid transparent;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        background: $bg-muted-dark;
+    }
+
+    &:focus-within {
+        background: $bg-card-light;
+        border-color: $border-color-brand;
+
+        .dark-theme & {
+            background: $bg-card-dark;
+        }
+    }
+}
+
+.reason-area {
+    width: 100%;
+    height: 200rpx;
+    font-size: $font-base;
+    line-height: 1.6;
+    color: $text-primary-light;
+    background: transparent;
+    border: none;
+    box-sizing: border-box;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+        color: $text-primary-dark;
+    }
+}
+
+.word-count {
+    display: block;
+    text-align: right;
+    font-size: $font-xs;
+    color: $text-tertiary-light;
+    margin-top: $space-3;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
+}
+
+// 通用 Button 组件负责外观，这里只补布局
+.submit-btn {
+    margin-top: $space-5;
+
+    // 缺项时置灰，但仍可点击以提示缺了什么
+    &.is-muted {
+        opacity: 0.5;
+    }
+}
+
+.safe-area-bottom {
+    height: env(safe-area-inset-bottom);
+}
+
+// ===== 内联编辑（同一结构：切换边框与颜色，标签不位移）=====
+.inline-field {
+    position: relative;
+    display: block;
+
+    // 编辑中的条目抬到点击捕获层之上，保持可输入
+    &.is-editing-item {
+        z-index: $z-sticky + 1;
+    }
+}
+
+// 透明点击捕获层：点击字段与浮层之外的区域（教师已填则默认不填院系并添加，否则取消）
+.edit-catcher {
+    position: fixed;
+    inset: 0;
+    z-index: $z-sticky;
+}
+
+.float-field {
+    position: relative;
+}
+
+// 展示/编辑共用的字段框；展示态边框透明，编辑态亮起成一圈
+.float-field__box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 96rpx;
+    // 与下拉浮层同宽（卡片内容宽度）
+    margin: 0;
+    padding: 0 $space-5;
+    border: 1rpx solid transparent;
+    border-radius: $radius-pill;
+    @include mwp-transition($dur-base, $ease-standard);
+
+    .dark-theme & {
+        border-color: transparent;
+    }
+}
+
+.float-field.is-editing .float-field__box {
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+        border-color: $brand-red-soft;
+    }
+}
+
+// 展示态：字段名 / 值 / 箭头 垂直居中，与编辑态输入框的文字对齐
+.float-field__main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+
+.float-field__name {
+    flex-shrink: 0;
+    font-size: $font-base;
+    color: $text-primary-light;
+
+    .dark-theme & {
+        color: $text-primary-dark;
+    }
+}
+
+.float-field__value {
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+    font-size: $font-base;
+    color: $text-primary-light;
+    @include ellipsis;
+
+    .dark-theme & {
+        color: $text-primary-dark;
+    }
+}
+
+.float-field__arrow {
+    flex-shrink: 0;
+    width: 36rpx;
+    height: 36rpx;
+    margin-left: $space-2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-tertiary-light;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
+
+    // CSS 绘制 chevron：位置由盒模型决定，不受字体度量影响
+    &::after {
+        content: '';
+        width: 14rpx;
+        height: 14rpx;
+        border-top: 3rpx solid currentColor;
+        border-right: 3rpx solid currentColor;
+        transform: rotate(45deg);
+        margin-left: -4rpx;
+    }
+}
+
+.float-field__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    font-size: $font-base;
+    color: $text-primary-light;
+    text-align: left;
+    background: transparent;
+
+    .dark-theme & {
+        color: $text-primary-dark;
+    }
+
+    // 选中教师后姓名输入框向左缩短，与院系框各占一半
+    &.is-shrunk {
+        flex: 1;
+    }
+}
+
+// 选中教师后并排出现的院系输入（含「不填」）
+.teacher-dept {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding-left: $space-3;
+    border-left: 1rpx solid $divider-light;
+
+    .dark-theme & {
+        border-left-color: $divider-dark;
+    }
+}
+
+.teacher-dept__input {
+    flex: 1;
+    min-width: 0;
+    font-size: $font-base;
+    color: $text-primary-light;
+
+    .dark-theme & {
+        color: $text-primary-dark;
+    }
+}
+
+.teacher-dept__skip {
+    flex-shrink: 0;
+    padding: 4rpx $space-3;
+    border-radius: $radius-pill;
+    background: $bg-muted-light;
+    font-size: $font-xs;
+    color: $text-secondary-light;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        background: $bg-muted-dark;
+        color: $text-secondary-dark;
+    }
+}
+
+// 标签：展示态黑色 → 编辑态变淡（灰）；有内容时缩小上浮
+.float-field__label {
+    position: absolute;
+    // 抵消标签自身内边距，使其与输入框文字左对齐
+    left: calc(#{$space-5} - #{$space-2});
+    top: 50%;
+    transform: translateY(-50%) scale(1);
+    transform-origin: left center;
+    padding: 0 $space-2;
+    font-size: $font-base;
+    line-height: 1;
+    color: $text-primary-light;
+    background: $bg-card-light;
+    pointer-events: none;
+    transition: transform $dur-fast $ease-emphasized,
+        color $dur-fast $ease-standard;
+
+    .dark-theme & {
+        color: $text-primary-dark;
+        background: $bg-card-dark;
+    }
+}
+
+.float-field.is-editing .float-field__label {
+    color: $text-placeholder-light;
+
+    .dark-theme & {
+        color: $text-placeholder-dark;
+    }
+}
+
+// 有内容：标签缩小上浮，压在顶边框上形成缺口
+.float-field.is-float .float-field__label {
+    transform: translateY(calc(-50% - 48rpx)) scale(0.72);
+    color: $brand-red;
+
+    .dark-theme & {
+        color: $brand-red-soft;
+    }
+}
+
+// 浮层：搜索结果 + 操作，覆盖内容而不改变布局
+.inline-layer {
+    position: absolute;
+    top: calc(100% + #{$space-2});
+    left: 0;
+    right: 0;
+    z-index: $z-popover;
+    padding: $space-4;
+    background: $bg-card-light;
+    border-radius: $radius-card;
+    box-shadow: $shadow-lg;
+    animation: mwp-fade-down $dur-base $ease-decelerate backwards;
+
+    .dark-theme & {
+        background: $bg-card-dark;
+        box-shadow: $shadow-md-dark;
+    }
+}
+
+.inline-suggest {
+    overflow: hidden;
+}
+
+// 纯文本行，无分割线、无色块（避免刷新时线条闪动）
+.inline-suggest__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: $space-4 $space-5;
+    font-size: $font-base;
+    color: $text-primary-light;
+    border-radius: $radius-md;
+    @include mwp-transition($dur-fast, $ease-standard);
+
+    .dark-theme & {
+        color: $text-primary-dark;
+    }
+
+    &:active {
+        background: $bg-muted-light;
+
+        .dark-theme & {
+            background: $bg-muted-dark;
+        }
+    }
+}
+
+.inline-suggest__label {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    @include ellipsis;
+}
+
+// 直接输入项右侧的灰色标注
+.inline-suggest__hint {
+    flex-shrink: 0;
+    font-size: $font-xs;
+    color: $text-tertiary-light;
+
+    .dark-theme & {
+        color: $text-tertiary-dark;
+    }
+}
+
+
+// 提交中蒙层（与「发表吐槽」一致）
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: $z-modal;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 240rpx;
+    background: $bg-overlay-light;
+    animation: mwp-fade-in $dur-base $ease-standard backwards;
+
+    .dark-theme & {
+        background: $bg-overlay-dark;
+    }
+}
+
+.loading-spinner {
+    width: 80rpx;
+    height: 80rpx;
+    margin-bottom: $space-6;
+    border: 6rpx solid rgba(255, 255, 255, 0.3);
+    border-top-color: $pure-white;
+    border-radius: 50%;
+    animation: mwp-spin $motion-spin linear infinite;
+}
+
+.loading-text {
+    font-size: $font-md;
+    font-weight: $weight-medium;
+    color: $pure-white;
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .teacher-row,
+    .mode-banner,
+    .inline-layer,
+    .loading-overlay,
+    .loading-spinner {
+        animation: none;
+    }
+
+    .float-field__label,
+    .float-field__box {
+        transition: none;
+    }
+}
