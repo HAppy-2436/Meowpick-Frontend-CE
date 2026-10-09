@@ -445,7 +445,7 @@ swagger.json 修改 → yarn api → 自动生成 src/api/ 下的类型和客户
 | AuthController | sign_in |
 | AdminController | listChangeLogs |
 
-### 6.3 后端数据要求（来自 `DOC_BACKEND_REQUIREMENTS.md`）
+### 6.3 后端数据要求
 
 - 列表/搜索接口需支持混合返回（comment + proposal）
 - 需有 `type` 字段区分数据类型
