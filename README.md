@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🐱 Meowpick 选课猫
+# 🐱 Meowpick 选课猫 · CE 版
 
-**华东师范大学学生团队开发的选课信息聚合与课程评价共享微信小程序**
+**华东师范大学选课信息聚合与课程评价共享微信小程序 · 社区重构版（Community Edition）**
 
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -15,9 +15,18 @@
 
 ---
 
+> **关于本仓库 / 官方来源**
+>
+> 本项目源自华东师范大学学生团队 **Boyuan-IT-Club** 的官方项目
+> [`Boyuan-IT-Club/Meowpick-Frontend`](https://github.com/Boyuan-IT-Club/Meowpick-Frontend)。
+> 本仓库为 **选课猫 CE（Community Edition）重构版**，在官方项目基础上对架构、设计系统与交互进行系统性重构，
+> 与官方团队为**出处关系**，并非替代或隶属关系。原项目与本重构版均基于 **GPL-2.0** 许可开源。
+
+---
+
 ## 📖 项目简介
 
-选课猫面向华东师范大学在校学生，解决"选课信息分散、课程口碑无处可查"的痛点：把课程评价、信息纠错与课程提议聚合到一个小程序里，让学生用真实反馈帮助彼此选课。
+选课猫 CE 版面向华东师范大学在校学生，解决"选课信息分散、课程口碑无处可查"的痛点：把课程评价、信息纠错与课程提议聚合到一个小程序里，让学生用真实反馈帮助彼此选课。
 
 **两条核心闭环：**
 
@@ -96,7 +105,7 @@ yarn build:mp-weixin    # → dist/build/mp-weixin
 ## 📁 目录结构
 
 ```
-new/
+Meowpick-Frontend-CE/
 ├── src/
 │   ├── api/               # swagger-typescript-api 生成（勿手改）
 │   ├── components/        # 全局组件（自动导入，文件名 PascalCase）
@@ -159,6 +168,16 @@ new/
 
 ---
 
+## 🙏 致谢
+
+本项目源自华东师范大学学生团队 **Boyuan-IT-Club** 的官方项目
+[`Boyuan-IT-Club/Meowpick-Frontend`](https://github.com/Boyuan-IT-Club/Meowpick-Frontend)。
+感谢原团队在选课猫小程序上的设计与开发工作；本 CE 重构版在其基础上重写了架构、设计 Token 系统与交互，并沿用其开源许可。
+
+---
+
 ## 📄 开源许可
 
 本项目基于 **GPL-2.0** 许可开源，详见 [LICENSE](LICENSE)。
+
+原始项目版权归华东师范大学 **Boyuan-IT-Club** 团队所有；本 CE 重构版在 GPL-2.0 条款下衍生并分发，保留原有版权与许可声明。
