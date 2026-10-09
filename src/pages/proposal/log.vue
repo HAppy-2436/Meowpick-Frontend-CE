@@ -24,6 +24,8 @@
             class="switch-item"
             :class="{ active: currentIndex === 0 }"
             hover-class="mwp-hover-sm"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="switchTo(0)"
             >聚合展示</view
           >
@@ -31,6 +33,8 @@
             class="switch-item"
             :class="{ active: currentIndex === 1 }"
             hover-class="mwp-hover-sm"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="switchTo(1)"
             >原始日志</view
           >
@@ -41,6 +45,8 @@
           :class="{ on: panelOpen }"
           :style="{ width: contentHeight + 'px', height: contentHeight + 'px' }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="togglePanel"
         >
           <MwpIcon name="search" size="36rpx" />
@@ -56,13 +62,15 @@
             v-model="keyword"
             class="search-input"
             placeholder="搜索课程、操作者或理由"
-            placeholder-class="search-placeholder"
+            placeholder-class="mwp-placeholder"
             confirm-type="search"
           />
           <view
             v-if="keyword"
             class="search-clear"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="keyword = ''"
           >
             <MwpIcon name="x" size="26rpx" />
@@ -77,6 +85,8 @@
               open: openDropdown === 'type'
             }"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="toggleDropdown('type')"
           >
             <text class="chip-text">{{ typeChipText }}</text>
@@ -89,6 +99,8 @@
               open: openDropdown === 'action'
             }"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="toggleDropdown('action')"
           >
             <text class="chip-text">{{ actionChipText }}</text>
@@ -98,6 +110,8 @@
             v-if="filtersActive"
             class="filter-reset"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="resetFilters"
             >重置</view
           >
@@ -111,6 +125,8 @@
               class="option-tag"
               :class="{ active: isOptionActive(opt.value) }"
               hover-class="mwp-hover"
+              :hover-start-time="0"
+              :hover-stay-time="0"
               @click="toggleOption(opt.value)"
               >{{ opt.label }}</view
             >
@@ -130,11 +146,12 @@
       @change="onSwiperChange"
     >
       <swiper-item>
-        <scroll-view
-          scroll-y
+        <MwpScrollView
+          v-model:refreshing="refreshing"
           class="log-scroll"
           enhanced
           :show-scrollbar="false"
+          @refresh="onRefresh"
           @scrolltolower="loadMore"
         >
           <ProposalLogGroups
@@ -143,18 +160,20 @@
             :error="error"
             :no-more="noMore && !filtersActive"
             :filtered="filtersActive"
+            :min-height="emptyMinHeight"
             @retry="reload"
             @proposal-click="goToProposal"
           />
-        </scroll-view>
+        </MwpScrollView>
       </swiper-item>
 
       <swiper-item>
-        <scroll-view
-          scroll-y
+        <MwpScrollView
+          v-model:refreshing="refreshing"
           class="log-scroll"
           enhanced
           :show-scrollbar="false"
+          @refresh="onRefresh"
           @scrolltolower="loadMore"
         >
           <ProposalLogRaw
@@ -163,12 +182,14 @@
             :error="error"
             :no-more="noMore && !filtersActive"
             :filtered="filtersActive"
+            :min-height="emptyMinHeight"
             @retry="reload"
             @proposal-click="goToProposal"
           />
-        </scroll-view>
+        </MwpScrollView>
       </swiper-item>
     </swiper>
+    <MwpStatusOverlay />
   </view>
 </template>
 
@@ -182,7 +203,12 @@ import { ADMIN_LOG_PAGE_SIZE_DEFAULT } from '@/utils/constants';
 import BackBtn from '@/components/common/BackBtn.vue';
 import ProposalLogGroups from '@/components/proposal/ProposalLogGroups.vue';
 import ProposalLogRaw from '@/components/proposal/ProposalLogRaw.vue';
-import { actionTextOf, groupLogs, type LogItem } from '@/utils/proposal-log';
+import {
+  actionTextForLog,
+  groupLogs,
+  logContentOf,
+  type LogItem
+} from '@/utils/proposal-log';
 
 type TypeFilter = 'all' | 'proposal' | 'permission';
 
@@ -197,7 +223,7 @@ const ACTION_FILTERS = [
   { label: '通过', value: 'APPROVE' },
   { label: '拒绝', value: 'REJECT' },
   { label: '撤回', value: 'DELETE' },
-  { label: '更新', value: 'UPDATE' },
+  { label: '修改', value: 'UPDATE' },
   { label: '授权管理员', value: 'GRANT_ADMIN' },
   { label: '撤销管理员', value: 'REVOKE_ADMIN' }
 ];
@@ -235,12 +261,38 @@ const headerRightPad = computed(() => {
   return gap;
 });
 
+// 滚动区可视高度（扣掉 header 与滚动区上下内边距），用于空状态垂直居中
+const emptyMinHeight = computed(() => {
+  const pr = viewport.width / 750;
+  const headerH = menuButtonInfo.value.top + contentHeight.value;
+  const scrollPad = pr * (16 + 48) + (viewport.safeBottom || 0);
+  return Math.max(0, viewport.height - headerH - scrollPad);
+});
+
 const filtersActive = computed(
   () =>
     typeFilter.value !== 'all' ||
     actionFilter.value.length > 0 ||
     keyword.value.trim() !== ''
 );
+
+// 各提案的创建者 id（取自 CREATE 日志），用于区分撤回主体
+const creatorByProposal = computed(() => {
+  const map: Record<string, string> = {};
+  logs.value.forEach((log) => {
+    const type = (log.actionType || '').toUpperCase();
+    if (type === 'CREATE' && log.proposalId && log.operatorId) {
+      map[log.proposalId] = log.operatorId;
+    }
+  });
+  return map;
+});
+
+const actionLabelOf = (log: LogItem) =>
+  actionTextForLog(
+    log,
+    log.proposalId ? creatorByProposal.value[log.proposalId] : undefined
+  );
 
 const matchKeyword = (log: LogItem, kw: string) => {
   const text = [
@@ -251,9 +303,9 @@ const matchKeyword = (log: LogItem, kw: string) => {
     log.operatorName,
     log.operatorId,
     log.proposalId,
-    log.details?.reason,
+    logContentOf(log),
     log.details?.contribution,
-    actionTextOf(log.actionType)
+    actionLabelOf(log)
   ]
     .filter(Boolean)
     .join(' ')
@@ -328,8 +380,12 @@ const resetFilters = () => {
   keyword.value = '';
 };
 
+// 请求序号：慢响应回来时若已有更新请求，则丢弃，避免旧结果覆盖新结果
+let fetchVersion = 0;
+
 const fetchLogs = async (p = 1) => {
   if (loading.value && p > 1) return;
+  const version = ++fetchVersion;
   loading.value = true;
   error.value = false;
   try {
@@ -337,6 +393,7 @@ const fetchLogs = async (p = 1) => {
       {},
       { page: p, pageSize: ADMIN_LOG_PAGE_SIZE_DEFAULT }
     );
+    if (version !== fetchVersion) return; // 过期响应丢弃
     const data = res.data?.data;
     const list = (data?.logs ?? []) as LogItem[];
     if (p === 1) logs.value = list;
@@ -345,15 +402,25 @@ const fetchLogs = async (p = 1) => {
     noMore.value = logs.value.length >= total;
     page.value = p;
   } catch {
+    if (version !== fetchVersion) return;
     if (p === 1) error.value = true;
   } finally {
-    loading.value = false;
+    if (version === fetchVersion) loading.value = false;
   }
 };
 
 const reload = () => fetchLogs(1);
 const loadMore = () => {
   if (!noMore.value && !loading.value) fetchLogs(page.value + 1);
+};
+
+const refreshing = ref(false);
+const onRefresh = async () => {
+  try {
+    await fetchLogs(1);
+  } finally {
+    refreshing.value = false;
+  }
 };
 
 const switchTo = (index: number) => {
@@ -366,7 +433,7 @@ const onSwiperChange = (e: { detail: { current?: number } }) => {
 
 const goToProposal = (id?: string) => {
   if (!id) return;
-  uni.navigateTo({ url: `/pages/course/proposal-detail?id=${id}` });
+  uni.navigateTo({ url: `/pages/proposal/proposal-detail?id=${id}` });
 };
 
 onLoad(() => {

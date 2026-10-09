@@ -1,4 +1,3 @@
-import { ContentType } from '@/api/http-client';
 import { Course } from '@/api/Course';
 import { Courses } from '@/api/Courses';
 import { Search } from '@/api/Search';
@@ -10,34 +9,37 @@ import { Auth } from '@/api/Auth';
 import { User } from '@/api/User';
 import { ChangeLog } from '@/api/ChangeLog';
 import { waitForLogin, relogin } from '@/utils/init';
+import {
+  isBackendDown,
+  isOffline,
+  markBackendUp,
+  showBackendGuide
+} from '@/utils/backend-status';
 import { useTokenStore } from '@/config';
-import axios, { AxiosAdapter, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosAdapter, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const buildQueryString = (params?: Record<string, any>): string => {
   if (!params || Object.keys(params).length === 0) return '';
   const parts: string[] = [];
   Object.keys(params).forEach((key) => {
     const value = params[key];
-    if (value !== undefined && value !== null) {
-      parts.push(
-        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
-      );
+    if (value === undefined || value === null) return;
+    // 数组按「重复 query 参数」序列化（后端支持重复参数 / JSON 字符串两种形式）
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item !== undefined && item !== null) {
+          parts.push(
+            `${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`
+          );
+        }
+      });
+      return;
     }
+    parts.push(
+      `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
+    );
   });
   return parts.join('&');
-};
-
-// 真机上看不到 console 时，用 toast 把请求失败原因直接显示出来（节流，避免刷屏）
-let lastNetErrorToastAt = 0;
-const notifyNetworkError = (errMsg: string) => {
-  const now = Date.now();
-  if (now - lastNetErrorToastAt < 3000) return;
-  lastNetErrorToastAt = now;
-  uni.showToast({
-    title: errMsg || '网络请求失败',
-    icon: 'none',
-    duration: 4000
-  });
 };
 
 const logRequestError = (context: string, error: any, config?: any) => {
@@ -81,7 +83,7 @@ const uniRequestAdapter: AxiosAdapter = async (
         method: method,
         header: {
           ...headers,
-          [tokenHeader]: `Bearer ${token}`,
+          ...(token ? { [tokenHeader]: `Bearer ${token}` } : {}),
           'X-Xh-Env': backendEnv
         },
         timeout: 30000,
@@ -102,7 +104,7 @@ const uniRequestAdapter: AxiosAdapter = async (
               request: null
             };
             logRequestError('Request failed', error, config);
-            notifyNetworkError(res.errMsg || '');
+            showBackendGuide(res.errMsg || '');
             reject(error);
             return;
           }
@@ -114,6 +116,7 @@ const uniRequestAdapter: AxiosAdapter = async (
               : undefined;
           const authFailed =
             res.statusCode === 401 ||
+            bizCode === 100000001 ||
             (typeof bizCode === 'number' &&
               bizCode >= 20000 &&
               bizCode < 30000);
@@ -137,10 +140,14 @@ const uniRequestAdapter: AxiosAdapter = async (
               request: null
             };
             logRequestError('Unauthorized', error, config);
+            // 自动续期也拿不到 token：引导用户走首页 Hello 手动重登
+            showBackendGuide('登录已失效');
             reject(error);
             return;
           }
 
+          // 请求成功：视为后端已恢复
+          markBackendUp();
           const response: AxiosResponse = {
             data: res.data,
             status: res.statusCode,
@@ -164,7 +171,7 @@ const uniRequestAdapter: AxiosAdapter = async (
             request: null
           };
           logRequestError('Request failed', error, config);
-          notifyNetworkError(res.errMsg || '');
+          showBackendGuide(res.errMsg || '');
           reject(error);
         }
       };
@@ -178,6 +185,12 @@ const uniRequestAdapter: AxiosAdapter = async (
 
   const tokenStore = useTokenStore();
   const token = tokenStore.token || uni.getStorageSync('token') || '';
+
+  // 已确认后端不可用 / 本地断网时，立即给出引导，不等请求超时
+  if (isBackendDown() || isOffline()) {
+    showBackendGuide();
+  }
+
   return send(token, 0);
 };
 
@@ -194,31 +207,6 @@ class HttpRequest<
   public AuthController = new Auth(this);
   public UserController = new User(this);
   public ChangeLogController = new ChangeLog(this);
-
-  // 绕过 adapter 直接用 uni.request，避免与 waitForLogin 死锁
-  async sign_in(data: any): Promise<void> {
-    return new Promise((resolve, reject) => {
-      uni.request({
-        url: import.meta.env.VITE_SERVER_HOST_PORT + '/api/auth/sign_in',
-        method: 'POST',
-        header: {
-          'Content-Type': 'application/json',
-          'X-Xh-Env': uni.getStorageSync('backendEnv') || 'test'
-        },
-        data,
-        success: (res: any) => {
-          if (res.data?.data?.accessToken) {
-            useTokenStore().store(res.data.data.accessToken);
-            uni.setStorageSync('token', res.data.data.accessToken);
-          }
-          resolve();
-        },
-        fail: (res: any) => {
-          reject(new Error(res.errMsg || 'sign_in failed'));
-        }
-      });
-    });
-  }
 }
 
 const api = new HttpRequest({

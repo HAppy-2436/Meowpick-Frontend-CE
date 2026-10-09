@@ -4,6 +4,8 @@
     :class="themeStore.themeClass"
     :style="customStyle"
     hover-class="mwp-hover"
+    :hover-start-time="0"
+    :hover-stay-time="0"
     @click="handleBack"
   >
     <view
@@ -14,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useThemeStore } from '@/config';
 
 const themeStore = useThemeStore();
@@ -41,11 +42,6 @@ const handleBack = () => {
   }
   emit('click');
 };
-
-const arrowStyle = computed(() => ({
-  borderBottomColor: props.color || '$brand-red',
-  borderLeftColor: props.color || '$brand-red'
-}));
 </script>
 
 <style scoped lang="scss">

@@ -27,12 +27,13 @@
 | 3 | 我的 | `components/profile/ProfileView`（嵌入 Tab 1） | 头像、昵称、更多菜单、筛选列表、FAB |
 | 4 | 搜索/发现 | `pages/find/index` | 可折叠搜索头、模糊建议、历史、筛选、结果列表 |
 | 5 | 课程详情 | `pages/course/detail` | 课程信息 + 评论列表 + FAB 写评论 |
-| 6 | 发布评论 | `pages/course/comment` | 选标签 + 文字（200字）+ 提交 |
-| 7 | 致用户信 | `pages/home/letter` | 静态内容页（v4.0 重写说明） |
-| 8 | 更新日志 | `pages/home/update-log` | 版本时间线（v1.0.4 → v4.0.0） |
+| 6 | 发布评论 | `pages/course/comment` | 选标签 + 文字（140字）+ 提交 |
+| 7 | 致用户信 | `pages/home/letter` | 静态内容页 |
+| 8 | 更新日志 | `pages/profile/update-log` | 版本时间线 |
 | 9 | 提案表单 | `pages/proposal/propose` | 三模式：新增提案 / 管理员审批 / 重新编辑 |
-| 10 | 提案广场 | `pages/proposal/list` | 多Tab：全部提案 / 操作记录 / 我的提案 |
-| 11 | 提案详情 | `pages/course/proposal-detail` | 提案信息 + 投票按钮 |
+| 10 | 提案广场 | `pages/proposal/list` | 搜索 + 校区/院系/分类/状态筛选 + 管理操作 |
+| 11 | 提案详情 | `pages/proposal/proposal-detail` | 提案信息 + 支持/投票 + 管理员审批 |
+| 12 | 提案日志 | `pages/proposal/log` | 聚合/原始两种视图（管理员） |
 
 ### 导航图
 
@@ -133,13 +134,12 @@
 
 | 组件 | 用途 | 所在页面 |
 |------|------|---------|
-| RejectModal | 管理员填写拒绝理由（200字） | 提案广场 |
-| SearchModal | 通用字段搜索（课程名/代码/院系/分类/教师） | 提案表单、提案广场筛选 |
-| TeacherListModal | 教师列表管理（查看/删除/添加） | 提案表单 |
-| AddTeacherModal | 添加教师（姓名+院系双搜索） | 提案表单 |
-| FeedbackModal | 反馈联系方式（QQ群/邮箱，点击复制） | 首页、我的 |
-| NicknameModal | 修改昵称（20字限制） | 我的 |
-| GuideOverlay | 首次使用引导（一次性） | 首页、我的 |
+| MwpConfirmDialog | 居中确认弹窗（破坏性操作确认） | 全局 |
+| MwpActionSheet | 底部操作面板 | 我的、提案表单 |
+| RejectModal | 管理员填写拒绝理由（200字） | 提案广场、提案详情 |
+| NicknameDialog | 设置/修改昵称（15字、30天冷却） | 提案表单、我的 |
+| FeedbackModal | 反馈联系方式（QQ群/邮箱） | 首页 |
+| 引导弹窗（样式见 `styles/_guide.scss`） | 首次使用 / 迁移欢迎 / 头像引导 | 首页、我的 |
 
 ### ActionSheet 操作面板
 
@@ -165,44 +165,52 @@
 
 ### 公共组件 (common/)
 
-| 组件 | 用途 | Props | 事件 |
-|------|------|-------|------|
-| Button | 通用按钮（5 tone / 3 size / loading） | tone, size, block, disabled, loading, icon | click |
-| TopNavBar | 顶部导航栏（实色背景） | title, subtitle, showBack, forceLight | back |
-| BackBtn | 返回按钮（CSS箭头） | customStyle, color | click |
-| StatusBadge | 状态徽标 | status, tone, label, pill, dot | — |
-| EmptyState | 空/错状态 | title, desc, emoji, tone, compact | click |
-| SkeletonCard | 骨架屏 | count | — |
-| SearchModal | 字段搜索弹窗 | visible, field, title, placeholder, allowAdd | select, close |
-| RejectModal | 拒绝理由弹窗 | visible | confirm(reason), cancel |
-| TeacherListModal | 教师列表弹窗 | visible, teachers | add, remove(index) |
-| AddTeacherModal | 添加教师弹窗 | visible | confirm(teacher), close |
+| 组件 | 用途 |
+|------|------|
+| MwpButton | 通用按钮（6 tone / 3 size / block / loading / `#icon` 插槽） |
+| MwpConfirmDialog | 居中确认弹窗（破坏性操作） |
+| MwpActionSheet | 底部操作面板（支持下滑关闭） |
+| MwpStatusOverlay | 全局 loading / 成功 / 失败浮层宿主 |
+| MwpScrollView | 统一滚动容器（含下拉刷新） |
+| MwpIcon | 图标（lucide，mask + currentColor） |
+| PlusIcon | 加号图标 |
+| TopNavBar | 顶部导航栏 |
+| BackBtn | 返回按钮 |
+| StatusBadge | 状态徽标 |
+| EmptyState | 空 / 错误状态 |
+| SkeletonCard | 骨架屏 |
+| NicknameDialog | 昵称设置弹窗 |
+| RejectModal | 拒绝理由弹窗 |
 
 ### 业务组件
 
 | 组件 | 路径 | 用途 |
 |------|------|------|
-| ChooseCourse | choose/ | 搜索结果卡片（含emoji标签） |
-| CourseHeader | course/ | 课程详情头部 |
-| CourseCommentList | course/ | 评论列表（分页/点赞/PubSub） |
+| CourseCard | choose/ | 统一课程卡片（提案卡 / 教师行共用） |
+| ChooseCourse | choose/ | 搜索结果卡片（含标签） |
+| CourseHeader | course/ | 课程详情头部（可展开） |
+| CourseCommentList | course/ | 评论列表（分页 / 点赞 / 撤回） |
 | CourseCommentBox | course/ | 单条评论卡片 |
 | FindView | find/ | 搜索页完整实现 |
 | FeedbackModal | feedback/ | 反馈弹窗 |
 | HomeView | home/ | 首页完整实现 |
 | ProfileView | profile/ | 我的页完整实现 |
-| UpdateLogTimeline | home/ | 更新日志时间线 |
-| InfiniteScroll | common/ | 可滚动容器（到底触发 bottom） |
-| ProposalLogTimeline | proposal/ | 操作日志时间线 |
+| PublishInfoTrack | profile/ | 教师 / 院系信息行（五五开布局） |
+| UpdateLogTimeline | profile/ | 更新日志时间线 |
+| ProposalLogGroups / ProposalLogRaw | proposal/ | 提案日志聚合视图 / 原始视图 |
 
 ### Composables
 
 | 名称 | 文件 | 用途 |
 |------|------|------|
+| useStatus / statusCore | composables/ | 全局 loading / 成功 / 失败状态机 |
 | useMenuButton | composables/ | 胶囊按钮位置计算 |
-| useCourseComment | course/comment-list/ | 评论列表状态管理 |
-| useSuggest | find/ | 搜索建议API调用 |
-| useInput | find/ | 搜索输入状态 |
-| useFuzzySearch | fuzzy-search/ | 客户端模糊过滤 |
+| useViewport / useScreenScale | composables/ | 视口尺寸与响应式缩放 |
+| useScrollDirection / useSwipeDownClose | composables/ | 滚动方向 / 下滑关闭手势 |
+| useChoose | composables/ | 搜索结果（课程 + 教师）分页与筛选 |
+| useCourse | composables/ | 课程详情 |
+| useCourseComment | composables/ | 评论列表（分页 / 点赞 / 撤回） |
+| useFind | composables/ | 搜索输入 + 建议（useInput / useSuggest） |
 
 ---
 
@@ -333,15 +341,15 @@
 ## 八、设计系统
 
 ### Token 系统 (`src/styles/_tokens.scss`)
-- 130+ 设计 token：颜色/圆角/间距/字号/阴影/动画曲线/z-index
-- 亮暗双套中性色
+- 210 个设计 token：颜色 / 圆角 / 间距 / 字号 / 阴影 / 动画曲线 / z-index / 页面页边距
+- 亮暗双套中性色；`scripts/gen-theme-colors.mjs` 由 token 生成 `src/config/theme-colors.ts`（`yarn theme:check` 校验）
 
 ### Mixins (`src/styles/_mixins.scss`)
-- `pressable` / `bounce-on-tap` / `glass` / `ellipsis` / `brand-button` / `card` / `safe-area-bottom` / `pill` / `text-gradient` / `focus-ring` / `shimmer`
+- 31 个 mixin，按用途分组：交互反馈（`pressable`/`mwp-transition`/`bounce-on-tap`/`fab`）、容器（`card`/`card-dark`/`icon-tile`）、装饰（`title-accent`/`section-title`/`card-top-line`/`corner-glow`/`dashed-divider`/`quote-accent`）、控件（`selectable-tag`/`tag-chip-active`/`banner`/`pill`/`textarea-box`/`textarea-field`/`textarea-counter`）、文本（`ellipsis`/`text-primary`/`text-secondary`/`text-tertiary`/`text-gradient`/`log-action-color`）等
 
 ### Animations (`src/styles/_animations.scss`)
-- 14 keyframes + 8 公共 class
-- `.mwp-fade-up` / `.mwp-scale-in` / `.mwp-slide-up` / `.mwp-bounce-in` / `.mwp-pop` / `.mwp-stagger-item` 等
+- 13 个 keyframe + `.mwp-*` 公共工具类
+- `.mwp-fade-up` / `.mwp-scale-in` / `.mwp-slide-up` / `.mwp-bounce-in` / `.mwp-stagger-item` 等
 - 响应 `prefers-reduced-motion`
 
 ---

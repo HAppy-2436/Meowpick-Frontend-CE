@@ -8,8 +8,11 @@
 $brand-red: #b20035;          // 品牌主色（红）
 $brand-red-soft: #ff4d6a;     // 品牌柔色（渐变终点）
 $brand-red-tint: #fff5f6;     // 品牌极淡背景
+$brand-red-tint-dark: rgba(255, 77, 106, 0.12); // 暗色品牌极淡背景（选中/浅底）
 $brand-red-deep: #8a0028;     // 按压态深红
 $brand-red-glow: rgba(178, 0, 53, 0.30);   // 品牌发光环
+$brand-red-ring: rgba(178, 0, 53, 0.18);   // 品牌细描边 / spinner 底环
+$brand-red-ring-dark: rgba(255, 77, 106, 0.20);
 
 // 状态色完整集
 // 注：$success/$warning/$info 为「视觉色」，用于图标/边框/背景；
@@ -32,9 +35,28 @@ $info-deep: #1565c0;
 $info-text-dark: #4da6ff;    // 暗底 6.52:1
 $success-text-dark: #81c784; // 暗底 8.28:1
 
+// 状态色暗色浅底（badge / 标签底），与 *-soft 对应
+$success-soft-dark: rgba(129, 199, 132, 0.16);
+$warning-soft-dark: rgba(255, 202, 122, 0.16);
+$danger-soft-dark: rgba(255, 77, 106, 0.16);
+$info-soft-dark: rgba(77, 166, 255, 0.16);
+
+// 状态色描边
+$success-border: rgba(46, 125, 50, 0.28);
+$success-border-dark: rgba(129, 199, 132, 0.36);
+$warning-border: rgba(230, 162, 60, 0.32);
+$warning-border-dark: rgba(255, 202, 122, 0.36);
+$danger-border: rgba(178, 0, 53, 0.24);
+$danger-border-dark: rgba(255, 77, 106, 0.36);
+$info-border: rgba(0, 102, 204, 0.24);
+$info-border-dark: rgba(77, 166, 255, 0.36);
+
 // 纯白与纯黑（语义）
 $pure-white: #ffffff;
 $pure-black: #000000;
+
+// 按钮涟漪高光
+$ripple-white: rgba(255, 255, 255, 0.5);
 
 // ---------- 中性色（亮色） ----------
 // 全部中性（R=G=B），相邻层差肉眼可辨。规范见 docs/DESIGN_LANGUAGE.md
@@ -91,23 +113,34 @@ $space-10: 64rpx;
 $space-11: 80rpx;
 $space-12: 96rpx;
 
+// ---------- 页面横向页边距（两档标准） ----------
+// Tab 主页（首页 / 我的）视觉更宽松；内容/详情页略窄。
+// 「我的」页白卡用 margin: 0 (-$page-gutter-tab) 抵消容器 padding 实现 full-bleed，
+// 卡内子元素再用 $page-gutter-tab 作为真正的页边距。
+$page-gutter: $space-7;     // 内容页 32rpx
+$page-gutter-tab: $space-8; // 首页 / 我的 40rpx
+
 // ---------- 字号 ----------
 $font-xs: 22rpx;
 $font-sm: 24rpx;
+$font-sm-plus: 26rpx;   // 次级正文的微调档（卡片标题、说明）
 $font-base: 28rpx;
 $font-md: 30rpx;
 $font-lg: 32rpx;
+$font-lg-plus: 34rpx;   // 小标题的微调档
 $font-xl: 36rpx;
 $font-2xl: 40rpx;
 $font-3xl: 44rpx;
 $font-4xl: 56rpx;
 
 // 字重
+$weight-light: 300;
 $weight-regular: 400;
 $weight-medium: 500;
 $weight-semibold: 600;
 $weight-bold: 700;
 $weight-black: 800;
+$weight-heavy: 900;
 
 // ---------- 阴影 ----------
 $shadow-xs: 0 2rpx 6rpx rgba(0, 0, 0, 0.04);
@@ -117,9 +150,22 @@ $shadow-lg: 0 12rpx 32rpx rgba(0, 0, 0, 0.10);
 $shadow-xl: 0 20rpx 60rpx rgba(0, 0, 0, 0.18);
 
 // 品牌色阴影（按钮发光）
+$shadow-brand-xs: 0 4rpx 12rpx rgba(178, 0, 53, 0.06);
 $shadow-brand-sm: 0 4rpx 12rpx rgba(178, 0, 53, 0.15);
 $shadow-brand-md: 0 8rpx 24rpx rgba(178, 0, 53, 0.20);
 $shadow-brand-lg: 0 12rpx 32rpx rgba(178, 0, 53, 0.30);
+$shadow-brand-glow: 0 8rpx 30rpx rgba(178, 0, 53, 0.50); // FAB / 强调按钮按压发光
+
+// 方向性阴影：底部固定条 / 底部弹层需要向上投影
+$shadow-up-light: 0 -4rpx 24rpx rgba(0, 0, 0, 0.10);
+$shadow-up-dark: 0 -8rpx 32rpx rgba(0, 0, 0, 0.40);
+
+// 内嵌控件的内阴影
+$shadow-inset-sm: inset 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+
+// 焦点环（输入类控件 focus 态，替代页面内一次性 box-shadow）
+$focus-ring-light: 0 0 0 4rpx rgba(178, 0, 53, 0.10);
+$focus-ring-dark: 0 0 0 4rpx rgba(255, 77, 106, 0.14);
 
 $shadow-card: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
 $shadow-card-hover: 0 12rpx 32rpx rgba(0, 0, 0, 0.10);
@@ -135,6 +181,8 @@ $shadow-logo: drop-shadow(0 16rpx 32rpx rgba(178, 0, 53, 0.15));
 $shadow-xs-dark: 0 2rpx 6rpx rgba(0, 0, 0, 0.20);
 $shadow-sm-dark: 0 4rpx 12rpx rgba(0, 0, 0, 0.30);
 $shadow-md-dark: 0 8rpx 24rpx rgba(0, 0, 0, 0.40);
+$shadow-lg-dark: 0 12rpx 32rpx rgba(0, 0, 0, 0.50);
+$shadow-xl-dark: 0 20rpx 60rpx rgba(0, 0, 0, 0.60);
 
 // ---------- 动画曲线 & 时长 ----------
 // 标准曲线
@@ -142,29 +190,30 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);     // 通用
 $ease-emphasized: cubic-bezier(0.25, 0.8, 0.25, 1); // 强调（按钮、卡片缩放）
 $ease-decelerate: cubic-bezier(0, 0, 0.2, 1);    // 入场减速
 $ease-accelerate: cubic-bezier(0.4, 0, 1, 1);     // 出场加速
-$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  // 弹性回弹
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  // 弹性回弹（轻）
 
-// 标准时长（交互过渡）
-$dur-instant: 100ms;
-$dur-fast: 150ms;
-$dur-base: 200ms;
-$dur-medium: 300ms;
-$dur-slow: 450ms;
-$dur-slower: 600ms;
+// 标准时长（交互过渡）——整体偏快，保证"利索"
+$dur-instant: 80ms;
+$dur-fast: 110ms;
+$dur-base: 160ms;
+$dur-medium: 240ms;
+$dur-slow: 360ms;
+$dur-slower: 480ms;
 
 // 动效时长（入场 / 弹入 / 循环，配合 _animations.scss）
-$motion-enter-sm: 280ms;   // 轻量入场（顶部提示等）
-$motion-enter: 320ms;      // 标准入场（列表/卡片）
-$motion-enter-lg: 360ms;   // 较强入场
-$motion-pop: 240ms;        // 缩放弹入
-$motion-bounce: 380ms;     // 弹性入场
-$motion-heart: 480ms;      // 点赞心跳
+$motion-enter-sm: 200ms;   // 轻量入场（顶部提示等）
+$motion-enter: 240ms;      // 标准入场（列表/卡片）
+$motion-enter-lg: 260ms;   // 较强入场
+$motion-pop: 180ms;        // 缩放弹入
+$motion-bounce: 300ms;     // 弹性入场
+$motion-heart: 400ms;      // 点赞心跳
 $motion-spin: 800ms;       // 加载旋转
+$motion-pulse: 2000ms;     // 状态呼吸
 
 // ---------- 按压反馈缩放 ----------
-$press-scale-sm: 0.97;  // 按钮/卡片（小）
-$press-scale-md: 0.94;  // 标签 chip/搜索结果
-$press-scale-lg: 0.92;  // 头像/重要按钮
+$press-scale-sm: 0.98;   // 按钮/卡片（小，幅度收敛更利索）
+$press-scale-md: 0.965;  // 标签 chip / 搜索结果
+$press-scale-lg: 0.95;   // 头像 / 重要按钮
 
 // ---------- 品牌粉色阶 / 暗品牌色阶 ----------
 // 用于头像底、胶囊底、提案卡/头部渐变等品牌氛围色
@@ -205,16 +254,19 @@ $border-color-light: $divider-light;          // #e4e4e4
 $border-color-medium-light: #dcdcdc;
 $border-color-strong-light: #cfcfcf;          // 亮色强调边框（搜索框、输入框等）
 $border-color-brand: rgba(178, 0, 53, 0.15);
-$border-color-dark: $divider-dark;            // #2a2a2a
+$border-color-brand-dark: rgba(255, 77, 106, 0.40);
+$border-color-brand-strong: rgba(178, 0, 53, 0.35);
+$border-color-brand-strong-dark: rgba(255, 77, 106, 0.45);
+$border-color-dark: $divider-dark;            // #333333
 $border-color-medium-dark: $divider-card-dark; // #3e3e3e 暗色中等边框（卡片边框、表单边框）
 
 // 简写 token：仅在需要一次性设置 width/style/color 的 `border:` 场景使用
-$border-light: 1px solid $border-color-light;
-$border-medium: 1px solid $border-color-medium-light;
-$border-strong-light: 1px solid $border-color-strong-light;
-$border-brand: 1px solid $border-color-brand;
-$border-dark: 1px solid $border-color-dark;
-$border-medium-dark: 1px solid $border-color-medium-dark;
+$border-light: 1rpx solid $border-color-light;
+$border-medium: 1rpx solid $border-color-medium-light;
+$border-strong-light: 1rpx solid $border-color-strong-light;
+$border-brand: 1rpx solid $border-color-brand;
+$border-dark: 1rpx solid $border-color-dark;
+$border-medium-dark: 1rpx solid $border-color-medium-dark;
 
 // ---------- 装饰（装饰条 / 光晕 / 高光线 / 虚线分隔） ----------
 $deco-bar-width: 8rpx;                    // 标题左侧品牌强调条

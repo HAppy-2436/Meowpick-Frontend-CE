@@ -13,6 +13,7 @@
     },
     "useCompilerPlugins": false,
     "minifyWXML": true,
+    "minifyWXSS": true,
     "condition": true
   },
   "compileType": "miniprogram",

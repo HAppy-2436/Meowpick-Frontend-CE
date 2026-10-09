@@ -4,7 +4,9 @@
   background-color: $bg-page-light;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  // 裁剪筛选遮罩等绝对定位元素，避免它们把页面撑出滚动高度，
+  // 导致面板打开后能整体滑动（连 header 一起）
+  overflow: hidden;
   transition: background-color $dur-medium $ease-standard;
 
   &.dark-theme {
@@ -86,11 +88,11 @@
   }
 
   &.active {
-    color: $text-primary-light;
+    color: $brand-red;
     font-weight: $weight-bold;
 
     .dark-theme & {
-      color: $text-primary-dark;
+      color: $brand-red-soft;
     }
   }
 }
@@ -130,17 +132,17 @@
   left: 0;
   right: 0;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba($pure-black, 0.12);
   z-index: $z-popover - 1;
 
   .dark-theme & {
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba($pure-black, 0.35);
   }
 }
 
 .filter-panel {
   position: absolute;
-  top: calc(100% + #{$space-2});
+  top: calc(100% + #{$space-4});
   left: $space-5;
   right: $space-5;
   z-index: $z-popover;
@@ -189,14 +191,6 @@
 
   .dark-theme & {
     color: $text-primary-dark;
-  }
-}
-
-.search-placeholder {
-  color: $text-placeholder-light;
-
-  .dark-theme & {
-    color: $text-placeholder-dark;
   }
 }
 
@@ -254,7 +248,7 @@
     border-color: $brand-red;
 
     .dark-theme & {
-      background: $danger-soft;
+      background: $brand-red-tint-dark;
       border-color: $brand-red-soft;
     }
   }
@@ -345,7 +339,7 @@
     color: $brand-red;
 
     .dark-theme & {
-      background: $danger-soft;
+      background: $brand-red-tint-dark;
       border-color: $brand-red-soft;
       color: $brand-red-soft;
     }
@@ -379,7 +373,14 @@
 .log-scroll {
   width: 100%;
   height: 100%;
-  padding: $space-4 $space-7;
+  padding: $space-7 $space-7;
   padding-bottom: calc(#{$space-9} + env(safe-area-inset-bottom));
   box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-panel,
+  .filter-options {
+    animation: none;
+  }
 }

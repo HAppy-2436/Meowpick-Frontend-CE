@@ -7,8 +7,18 @@ import SeriousCat from '@/images/cat-emoji/pouting_cat.png';
 import HumorCat from '@/images/cat-emoji/cat_with_tears_of_joy.png';
 import BoringCat from '@/images/cat-emoji/crying_cat.png';
 
+export type TagText =
+  | '容易'
+  | '硬核'
+  | '避雷'
+  | '推荐'
+  | '严格'
+  | '快跑'
+  | '幽默'
+  | '枯燥';
+
 export type Tags = {
-  text: string;
+  text: TagText;
   icon: string;
   isSelected: boolean;
 };
@@ -18,10 +28,10 @@ export const TotalTags = ref<Tags[]>([
   { text: '硬核', icon: HardcoreCat, isSelected: false },
   { text: '避雷', icon: TerribleCat, isSelected: false },
   { text: '推荐', icon: NiceCat, isSelected: false },
-  { text: '严谨', icon: SeriousCat, isSelected: false },
-  { text: '枯燥', icon: BoringCat, isSelected: false },
+  { text: '严格', icon: SeriousCat, isSelected: false },
+  { text: '快跑', icon: BoringCat, isSelected: false },
   { text: '幽默', icon: HumorCat, isSelected: false },
-  { text: '好评', icon: NiceCat, isSelected: false }
+  { text: '枯燥', icon: BoringCat, isSelected: false }
 ]);
 export function InitTags() {
   TotalTags.value.forEach((tag) => {
@@ -30,7 +40,7 @@ export function InitTags() {
 }
 
 // 同义词映射：当 mock 数据使用了不同写法时，可以映射到标准标签
-const synonyms: Record<string, string> = {
+const synonyms: Record<string, TagText> = {
   easy: '容易',
   recommend: '推荐',
   recommended: '推荐',
@@ -41,9 +51,10 @@ const synonyms: Record<string, string> = {
   humor: '幽默',
   avoid: '避雷',
   bad: '避雷',
-  good: '好评',
-  great: '好评',
-  strict: '严谨'
+  good: '快跑',
+  great: '快跑',
+  fast: '快跑',
+  strict: '严格'
 };
 
 export function Emoji(text: string) {
@@ -89,7 +100,6 @@ export function Emoji(text: string) {
   return EasyCat;
 }
 
-const allowedTags = TotalTags.value.map((tag) => tag.text);
 export const limitedTags = (tags: string[]) => {
   // 保留原来的限制逻辑，但对不认识的标签也返回（最多4个）
   if (!tags) return [];

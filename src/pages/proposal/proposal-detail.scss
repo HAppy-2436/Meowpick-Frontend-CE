@@ -1,0 +1,685 @@
+// =====================================================
+// 提案详情页
+// 单一悬浮卡片：品牌极淡 Hero + 灰阶内容层 + 虚线操作层
+// =====================================================
+.proposal-detail-page {
+  height: 100vh;
+  background-color: $bg-page-light;
+  display: flex;
+  flex-direction: column;
+  transition: background-color $dur-medium $ease-standard;
+
+  &.dark-theme {
+    background-color: $bg-page-dark;
+  }
+}
+
+.content-scroll {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: $page-gutter $page-gutter 0;
+}
+
+// =====================================================
+// 卡片
+// =====================================================
+.proposal-card {
+  background: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  margin-bottom: $space-6;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
+  transition: background-color $dur-medium $ease-standard,
+    box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+}
+
+// ---------- Hero：标题 + 贡献值（与课程卡片一致，标题置于顶部）----------
+.card-hero {
+  position: relative;
+  padding: $space-7 $space-8 $space-7;
+  background: $bg-card-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+  }
+}
+
+// 右上角：贡献者（上）+ 贡献值（下，字号更小）
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  max-width: 40%;
+  gap: 6rpx;
+}
+
+.hero-contributor {
+  font-size: $font-sm;
+  font-weight: $weight-medium;
+  color: $text-secondary-light;
+  line-height: 1.4;
+  max-width: 100%;
+  @include ellipsis;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+// 贡献值：缩小置于贡献者下方，标签与数字同字号、居中对齐
+.contribution-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.contribution-label {
+  font-size: $font-xs;
+  font-weight: $weight-medium;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.contribution-value {
+  font-size: $font-sm;
+  font-weight: $weight-bold;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  @include text-gradient;
+
+  .dark-theme & {
+    @include text-gradient($brand-red-soft, $brand-red);
+  }
+}
+
+// 课程名称（点击查看课程）+ 贡献值同行，贡献值在名称右侧
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.proposal-title {
+  flex: 1;
+  min-width: 0;
+  display: block;
+  font-size: $font-3xl;
+  font-weight: $weight-bold;
+  color: $text-primary-light;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
+  transition: color $dur-fast $ease-standard;
+
+  // 已上架课程标题可点击：标题与下划线统一用主题色，类似超链接
+  &.is-clickable {
+    color: $brand-red;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 6rpx;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
+  }
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+// 管理员修订：被替换的原始标题（删除线）
+.proposal-original {
+  display: block;
+  margin-top: $space-3;
+  font-size: $font-sm;
+  color: $text-tertiary-light;
+  line-height: 1.4;
+  text-decoration: line-through;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+// ---------- 内容层 ----------
+.card-body {
+  padding: 0 $space-8 $space-7;
+}
+
+.revision-tip {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin: 0 0 $space-7;
+  padding: $space-4 $space-5;
+  border-radius: $radius-md;
+  background: $info-soft;
+  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
+
+  &__icon {
+    flex-shrink: 0;
+    color: $info;
+  }
+
+  &__text {
+    font-size: $font-sm;
+    line-height: 1.4;
+    color: $info;
+  }
+
+  .dark-theme & {
+    background: $info-soft-dark;
+
+    &__icon,
+    &__text {
+      color: $info-text-dark;
+    }
+  }
+}
+
+// ---------- 关键信息 ----------
+.meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  margin-bottom: $space-8;
+}
+
+.meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-4;
+  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
+
+  &:nth-child(1) {
+    animation-delay: 60ms;
+  }
+  &:nth-child(2) {
+    animation-delay: 120ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 180ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 240ms;
+  }
+  &:nth-child(5) {
+    animation-delay: 300ms;
+  }
+}
+
+.meta-icon {
+  @include icon-tile(64rpx, $danger-soft, $radius-md);
+  color: $brand-red;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+    background: $danger-soft-dark;
+    border: 1rpx solid $danger-border-dark;
+  }
+}
+
+.meta-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.meta-label {
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.meta-value {
+  font-size: $font-base;
+  font-weight: $weight-semibold;
+  color: $text-primary-light;
+  line-height: 1.5;
+  @include ellipsis(2);
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+// 被管理员替换掉的原始值（删除线）
+.meta-original {
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  line-height: 1.4;
+  text-decoration: line-through;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+// ---------- 提案理由 ----------
+.reason-section {
+  animation: mwp-fade-up $motion-enter $ease-decelerate backwards;
+  animation-delay: 360ms;
+}
+
+.section-title {
+  @include title-accent;
+  display: block;
+  margin-bottom: $space-5;
+  font-size: $font-lg;
+  font-weight: $weight-bold;
+  line-height: 1.3;
+  color: $text-primary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.proposal-reason-box {
+  padding: $space-6;
+  border-radius: $radius-md;
+  background: $bg-muted-light;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+  }
+}
+
+.reason-content {
+  font-size: $font-base;
+  line-height: 1.7;
+  color: $text-primary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+// ---------- 支持操作层（仅普通用户视角）----------
+.vote-area {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-7 $space-8 $space-8;
+  @include dashed-divider;
+  transition: border-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    border-top-color: $divider-dark;
+  }
+}
+
+.vote-info {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  min-width: 0;
+
+  .vote-count-big {
+    font-size: $font-4xl;
+    font-weight: $weight-bold;
+    line-height: 1;
+    margin-right: $space-3;
+    font-variant-numeric: tabular-nums;
+    @include text-gradient;
+
+    .dark-theme & {
+      @include text-gradient($brand-red-soft, $brand-red);
+    }
+
+    .is-voted & {
+      animation: mwp-bounce-in $dur-slow $ease-spring;
+    }
+  }
+
+  .vote-text {
+    font-size: $font-sm;
+    color: $text-tertiary-light;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+.vote-hint {
+  display: block;
+  text-align: center;
+  font-size: $font-sm;
+  line-height: 1.5;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+// ---------- 本人视角：更舒展的间距与行高 ----------
+.proposal-card.is-guest {
+  .meta-list {
+    gap: $space-7;
+  }
+
+  .meta-value {
+    line-height: 1.6;
+  }
+
+  .proposal-reason-box {
+    padding: $space-7;
+  }
+
+  .reason-content {
+    line-height: 1.9;
+  }
+}
+
+// =====================================================
+// 审核进度卡
+// =====================================================
+.timeline-card {
+  background: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  padding: $space-7 $space-8;
+  margin-bottom: $space-6;
+  animation: mwp-fade-up $motion-enter-lg $ease-decelerate $dur-fast backwards;
+  transition: background-color $dur-medium $ease-standard,
+    box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-sm-dark;
+  }
+}
+
+.timeline-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-6;
+
+  .section-title {
+    margin-bottom: 0;
+  }
+}
+
+// 状态 + 已修订：置于操作日志标题右侧
+.timeline-card__status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2;
+  flex-shrink: 0;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  gap: $space-4;
+  padding-bottom: $space-7;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  // 节点连接线：与圆点中心对齐（32rpx 圆点中心 16rpx，线宽 2rpx）
+  &:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 15rpx;
+    top: 40rpx;
+    bottom: 0;
+    width: 2rpx;
+    background: $divider-light;
+    transition: background-color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      background: $divider-card-dark;
+    }
+  }
+}
+
+.timeline-dot {
+  position: relative;
+  z-index: $z-base;
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-tertiary-light;
+  background: $bg-muted-light;
+  transition: color $dur-fast $ease-standard,
+    background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+    background: $bg-muted-dark;
+  }
+
+  // 已完成节点：品牌底 + 品牌图标
+  .timeline-item.is-done & {
+    color: $brand-red;
+    background: $danger-soft;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+      background: $danger-soft-dark;
+      border: 1rpx solid $danger-border-dark;
+    }
+  }
+
+  // 已拒绝节点：同样用危险色（品牌红即危险色）
+  .timeline-item.is-rejected & {
+    color: $brand-red;
+    background: $danger-soft;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+      background: $danger-soft-dark;
+      border: 1rpx solid $danger-border-dark;
+    }
+  }
+
+  // 已修订（管理员修改后通过 / 撤回审批）：信息蓝
+  .timeline-item.is-revise & {
+    color: $info;
+    background: $info-soft;
+
+    .dark-theme & {
+      color: $info-text-dark;
+      background: $info-soft-dark;
+    }
+  }
+
+  // 进行中：内嵌脉动品牌点
+  .timeline-item.is-active & {
+    background: $bg-card-light;
+
+    .dark-theme & {
+      background: $bg-card-dark;
+    }
+
+    &::after {
+      content: '';
+      width: 16rpx;
+      height: 16rpx;
+      border-radius: 50%;
+      background: $brand-red;
+      animation: mwp-pulse $motion-pulse $ease-standard infinite;
+
+      .dark-theme & {
+        background: $brand-red-soft;
+      }
+    }
+  }
+}
+
+.timeline-body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2rpx;
+}
+
+.timeline-title {
+  display: block;
+  font-size: $font-base;
+  font-weight: $weight-semibold;
+  line-height: 1.4;
+  color: $text-primary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+.timeline-time {
+  display: block;
+  margin-top: 4rpx;
+  font-size: $font-sm;
+  color: $text-tertiary-light;
+  font-variant-numeric: tabular-nums;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.timeline-desc {
+  display: block;
+  margin-top: 4rpx;
+  font-size: $font-sm;
+  line-height: 1.5;
+  color: $text-secondary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+}
+
+.reject-reason {
+  margin-top: $space-6;
+  padding: $space-5 $space-6;
+  border-radius: $radius-md;
+  background: $danger-soft;
+
+  .dark-theme & {
+    background: $danger-soft-dark;
+    border: 1rpx solid $danger-border-dark;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: $space-2;
+    font-size: $font-sm;
+    font-weight: $weight-semibold;
+    color: $danger;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
+  }
+
+  &__text {
+    font-size: $font-base;
+    line-height: 1.6;
+    color: $text-primary-light;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+}
+
+// =====================================================
+// 底部留白
+// =====================================================
+.bottom-spacer {
+  height: 60rpx;
+
+  &--actions {
+    height: 220rpx;
+  }
+}
+
+// =====================================================
+// 底部操作栏（本人：撤回 / 修改；管理员：拒绝 / 修改后通过 / 通过）
+// =====================================================
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-navbar;
+  display: flex;
+  gap: $space-4;
+  padding: $space-4 $space-7 calc(#{$space-4} + env(safe-area-inset-bottom));
+  background: $bg-card-light;
+  box-shadow: $shadow-up-light;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-up-dark;
+  }
+}
+
+.action-btn {
+  flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proposal-card,
+  .timeline-card,
+  .revision-tip,
+  .meta-item,
+  .reason-section,
+  .vote-count-big,
+  .timeline-dot::after {
+    animation: none;
+  }
+}

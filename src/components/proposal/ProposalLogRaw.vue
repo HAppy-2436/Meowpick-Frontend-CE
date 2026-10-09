@@ -1,10 +1,16 @@
 <template>
-  <view class="raw-list">
+  <view class="raw-list" :class="themeStore.themeClass">
     <SkeletonCard v-if="loading && logs.length === 0" :count="4" />
 
-    <EmptyState v-else-if="error" tone="danger" title="加载失败" compact>
+    <EmptyState
+      v-else-if="error"
+      tone="danger"
+      title="加载失败"
+      compact
+      :min-height="minHeight"
+    >
       <template #action>
-        <MwpButton tone="danger" @click="$emit('retry')">重试</MwpButton>
+        <MwpButton tone="brand" @click="$emit('retry')">重试</MwpButton>
       </template>
     </EmptyState>
 
@@ -14,6 +20,7 @@
       :desc="
         filtered ? '换个关键词或类型试试' : '管理员审批 / 撤回后会显示在这里'
       "
+      :min-height="minHeight"
     />
 
     <view v-else class="raw-items">
@@ -33,9 +40,7 @@
                 : ''
             "
             >{{
-              log.actionType
-                ? actionTextOf(log.actionType)
-                : log.typeLabel || '变更'
+              log.actionType ? actionLabel(log) : log.typeLabel || '变更'
             }}</text
           >
           <text class="raw-code">{{ log.actionType || '—' }}</text>
@@ -51,19 +56,14 @@
           <text class="raw-val">{{ targetText(log) }}</text>
         </view>
 
-        <view v-if="log.details?.reason" class="raw-line">
-          <text class="raw-key">理由</text>
-          <text class="raw-val">{{ log.details.reason }}</text>
+        <view v-if="logContentOf(log)" class="raw-line">
+          <text class="raw-key">内容</text>
+          <text class="raw-val">{{ logContentOf(log) }}</text>
         </view>
 
         <view v-if="log.details?.contribution" class="raw-line">
           <text class="raw-key">贡献值</text>
           <text class="raw-val">{{ log.details.contribution }}</text>
-        </view>
-
-        <view v-if="log.content" class="raw-line">
-          <text class="raw-key">内容</text>
-          <text class="raw-val">{{ log.content }}</text>
         </view>
 
         <view v-if="extraDetails(log)" class="raw-line">
@@ -85,19 +85,44 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import {
-  actionTextOf,
+  actionTextForLog,
   formatLogTime,
+  logContentOf,
   type LogItem
 } from '@/utils/proposal-log';
+import { useThemeStore } from '@/config';
 
-defineProps<{
+const themeStore = useThemeStore();
+
+const props = defineProps<{
   logs: LogItem[];
   loading?: boolean;
   error?: boolean;
   noMore?: boolean;
   filtered?: boolean;
+  /** 空状态撑高到可视区域高度，使其垂直居中（px） */
+  minHeight?: number;
 }>();
+
+// 同一提案的创建者 id（取自该提案的 CREATE 日志），用于区分撤回主体
+const creatorByProposal = computed(() => {
+  const map: Record<string, string> = {};
+  props.logs.forEach((log) => {
+    const type = (log.actionType || '').toUpperCase();
+    if (type === 'CREATE' && log.proposalId && log.operatorId) {
+      map[log.proposalId] = log.operatorId;
+    }
+  });
+  return map;
+});
+
+const actionLabel = (log: LogItem) =>
+  actionTextForLog(
+    log,
+    log.proposalId ? creatorByProposal.value[log.proposalId] : undefined
+  );
 
 defineEmits<{
   (e: 'retry'): void;
@@ -130,7 +155,8 @@ const extraDetails = (log: LogItem) => {
   if (!details) return '';
   return Object.entries(details)
     .filter(
-      ([key, value]) => key !== 'reason' && key !== 'contribution' && value
+      ([key, value]) =>
+        key !== 'reason' && key !== 'content' && key !== 'contribution' && value
     )
     .map(([key, value]) => {
       const text = typeof value === 'object' ? JSON.stringify(value) : value;
@@ -152,8 +178,11 @@ const extraDetails = (log: LogItem) => {
 
 .raw-item {
   padding: $space-5 0;
-  border-bottom: 1rpx dashed $divider-light;
   transition: border-color $dur-fast $ease-standard;
+
+  & + & {
+    @include dashed-divider;
+  }
 
   &:first-child {
     padding-top: 0;
@@ -164,7 +193,7 @@ const extraDetails = (log: LogItem) => {
   }
 
   .dark-theme & {
-    border-bottom-color: $divider-dark;
+    border-top-color: $divider-dark;
   }
 }
 
@@ -197,51 +226,20 @@ const extraDetails = (log: LogItem) => {
   .dark-theme & {
     color: $text-primary-dark;
   }
-
-  &--create,
-  &--update {
-    color: $info;
-  }
-  &--approve,
-  &--grant_admin {
-    color: $success;
-  }
-  &--reject {
-    color: $brand-red;
-  }
-  &--delete,
-  &--revoke_admin {
-    color: $warning-text;
-  }
-
-  .dark-theme & {
-    &--create,
-    &--update {
-      color: $info-text-dark;
-    }
-    &--approve,
-    &--grant_admin {
-      color: $success-text-dark;
-    }
-    &--reject {
-      color: $brand-red-soft;
-    }
-    &--delete,
-    &--revoke_admin {
-      color: $warning-text-dark;
-    }
-  }
 }
+
+// 动作类型 → 文本色（统一 mixin）
+@include log-action-color('.raw-action');
 
 .raw-code {
   font-size: $font-xs;
   font-family: monospace;
   letter-spacing: 0.5rpx;
-  color: $text-placeholder-light;
+  color: $text-tertiary-light;
   transition: color $dur-fast $ease-standard;
 
   .dark-theme & {
-    color: $text-placeholder-dark;
+    color: $text-tertiary-dark;
   }
 }
 
@@ -284,13 +282,13 @@ const extraDetails = (log: LogItem) => {
   margin-top: $space-3;
   font-size: $font-xs;
   font-family: monospace;
-  color: $text-placeholder-light;
+  color: $text-tertiary-light;
   line-height: 1.5;
   word-break: break-all;
   transition: color $dur-fast $ease-standard;
 
   .dark-theme & {
-    color: $text-placeholder-dark;
+    color: $text-tertiary-dark;
   }
 }
 

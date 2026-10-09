@@ -4,7 +4,7 @@
   background-color: $bg-page-light;
   position: relative;
   overflow: hidden;
-  padding: 0 $space-7 $space-9;
+  padding: 0 $page-gutter $space-9;
   box-sizing: border-box;
   transition: background-color $dur-medium $ease-standard;
 
@@ -16,7 +16,7 @@
 .content-card {
   position: relative;
   z-index: $z-base;
-  margin-top: $space-8;
+  margin-top: $space-7;
   background: $bg-card-light;
   border-radius: $radius-card;
   padding: $space-10 $space-8;
@@ -67,17 +67,31 @@
     border-top-color: $divider-dark;
   }
 
+  .footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    margin-bottom: $space-4;
+  }
+
   .footer-text {
-    display: block;
     font-size: $font-base;
     color: $text-primary-light;
     font-weight: $weight-semibold;
-    margin-bottom: $space-4;
     text-align: center;
     transition: color $dur-fast $ease-standard;
 
     .dark-theme & {
       color: $text-primary-dark;
+    }
+  }
+
+  .footer-heart {
+    color: $brand-red;
+
+    .dark-theme & {
+      color: $brand-red-soft;
     }
   }
 

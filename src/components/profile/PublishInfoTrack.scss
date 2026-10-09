@@ -1,0 +1,40 @@
+// 授课教师 / 院系：内联自适应，左对齐；两者都短时紧挨，长项才省略让位
+.course-info-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12rpx;
+  min-width: 0;
+  overflow: hidden;
+  min-height: 40rpx;
+}
+
+.course-info-item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-size: $font-sm-plus;
+  font-weight: $weight-medium;
+  @include text-secondary;
+
+  .info-text {
+    min-width: 0;
+    line-height: 40rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info-icon {
+    width: 30rpx;
+    height: 30rpx;
+    margin-right: 12rpx;
+    color: $brand-red;
+    flex-shrink: 0;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
+  }
+}

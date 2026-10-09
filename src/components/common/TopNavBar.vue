@@ -33,7 +33,7 @@
  * 用法：
  *   <TopNavBar title="提案广场" :subtitle="`${total} 条记录`" />
  *   <TopNavBar title="详情" @back="goBack">
- *     <template #right><view @click="onShare" hover-class="mwp-hover">分享</view></template>
+ *     <template #right><view @click="onShare" hover-class="mwp-hover" :hover-start-time="0" :hover-stay-time="0">分享</view></template>
  *   </TopNavBar>
  */
 import BackBtn from './BackBtn.vue';
@@ -42,7 +42,7 @@ import { useThemeStore } from '@/config';
 
 const themeStore = useThemeStore();
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     title?: string;
     subtitle?: string;
@@ -67,14 +67,14 @@ const { menuButtonInfo, navBarHeight, contentHeight } = useMenuButton();
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba($bg-card-light, 0.95);
   border-radius: 0 0 $radius-card $radius-card;
   z-index: $z-navbar;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  box-shadow: $shadow-sm;
 
   &.dark-theme {
-    background: rgba(30, 30, 30, 0.95);
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+    background: rgba($bg-card-dark, 0.95);
+    box-shadow: $shadow-sm-dark;
   }
 }
 
@@ -98,7 +98,7 @@ const { menuButtonInfo, navBarHeight, contentHeight } = useMenuButton();
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  animation: mwp-fade-in $motion-pop ease backwards;
+  animation: mwp-fade-in $motion-pop $ease-standard backwards;
 
   &.has-back {
     margin-left: $space-4;
@@ -113,7 +113,6 @@ const { menuButtonInfo, navBarHeight, contentHeight } = useMenuButton();
   font-weight: $weight-bold;
   color: $text-primary-light;
   line-height: 1.2;
-  letter-spacing: -1rpx;
   @include ellipsis;
 
   .dark-theme & {
@@ -137,5 +136,11 @@ const { menuButtonInfo, navBarHeight, contentHeight } = useMenuButton();
   display: flex;
   align-items: center;
   gap: $space-3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-title-container {
+    animation: none;
+  }
 }
 </style>

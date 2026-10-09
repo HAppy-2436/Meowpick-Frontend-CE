@@ -63,24 +63,25 @@ src/
 ├── components/             # Vue 组件（PascalCase，全局自动导入）
 │   ├── home/              # 首页 HomeView / UpdateLogTimeline
 │   ├── find/              # 搜索 FindView
-│   ├── profile/           # 我的 ProfileView
+│   ├── profile/           # 我的 ProfileView / UpdateLogTimeline / PublishInfoTrack
 │   ├── course/            # 课程详情头部 / 评论列表
-│   ├── choose/            # 搜索结果卡片 ChooseCourse
-│   ├── layout/            # 主布局容器 Layout
-│   └── common/            # 通用组件（BackBtn / 弹窗等）
+│   ├── choose/            # 课程卡片 CourseCard / ChooseCourse
+│   ├── proposal/          # 提案日志 ProposalLogGroups / ProposalLogRaw
+│   └── common/            # 通用组件（MwpButton / 弹窗 / 空态等）
 ├── composables/            # useCourse / useChoose / useFind / useMenuButton
 ├── config/
 │   ├── store/             # Pinia stores（含持久化，文件名小写）
 │   └── utils/             # http / pubsub
 ├── pages/                  # 扁平式：模块/页面.vue
 │   ├── layout/main.vue    # TabBar 主布局（首页/我的 左右滑动）
+│   ├── gateway/           # 皮肤网关启动页
 │   ├── course/
 │   │   ├── detail.vue     # 课程详情页
-│   │   ├── comment.vue    # 吐槽发布页
-│   │   └── proposal-detail.vue  # 提议详情页
+│   │   └── comment.vue    # 吐槽发布页
 │   ├── find/index.vue     # 搜索入口页（转发 mode 参数）
-│   ├── home/              # letter.vue / update-log.vue
-│   └── proposal/          # propose.vue / list.vue / log.vue
+│   ├── home/              # letter.vue
+│   ├── profile/           # update-log.vue
+│   └── proposal/          # propose.vue / list.vue / log.vue / proposal-detail.vue
 ├── utils/
 ├── styles/                 # 设计 token / mixin / 动画
 ├── swagger.json            # ⚠️ API 契约源文件
@@ -193,8 +194,8 @@ if (saved && saved.searchText) {
     → 搜索组件检测 mode === 'add-comment' → 显示提示横幅
     → 用户搜索并点击课程卡片
     → clickCourse() 检测 mode === 'add-comment'
-      → 数据序列化后跳转 /pages/course/comment/index?data=<courseJson>
-        → comment/index.vue 解析 data 参数获取 courseId
+      → 携带课程 id 跳转 /pages/course/comment?id=<courseId>
+        → comment.vue 解析 id 参数
         → 直接显示发布界面（不请求课程详情）
 ```
 

@@ -12,12 +12,14 @@ node_modules
 .DS_Store
 dist
 *.local
-!src/wxcomponents/vant-weapp/dist
 
 # 环境变量：.env 含本地配置不入库，模板见 .env.example
 .env
 .env.*
 !.env.example
+
+# 小程序上传私钥（由 scripts/upload.mjs 从环境变量生成，禁止入库）
+upload.key
 # Editor directories and files
 .idea
 *.suo
@@ -25,8 +27,6 @@ dist
 *.njsproj
 *.sln
 *.sw?
-auto-imports.d.ts
-components.d.ts
 /full_project_source.txt
 
 # Windows / WSL 元数据
@@ -37,6 +37,9 @@ components.d.ts
 *.bak[0-9]*
 *.orig
 *.rej
+
+# 注意：auto-imports.d.ts / components.d.ts 由 unplugin 生成，但需入库，
+# 否则干净检出后 `yarn type-check`（CI 在 build 之前执行）会因缺少全局声明而失败。
 
 # 微信开发者工具本地私有配置（每人不同，不入库）
 project.private.config.json

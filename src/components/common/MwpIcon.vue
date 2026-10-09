@@ -13,7 +13,7 @@ const props = withDefaults(
     color?: string;
     strokeWidth?: number;
   }>(),
-  { size: '40rpx', color: 'currentColor' }
+  { color: 'currentColor' }
 );
 
 const style = computed(() => {
@@ -26,8 +26,8 @@ const style = computed(() => {
   }
   const url = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
   return [
-    `width:${props.size}`,
-    `height:${props.size}`,
+    props.size ? `width:${props.size}` : '',
+    props.size ? `height:${props.size}` : '',
     `background-color:${props.color}`,
     `-webkit-mask-image:${url}`,
     '-webkit-mask-repeat:no-repeat',
@@ -37,13 +37,25 @@ const style = computed(() => {
     'mask-repeat:no-repeat',
     'mask-position:center',
     'mask-size:contain'
-  ].join(';');
+  ]
+    .filter(Boolean)
+    .join(';');
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
 .mwp-icon {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
   flex-shrink: 0;
 }
 </style>

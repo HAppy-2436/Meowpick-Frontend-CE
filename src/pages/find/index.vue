@@ -1,6 +1,7 @@
 <template>
   <view class="find-page" :class="themeStore.themeClass">
     <FindView ref="findRef" :initial-mode="mode" />
+    <MwpStatusOverlay />
   </view>
 </template>
 
@@ -19,6 +20,9 @@ onLoad((options: Record<string, string> = {}) => {
   if (options && options.mode) {
     mode.value = options.mode;
   }
+  // 全新进入搜索页：清掉上次遗留的搜索状态，
+  // 只有「从详情页返回」这种页面未销毁的 onShow 才恢复，避免搜索框自带旧关键词
+  uni.removeStorageSync('find_page_state');
 });
 
 onShow(() => {

@@ -1,5 +1,5 @@
 <template>
-  <view class="skeleton-list">
+  <view class="skeleton-list" :class="themeStore.themeClass">
     <view
       v-for="i in count"
       :key="i"
@@ -26,10 +26,15 @@
 </template>
 
 <script setup lang="ts">
+import { useThemeStore } from '@/config';
+
 /**
  * 卡片骨架屏列表
  * @param count 显示几张骨架卡（默认3）
  */
+// 组件自身挂主题类：小程序自定义组件样式隔离下，外层 .dark-theme 不一定能命中
+const themeStore = useThemeStore();
+
 withDefaults(defineProps<{ count?: number }>(), { count: 3 });
 </script>
 
@@ -137,5 +142,15 @@ withDefaults(defineProps<{ count?: number }>(), { count: 3 });
 .dark-theme .skeleton-circle,
 .dark-theme .skeleton-chip {
   @include shimmer-dark;
+}
+
+// shimmer 由 mixin 直接声明 animation，不在全局 .mwp-skeleton 降级范围内，需本地兜底
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line,
+  .skeleton-circle,
+  .skeleton-chip {
+    animation: none;
+    background-image: none;
+  }
 }
 </style>

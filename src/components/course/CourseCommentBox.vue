@@ -12,25 +12,38 @@
           <text class="txt">{{ item }}</text>
         </view>
       </view>
+
+      <view
+        v-if="canDelete"
+        class="delete-btn mwp-pressable"
+        hover-class="mwp-hover"
+        :hover-start-time="0"
+        :hover-stay-time="0"
+        @click.stop="onDelete"
+      >
+        <MwpIcon name="trash-2" size="32rpx" class="delete-icon" />
+      </view>
     </view>
 
     <text class="content-section">{{ data.content }}</text>
 
     <view class="footer-section">
-      <text class="date-str">{{ format(data.createdAt || '') }}</text>
       <view
         class="like-block mwp-pressable"
         hover-class="mwp-hover"
+        :hover-start-time="0"
+        :hover-stay-time="0"
         @click="like"
       >
-        <image
-          :src="data.like ? Liked : Like"
+        <MwpIcon
+          :name="data.like ? 'heart-filled' : 'heart'"
+          size="32rpx"
           class="icon-small"
           :class="{ 'is-liked': data.like }"
-          mode="aspectFit"
         />
         <text class="count">{{ data.likeCnt || 0 }}</text>
       </view>
+      <text class="date-str">{{ format(data.createdAt || '') }}</text>
     </view>
   </view>
 </template>
@@ -38,21 +51,25 @@
 <script setup lang="ts">
 import type { DtoCommentVO } from '@/api/data-contracts';
 import { useThemeStore } from '@/config';
-import Like from '@/images/like-icon.png';
-import Liked from '@/images/like_active.png';
 import { format as formatTime } from '@/composables/useCourseComment';
 import { Emoji } from '@/utils/tags';
 
 const themeStore = useThemeStore();
 
-type CommentBoxProps = { data: DtoCommentVO };
-const props = defineProps<CommentBoxProps>();
-const emit = defineEmits<{ (e: 'like', id: string): void }>();
+type CommentBoxProps = { data: DtoCommentVO; canDelete?: boolean };
+const props = withDefaults(defineProps<CommentBoxProps>(), {
+  canDelete: false
+});
+const emit = defineEmits<{ (e: 'like' | 'delete', id: string): void }>();
 
 const format = (time: string) => formatTime(time);
 
 const like = () => {
   emit('like', props.data.id || '');
+};
+
+const onDelete = () => {
+  emit('delete', props.data.id || '');
 };
 
 const textTags = (tags: string[]) => tags || [];
@@ -66,28 +83,70 @@ const textTags = (tags: string[]) => tags || [];
   margin-bottom: $space-6;
   box-shadow: $shadow-sm;
   transition: background-color $dur-medium $ease-standard,
-    box-shadow $dur-medium $ease-standard, transform $dur-fast $ease-standard;
+    box-shadow $dur-medium $ease-standard;
   animation: mwp-fade-up $motion-enter-lg $ease-decelerate backwards;
 
-  .dark-theme & {
+  &.dark-theme {
     background: $bg-card-dark;
-  }
-
-  &:active {
-    transform: scale($press-scale-md);
+    box-shadow: $shadow-sm-dark;
   }
 }
 
 .header-section {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: $space-4;
 }
 
 .tags-wrapper {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 6rpx $space-3;
+}
+
+// 撤回/删除入口固定在卡片右上角：管理员删除他人评论，普通用户撤回自己的吐槽
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: $space-3;
+  padding: $space-1;
+  border-radius: $radius-pill;
+  transition: background-color $dur-fast $ease-standard;
+  position: relative;
+
+  // 图标 32rpx，热区扩大到 88rpx，避免误触
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 88rpx;
+    height: 88rpx;
+    transform: translate(-50%, -50%);
+  }
+
+  &:active {
+    background: $danger-soft;
+
+    .dark-theme & {
+      background: $danger-soft-dark;
+    }
+  }
+}
+
+.delete-icon {
+  width: 32rpx;
+  height: 32rpx;
+  color: $text-tertiary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
 }
 
 .ctag {
@@ -104,8 +163,8 @@ const textTags = (tags: string[]) => tags || [];
 }
 
 .tag-icon {
-  width: 28rpx;
-  height: 28rpx;
+  width: 32rpx;
+  height: 32rpx;
   margin-right: $space-2;
   display: block;
   flex-shrink: 0;
@@ -139,11 +198,13 @@ const textTags = (tags: string[]) => tags || [];
 .footer-section {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  // 爱心贴到卡片内容底边，与左边距一致
+  align-items: flex-end;
 }
 
 .date-str {
   font-size: $font-xs;
+  line-height: 1;
   color: $text-tertiary-light;
   text-align: left;
   transition: color $dur-fast $ease-standard;
@@ -156,15 +217,13 @@ const textTags = (tags: string[]) => tags || [];
 .like-block {
   display: inline-flex;
   align-items: center;
-  padding: 4rpx $space-3;
-  border-radius: $radius-pill;
-  transition: background-color $dur-fast $ease-standard;
+  // 只留顶部内衬，避免底边被 padding 顶起
+  padding: 4rpx 0 0;
+  line-height: 1;
+  transition: transform $dur-fast $ease-standard;
 
   &:active {
-    background: $bg-muted-light;
-    .dark-theme & {
-      background: $bg-muted-dark;
-    }
+    transform: scale($press-scale-md);
   }
 }
 
@@ -172,7 +231,12 @@ const textTags = (tags: string[]) => tags || [];
   width: 32rpx;
   height: 32rpx;
   margin-right: $space-2;
-  transition: transform $dur-base $ease-spring;
+  color: $brand-red;
+  transition: transform $dur-base $ease-spring, color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+  }
 
   &.is-liked {
     animation: mwp-heart-beat $motion-heart $ease-spring;
@@ -180,7 +244,8 @@ const textTags = (tags: string[]) => tags || [];
 }
 
 .count {
-  font-size: $font-sm + 2rpx;
+  font-size: $font-sm-plus;
+  line-height: 1;
   color: $text-secondary-light;
   font-weight: $weight-medium;
   text-align: left;

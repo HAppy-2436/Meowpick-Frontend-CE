@@ -1,41 +1,25 @@
-
 .course-header-container {
   position: relative;
   z-index: $z-sticky;
 }
 
 .header-card {
-  background-color: $bg-card-light;
+  background: $bg-card-light;
+  border: $border-light;
   border-radius: $radius-card;
   box-shadow: $shadow-card;
   padding: $space-9 $space-7;
   display: flex;
   flex-direction: column;
-  transition: background-color $dur-medium $ease-standard,
-              box-shadow $dur-medium $ease-standard;
+  transition: border-color $dur-medium $ease-standard,
+    box-shadow $dur-medium $ease-standard;
   animation: mwp-fade-up $dur-slow $ease-decelerate backwards;
   position: relative;
   overflow: hidden;
 
-  // 顶部渐变装饰
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4rpx;
-    background: $gradient-brand;
-    opacity: 0;
-    transition: opacity $dur-medium $ease-standard;
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-
   .dark-theme & {
-    background-color: $bg-card-dark;
+    background: $bg-card-dark;
+    border-color: $border-color-medium-dark;
     box-shadow: $shadow-sm-dark;
   }
 }
@@ -61,6 +45,21 @@
       color: $text-primary-dark;
     }
   }
+
+  .contributor {
+    flex-shrink: 0;
+    max-width: 45%;
+    padding-top: 6rpx;
+    font-size: $font-sm;
+    color: $text-tertiary-light;
+    line-height: 1.4;
+    @include ellipsis;
+    transition: color $dur-fast $ease-standard;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
 }
 
 .info-grid {
@@ -72,40 +71,22 @@
     display: flex;
     align-items: center;
     min-width: 0;
-    transition: transform $dur-fast $ease-standard;
-
-    &:active {
-      transform: scale($press-scale-sm);
-    }
 
     // 折叠态不展示图标，仅用标签区分；展开后恢复
     .icon-wrapper {
       display: none;
       @include icon-tile(80rpx, $bg-muted-light, $radius-md);
       margin-right: $space-5;
-      transition: transform $dur-base $ease-spring;
-
-      &:active {
-        transform: scale($press-scale-lg);
-      }
-
-      &.bg-blue { background-color: $tile-blue; }
-      &.bg-green { background-color: $tile-green; }
-      &.bg-orange { background-color: $tile-orange; }
-      &.bg-purple { background-color: $tile-purple; }
 
       .dark-theme & {
-        &.bg-blue { background-color: $tile-blue-dark; }
-        &.bg-green { background-color: $tile-green-dark; }
-        &.bg-orange { background-color: $tile-orange-dark; }
-        &.bg-purple { background-color: $tile-purple-dark; }
+        background: $bg-muted-dark;
       }
 
       .icon {
-        color: $text-secondary-light;
+        color: $brand-red;
 
         .dark-theme & {
-          color: $text-secondary-dark;
+          color: $brand-red-soft;
         }
       }
     }
@@ -159,7 +140,7 @@
           }
 
           &:not(:last-child)::after {
-            content: "、";
+            content: '、';
           }
         }
       }
@@ -202,7 +183,7 @@
   }
 
   .desc-text {
-    font-size: $font-sm + 2rpx;
+    font-size: $font-sm-plus;
     color: $text-secondary-light;
     line-height: 1.6;
     transition: color $dur-fast $ease-standard;
@@ -266,4 +247,10 @@
   font-weight: $weight-medium;
   opacity: 0;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-card {
+    animation: none;
+  }
 }

@@ -1,0 +1,188 @@
+// =====================================================================
+// 引导弹窗统一样式（HomeView 首次引导 / 迁移欢迎、ProfileView 头像引导共用）
+// 用法：在页面 scoped 样式中 `@import '../../styles/guide';`
+// 依赖 tokens / mixins（由全局 additionalData 注入）
+// 结构：.guide-overlay > .guide-content > .guide-header + .guide-steps + .guide-footer
+// =====================================================================
+
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: $bg-overlay-light;
+  z-index: $z-modal + 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-9;
+  box-sizing: border-box;
+  animation: mwp-fade-in $motion-enter-sm $ease-standard backwards;
+
+  .dark-theme & {
+    background-color: $bg-overlay-dark;
+  }
+}
+
+.guide-content {
+  width: 100%;
+  max-width: 600rpx;
+  // 高度超限时在弹窗内部滚动，避免溢出屏幕
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: $bg-card-light;
+  border-radius: $radius-2xl;
+  padding: $space-8 $space-7;
+  box-shadow: $shadow-xl;
+  animation: mwp-bounce-in $motion-heart $ease-spring backwards;
+  transition: background-color $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-xl-dark;
+  }
+}
+
+.guide-header {
+  text-align: center;
+  margin-bottom: $space-7;
+
+  .guide-badge {
+    display: inline-block;
+    font-size: $font-xs;
+    font-weight: $weight-bold;
+    color: $brand-red;
+    background: $brand-red-tint;
+    padding: 2rpx 16rpx;
+    border: 1rpx solid transparent;
+    border-radius: $radius-pill;
+    margin-bottom: $space-3;
+    letter-spacing: 1rpx;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+      background: $brand-ink-800;
+      border-color: $border-color-brand-dark;
+    }
+  }
+
+  .guide-title {
+    display: block;
+    font-size: $font-3xl;
+    font-weight: $weight-black;
+    color: $text-primary-light;
+    margin-bottom: $space-2;
+    text-align: center;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+
+  .guide-subtitle {
+    display: block;
+    font-size: $font-sm-plus;
+    color: $text-tertiary-light;
+    text-align: center;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+.guide-steps {
+  margin-bottom: $space-7;
+}
+
+.guide-step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: $space-6;
+  gap: $space-5;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .step-icon {
+    width: 64rpx;
+    height: 64rpx;
+    background: $brand-red-tint;
+    border: 1rpx solid transparent;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $brand-red;
+    flex-shrink: 0;
+
+    .dark-theme & {
+      background: $brand-ink-800;
+      color: $brand-red-soft;
+      border-color: $border-color-brand-dark;
+    }
+  }
+
+  .step-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  .step-title {
+    font-size: $font-md;
+    font-weight: $weight-semibold;
+    color: $text-primary-light;
+    display: block;
+
+    .dark-theme & {
+      color: $text-primary-dark;
+    }
+  }
+
+  .step-desc {
+    font-size: $font-sm;
+    color: $text-tertiary-light;
+    line-height: 1.5;
+    display: block;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+.guide-footer {
+  .guide-skip {
+    text-align: center;
+    font-size: $font-base;
+    color: $text-tertiary-light;
+    padding: $space-6 0 0;
+    @include pressable($press-scale-sm);
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+
+  .guide-dont-ask {
+    text-align: center;
+    font-size: $font-xs;
+    color: $text-tertiary-light;
+    padding: $space-3 0;
+    margin-top: $space-2;
+
+    .dark-theme & {
+      color: $text-tertiary-dark;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-overlay,
+  .guide-content {
+    animation: none;
+    transition: none;
+  }
+}

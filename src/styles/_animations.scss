@@ -7,7 +7,7 @@
 @keyframes mwp-fade-up {
   from {
     opacity: 0;
-    transform: translate3d(0, 24rpx, 0);
+    transform: translate3d(0, 16rpx, 0);
   }
   to {
     opacity: 1;
@@ -18,7 +18,7 @@
 @keyframes mwp-fade-down {
   from {
     opacity: 0;
-    transform: translate3d(0, -24rpx, 0);
+    transform: translate3d(0, -16rpx, 0);
   }
   to {
     opacity: 1;
@@ -34,7 +34,7 @@
 @keyframes mwp-scale-in {
   from {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -85,11 +85,11 @@
 @keyframes mwp-bounce-in {
   0% {
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.85);
   }
   60% {
     opacity: 1;
-    transform: scale(1.06);
+    transform: scale(1.03);
   }
   100% {
     transform: scale(1);
@@ -97,8 +97,8 @@
 }
 
 @keyframes mwp-pop {
-  0%   { transform: scale(0); opacity: 0; }
-  70%  { transform: scale(1.1); opacity: 1; }
+  0%   { transform: scale(0.85); opacity: 0; }
+  70%  { transform: scale(1.05); opacity: 1; }
   100% { transform: scale(1); }
 }
 
@@ -109,11 +109,6 @@
   50% {
     transform: translateY(-8rpx) scale(1.02);
   }
-}
-
-@keyframes mwp-glow {
-  0%, 100% { box-shadow: 0 8rpx 24rpx rgba(178, 0, 53, 0.25); }
-  50%      { box-shadow: 0 12rpx 32rpx rgba(178, 0, 53, 0.45); }
 }
 
 @keyframes mwp-shake {
@@ -145,6 +140,11 @@
   border-top-color: $brand-red;
   border-radius: 50%;
   animation: mwp-spin $motion-spin linear infinite;
+
+  .dark-theme & {
+    border-color: rgba(255, 77, 106, 0.2);
+    border-top-color: $brand-red-soft;
+  }
 }
 
 .mwp-spinner-sm {
@@ -199,24 +199,24 @@
 
 // 触觉按压（最常用）
 .mwp-pressable {
-  transition: transform $dur-fast $ease-emphasized,
+  transition: transform $dur-fast linear,
               box-shadow $dur-base $ease-standard;
   &:active {
-    transform: scale(0.97);
+    transform: scale($press-scale-sm);
   }
 }
 
 // 小程序 `view` 的 :active 不触发，按压反馈统一走 hover-class="mwp-hover"。
 // 该文件已注入每个组件，故本类在每个组件内都可用。
 .mwp-hover {
-  transform: scale(0.97);
+  transform: scale($press-scale-sm);
   opacity: 0.96;
-  transition: transform $dur-instant $ease-emphasized, opacity $dur-instant $ease-standard;
+  transition: transform $dur-fast linear, opacity $dur-instant $ease-standard;
 }
 .mwp-hover-sm {
-  transform: scale(0.97);
+  transform: scale($press-scale-sm);
   opacity: 0.98;
-  transition: transform $dur-instant $ease-emphasized, opacity $dur-instant $ease-standard;
+  transition: transform $dur-fast linear, opacity $dur-instant $ease-standard;
 }
 
 // 减弱动画（用户系统设置 prefers-reduced-motion）
@@ -241,11 +241,51 @@
 
 // ---------- 全局 placeholder 颜色（深色模式友好） ----------
 // 用法：<input placeholder-class="mwp-placeholder" />
+// 注意：原生 placeholder 不继承宿主 input 的 font-size / font-family，
+// 必须显式声明，否则会按系统默认字体渲染，与聚焦后输入的正文不一致。
 .mwp-placeholder {
   color: $text-placeholder-light;
   font-weight: 400;
+  font-size: $font-base;
+  font-family: inherit;
 }
 .dark-theme .mwp-placeholder {
+  color: $text-placeholder-dark;
+}
+
+// 大号输入框专用 placeholder（宿主 font-size 为 $font-lg，如昵称输入）
+.mwp-placeholder--lg {
+  color: $text-placeholder-light;
+  font-weight: 400;
+  font-size: $font-lg;
+  font-family: inherit;
+}
+.dark-theme .mwp-placeholder--lg {
+  color: $text-placeholder-dark;
+}
+
+// 小号输入框专用 placeholder（宿主 font-size 为 $font-sm，如搜索框）
+.mwp-placeholder--sm {
+  color: $text-placeholder-light;
+  font-weight: 400;
+  font-size: $font-sm;
+  font-family: inherit;
+}
+.dark-theme .mwp-placeholder--sm {
+  color: $text-placeholder-dark;
+}
+
+// 多行 textarea 专用 placeholder：原生 placeholder 不继承宿主 textarea 的
+// font-size / line-height / font-family，只写 color 会导致提示文字与输入
+// 文字大小、位置、字体错位。
+.mwp-placeholder--area {
+  color: $text-placeholder-light;
+  font-weight: 400;
+  font-size: $font-base;
+  line-height: 1.6;
+  font-family: inherit;
+}
+.dark-theme .mwp-placeholder--area {
   color: $text-placeholder-dark;
 }
 
@@ -277,6 +317,9 @@
     background: $bg-card-dark;
     border-color: $border-color-medium-dark;
     color: $text-primary-dark;
+    &:active {
+      border-color: $brand-red-soft;
+    }
   }
 }
 
@@ -287,7 +330,7 @@
   color: $brand-red;
   @include mwp-transition($dur-fast, $ease-standard);
   .dark-theme & {
-    background: $danger-soft;
+    background: rgba(255, 77, 106, 0.14);
     border-color: $brand-red-soft;
     color: $brand-red-soft;
   }

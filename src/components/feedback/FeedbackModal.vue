@@ -1,5 +1,10 @@
 <template>
-  <view v-if="visible" class="feedback-overlay mwp-fade-in" @click="close">
+  <view
+    v-if="visible"
+    class="feedback-overlay mwp-fade-in"
+    :class="themeStore.themeClass"
+    @click="close"
+  >
     <view
       class="feedback-card mwp-bounce-in"
       :class="themeStore.themeClass"
@@ -10,9 +15,12 @@
         <view
           class="feedback-close mwp-pressable"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="close"
-          >×</view
         >
+          <MwpIcon name="x" size="30rpx" />
+        </view>
       </view>
 
       <view class="feedback-body">
@@ -26,6 +34,8 @@
           class="feedback-section mwp-stagger-item"
           :style="{ animationDelay: `${item.delay}ms` }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="handleCopy(item)"
         >
           <view class="feedback-section-header">
@@ -43,7 +53,7 @@
 import { useThemeStore } from '@/config';
 import { CONTACT_INFO, copyToClipboard } from '@/utils/contact-info';
 
-const props = defineProps<{ visible: boolean }>();
+defineProps<{ visible: boolean }>();
 const emit = defineEmits<{ (e: 'update:visible', value: boolean): void }>();
 
 const themeStore = useThemeStore();
@@ -61,17 +71,23 @@ const contactItems: ContactItem[] = [
     label: 'QQ 群',
     value: `群号 ${CONTACT_INFO.qqGroup.number}`,
     delay: 80
-  },
-  { key: 'email', label: '邮箱', value: CONTACT_INFO.email.address, delay: 160 }
+  }
+  // TODO: 邮箱暂未提供，后续有联系方式时再启用
+  // { key: 'email', label: '邮箱', value: CONTACT_INFO.email.address, delay: 160 }
 ];
 
+const copyTextMap: Record<string, string> = {
+  qq: CONTACT_INFO.qqGroup.number,
+  email: CONTACT_INFO.email.address
+};
+
+const copyMsgMap: Record<string, string> = {
+  qq: '已复制群号',
+  email: '已复制邮箱'
+};
+
 const handleCopy = (item: ContactItem) => {
-  const text =
-    item.key === 'qq'
-      ? CONTACT_INFO.qqGroup.number
-      : CONTACT_INFO.email.address;
-  const msg = item.key === 'qq' ? '已复制群号' : '已复制邮箱';
-  copyToClipboard(text, msg);
+  copyToClipboard(copyTextMap[item.key], copyMsgMap[item.key]);
 };
 
 const close = () => {
@@ -90,6 +106,10 @@ const close = () => {
   justify-content: center;
   padding: $space-9;
   box-sizing: border-box;
+
+  &.dark-theme {
+    background: $bg-overlay-dark;
+  }
 }
 
 .feedback-card {
@@ -100,12 +120,12 @@ const close = () => {
   -webkit-overflow-scrolling: touch;
   background: $bg-card-light;
   border-radius: $radius-card;
-  overflow: hidden;
   box-shadow: $shadow-lg;
   transition: background-color $dur-medium $ease-standard;
 
-  .dark-theme & {
+  &.dark-theme {
     background: $bg-card-dark;
+    box-shadow: $shadow-lg-dark;
   }
 }
 
@@ -196,6 +216,10 @@ const close = () => {
   &:active {
     transform: scale($press-scale-md);
     border-color: $brand-red;
+
+    .dark-theme & {
+      border-color: $brand-red-soft;
+    }
   }
 
   &:last-child {

@@ -28,14 +28,14 @@
 
 ## ✨ 功能特性
 
-- 🔍 **课程搜索** — 模糊联想、搜索历史、猜你想搜；支持按 **校区 / 院系 / 分类** 多维筛选与客户端排序
+- 🔍 **课程搜索** — 模糊联想、搜索历史、猜你想搜；支持按 **校区 / 院系 / 分类** 多维筛选
 - 📚 **课程详情** — 课程信息、任课教师、课程评价列表，一键发布吐槽
 - 🏷️ **标签化评价** — 表情标签 + 文字评论（最多 4 个标签），快速表达态度
 - 🗳️ **提案广场** — 发起提案、点赞/投票、按状态与维度筛选，直接跳转搜索词
 - ✅ **管理员工作台** — 提案审批（通过 / 拒绝 / 撤回）与操作记录时间线
 - 👤 **个人中心** — 我的评论与提案历史、昵称修改、反馈入口
 - 🌗 **深色模式** — 全量色彩 Token 适配，一键切换浅色/深色
-- 🎨 **设计 Token 系统** — 122 个 token + mixin + keyframe，主题色集中管理、可校验
+- 🎨 **设计 Token 系统** — 210 个 token + 31 个 mixin + 13 个 keyframe，主题色集中管理、可校验
 
 ---
 
@@ -45,7 +45,7 @@
 |------|------|
 | 框架 | uni-app（Vue 3 + `<script setup>` + TypeScript） |
 | 构建 | Vite + `@dcloudio/vite-plugin-uni` |
-| 样式 | SCSS 设计 Token 系统 + Tailwind CSS + NutUI + Vant Weapp |
+| 样式 | SCSS 设计 Token 系统 + NutUI（旧版「原始版」皮肤另用 Tailwind CSS） |
 | 状态 | Pinia + `pinia-plugin-unistorage`（持久化） |
 | 请求 | Axios（`uni.request` 适配器） |
 | API 类型 | `swagger-typescript-api` 从 `src/swagger.json` 自动生成 |
@@ -58,7 +58,7 @@
 
 ## 🚀 快速开始
 
-**环境要求**：Node.js >= 16（推荐 20 LTS）、yarn 1.x、微信开发者工具。
+**环境要求**：Node.js >= 20（见 `.nvmrc`）、yarn 1.x、微信开发者工具。
 
 ```bash
 yarn install            # 安装依赖
@@ -89,7 +89,7 @@ yarn build:mp-weixin    # → dist/build/mp-weixin
 | `yarn theme:gen` / `yarn theme:check` | 生成 / 校验主题色 Token |
 | `yarn release` | 版本发布（release-it + CHANGELOG） |
 
-**CI**：推送 `v*.*.*` tag 时触发 `.github/workflows/upgrade.yml`，执行 `install → api → type-check → build:mp-weixin → 上传`。
+**CI**：推送 `v*.*.*` tag 时触发 `.github/workflows/upgrade.yml`，执行 `install → api → type-check → lint → build:mp-weixin → 上传`。
 
 ---
 
@@ -100,18 +100,19 @@ new/
 ├── src/
 │   ├── api/               # swagger-typescript-api 生成（勿手改）
 │   ├── components/        # 全局组件（自动导入，文件名 PascalCase）
-│   │   ├── home/          # 首页 HomeView / UpdateLogTimeline
+│   │   ├── home/          # 首页 HomeView
 │   │   ├── find/          # 搜索 FindView
-│   │   ├── profile/       # 个人中心 ProfileView
+│   │   ├── profile/       # 个人中心 ProfileView / UpdateLogTimeline
 │   │   ├── course/        # 课程详情头部与评论
-│   │   ├── choose/        # 选择器
-│   │   └── common/        # 通用组件（按钮/弹窗/空态…）
+│   │   ├── choose/        # 课程卡片选择器
+│   │   ├── proposal/      # 提案日志聚合/原始视图
+│   │   ├── feedback/      # 反馈弹窗
+│   │   └── common/        # 通用组件（MwpButton / 弹窗 / 空态 / 骨架屏…）
 │   ├── composables/       # useCourse / useChoose / useFind / useMenuButton 等
 │   ├── config/            # Pinia store + Axios 客户端
 │   ├── pages/             # 页面（模块/页面.vue 扁平式）
 │   ├── styles/            # 设计 Token / mixin / 动画
 │   ├── utils/             # 工具函数、常量、类型
-│   ├── wxcomponents/      # Vant Weapp 组件
 │   ├── pages.json         # 路由与窗口配置
 │   ├── manifest.json      # 小程序配置
 │   └── swagger.json       # API 契约（唯一事实来源）
@@ -132,7 +133,7 @@ new/
 约定：
 
 - 颜色一律使用 Token（如 `$brand-red`、`$bg-card-light`），**禁止硬编码色值**
-- 不使用原生 `<button>`，统一用 `<view class="mwp-pressable">` 实现可点击反馈
+- 可点击元素统一用通用组件 `<MwpButton>` 或 `<view class="mwp-pressable">`，**不使用原生 `<button>`**（需要 `open-type` 时除外）
 - 所有样式需同时适配 **暗色模式**（`themeStore.themeClass` + `.dark-theme &` 嵌套）
 
 ---

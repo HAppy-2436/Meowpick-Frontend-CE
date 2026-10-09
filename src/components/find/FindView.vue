@@ -16,9 +16,11 @@
             width: contentHeight + 'px'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="goBack"
         >
-          <BackBtn />
+          <BackBtn :intercept="true" />
         </view>
 
         <!-- 中间：搜索框（高度 = 胶囊高度，见 useMenuButton.contentHeight）-->
@@ -27,14 +29,14 @@
           :class="{ 'is-focused': isFocused }"
           :style="{ height: contentHeight + 'px' }"
         >
-          <text class="search-icon">🔍</text>
+          <MwpIcon name="search" size="34rpx" class="search-icon" />
           <input
             v-model="searchText"
             class="search-input"
             :placeholder="placeHolder"
             :focus="!isResultMode"
             confirm-type="search"
-            placeholder-class="placeholder-style"
+            placeholder-class="mwp-placeholder"
             @focus="onInputFocus"
             @blur="onInputBlur"
             @input="onInputChange"
@@ -44,32 +46,48 @@
             v-if="searchText"
             class="clear-icon"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="clearSearch"
           >
-            <text class="clear-text">×</text>
+            <MwpIcon name="x" size="26rpx" class="clear-text" />
+          </view>
+          <!-- 搜索框内部右侧：直接点击搜索（手机端聚焦时显示；PC 端改用右侧独立常驻按钮） -->
+          <view
+            v-if="isFocused && viewport.hasCapsule"
+            class="search-submit"
+            hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
+            @click="handleSearch"
+          >
+            <text>搜索</text>
           </view>
         </view>
 
-        <!-- 右侧搜索按钮：仅在没有系统胶囊（PC 端）时出现，
-             手机/平板右上角被胶囊占用，放不下 -->
-        <view
+        <!-- PC 端：独立常驻的搜索按钮（无系统胶囊时，搜索框右端为其让位） -->
+        <MwpButton
           v-if="!viewport.hasCapsule"
-          class="nav-search-btn"
-          hover-class="mwp-hover"
+          class="search-pc-btn"
+          tone="brand"
+          size="md"
           @click="handleSearch"
-          >搜索</view
+          >搜索</MwpButton
         >
       </view>
     </view>
 
     <!-- 模糊搜索建议：紧贴输入框下方的浮层 -->
     <view
-      v-if="searchText && showSuggest"
+      v-if="searchText && showSuggest && (isLoading || suggestList.length)"
       class="suggest-panel"
       :style="{ top: headerHeight + 'px' }"
     >
       <!-- 等待建议返回时先显示加载态，避免空白白条闪现 -->
-      <view v-if="!suggestList.length" class="suggest-panel__loading">
+      <view
+        v-if="isLoading && !suggestList.length"
+        class="suggest-panel__loading"
+      >
         <view class="suggest-panel__spinner" />
         <text class="suggest-panel__loading-text">请稍候...</text>
       </view>
@@ -81,21 +99,19 @@
           class="suggest-panel__item mwp-stagger-item"
           :style="{ animationDelay: `${Math.min(index * 60, 300)}ms` }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="handleSuggestClick(item)"
         >
           <text class="suggest-panel__label">{{ item.name }}</text>
-          <text class="suggest-panel__hint">
-            {{
-              item.type === 'input'
-                ? '（直接搜索）'
-                : `（${suggestLabel(item.type)}）`
-            }}
+          <text v-if="suggestLabel(item.type)" class="suggest-panel__hint">
+            {{ `（${suggestLabel(item.type)}）` }}
           </text>
         </view>
       </template>
     </view>
 
-    <!-- 筛选条（仅结果模式，移至dynamic-header外部） -->
+    <!-- 筛选条（仅结果模式，移至 dynamic-header 外部） -->
     <view
       v-if="isResultMode"
       class="filter-bar-wrapper"
@@ -111,14 +127,16 @@
             'is-open': openDropdown === 'campus' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('campus')"
         >
           <text class="chip-text">{{
             filterState.campuses.length
-              ? filterState.campuses.map((c) => c.replace('校区', '')).join('+')
+              ? filterState.campuses.join('+')
               : '校区'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
           class="filter-chip"
@@ -128,6 +146,8 @@
             'is-open': openDropdown === 'department' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('department')"
         >
           <text class="chip-text">{{
@@ -137,7 +157,7 @@
                 : filterState.departments[0]
               : '院系'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
           class="filter-chip"
@@ -147,6 +167,8 @@
             'is-open': openDropdown === 'category' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('category')"
         >
           <text class="chip-text">{{
@@ -156,15 +178,17 @@
                 : filterState.categories[0]
               : '分类'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
           class="filter-chip filter-chip--expand"
           :class="{ 'is-open': openDropdown === 'all' }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('all')"
         >
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
       </view>
 
@@ -188,8 +212,10 @@
                 class="fd-tag"
                 :class="{ active: filterState.campuses.includes(campus) }"
                 hover-class="mwp-hover"
+                :hover-start-time="0"
+                :hover-stay-time="0"
                 @click="toggleCampus(campus)"
-                >{{ campus.replace('校区', '') }}</view
+                >{{ campus }}</view
               >
             </view>
           </view>
@@ -211,9 +237,12 @@
                 <view
                   class="fd-selected-clear"
                   hover-class="mwp-hover-sm"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="removeDepartment(d)"
-                  >×</view
                 >
+                  <MwpIcon name="x" size="24rpx" />
+                </view>
               </view>
             </view>
             <view class="fd-search">
@@ -221,7 +250,7 @@
                 v-model="deptKeyword"
                 class="fd-search-input"
                 placeholder="搜索院系..."
-                placeholder-class="fd-placeholder"
+                placeholder-class="mwp-placeholder--sm"
                 @input="onDeptSearch"
               />
               <view v-if="deptResults.length" class="fd-suggest-list">
@@ -230,6 +259,8 @@
                   :key="item.value"
                   class="fd-suggest-item"
                   hover-class="mwp-hover"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="selectDept(item)"
                   >{{ item.label || item.value }}</view
                 >
@@ -251,9 +282,12 @@
                 <view
                   class="fd-selected-clear"
                   hover-class="mwp-hover-sm"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="removeCategory(cat)"
-                  >×</view
                 >
+                  <MwpIcon name="x" size="24rpx" />
+                </view>
               </view>
             </view>
             <view class="fd-search">
@@ -261,7 +295,7 @@
                 v-model="categoryKeyword"
                 class="fd-search-input"
                 placeholder="搜索分类..."
-                placeholder-class="fd-placeholder"
+                placeholder-class="mwp-placeholder--sm"
                 @input="onCategorySearch"
               />
               <view v-if="categoryResults.length" class="fd-suggest-list">
@@ -270,6 +304,8 @@
                   :key="item.value"
                   class="fd-suggest-item"
                   hover-class="mwp-hover"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="selectCategory(item)"
                   >{{ item.label || item.value }}</view
                 >
@@ -278,26 +314,28 @@
           </view>
         </view>
         <view class="fd-footer">
-          <view
-            class="fd-btn fd-btn--reset"
-            hover-class="mwp-hover"
-            @click="resetFilters"
-            >重置</view
+          <MwpButton class="fd-btn" tone="plain" size="sm" @click="resetFilters"
+            >重置</MwpButton
           >
-          <view
+          <MwpButton
             class="fd-btn fd-btn--confirm"
-            hover-class="mwp-hover"
+            tone="brand"
+            size="sm"
             @click="applyFilters"
-            >确定</view
+            >确定</MwpButton
           >
         </view>
       </view>
     </view>
 
     <!-- 内容区域 -->
-    <scroll-view
-      scroll-y
+    <MwpScrollView
+      v-model:refreshing="refreshing"
       class="content-scroll"
+      :enabled="isResultMode"
+      :content-offset="firstCardTop"
+      :indicator-min="refreshTopOffset"
+      @refresh="onRefresh"
       @scroll="onScroll"
       @scrolltolower="onScrollToLower"
     >
@@ -311,11 +349,24 @@
           :count="3"
         />
 
+        <!-- 加载失败（仅首屏无数据时整页展示） -->
+        <EmptyState
+          v-else-if="error && groupedRows.courses.length === 0"
+          tone="danger"
+          title="加载失败"
+          :min-height="emptyMinHeight"
+        >
+          <template #action>
+            <MwpButton tone="brand" @click="doSearch(true)">重试</MwpButton>
+          </template>
+        </EmptyState>
+
         <!-- 空状态：搜索无结果 -->
         <EmptyState
           v-else-if="!loading && groupedRows.courses.length === 0"
           title="没有找到相关课程"
           desc="换个关键词试试，或去广场看看"
+          :min-height="emptyMinHeight"
         >
           <template #action>
             <MwpButton tone="brand" @click="goToProposalPlaza"
@@ -332,11 +383,11 @@
               :key="item.id"
               class="result-card"
               hover-class="result-hover"
+              :hover-start-time="0"
+              :hover-stay-time="0"
               @click="onResultClick(item)"
             >
-              <view class="result-card-wrapper course-card">
-                <ChooseCourse :data="item" variant="course" />
-              </view>
+              <ChooseCourse :data="item" />
             </view>
           </view>
 
@@ -360,7 +411,9 @@
       <view v-else class="empty-section">
         <!-- Add Comment Search Guide Banner -->
         <view v-if="mode === 'add-comment'" class="search-guide-banner">
-          <text>请搜索并选择你要吐槽的课程</text>
+          <text class="search-guide-banner__text">
+            请搜索并选择你要吐槽的课程
+          </text>
         </view>
 
         <!-- 历史记录 -->
@@ -369,10 +422,11 @@
           <view
             class="clear-history"
             hover-class="mwp-hover"
-            @click="clearHistory"
+            :hover-start-time="0"
+            :hover-stay-time="0"
+            @click="showClearConfirm = true"
           >
-            🗑️
-            <!-- 暂时用 emoji 替代图标 -->
+            <MwpIcon name="trash-2" size="34rpx" />
           </view>
         </view>
 
@@ -382,6 +436,8 @@
             :key="index"
             class="tag-item"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="clickHistory(tag)"
           >
             {{ tag }}
@@ -402,30 +458,43 @@
               :key="index"
               class="recommend-item"
               hover-class="result-hover"
+              :hover-start-time="0"
+              :hover-stay-time="0"
               @click="clickRecommend(name)"
             >
               <view class="recommend-icon">
-                <text class="mini-icon">🔍</text>
+                <MwpIcon name="search" size="30rpx" class="mini-icon" />
               </view>
               <text class="recommend-word">{{ name }}</text>
             </view>
           </view>
         </template>
       </view>
-    </scroll-view>
+    </MwpScrollView>
+
+    <!-- 清空搜索历史确认 -->
+    <MwpConfirmDialog
+      v-model:visible="showClearConfirm"
+      title="清空搜索历史"
+      description="清空后无法恢复，确定清空全部搜索历史吗？"
+      confirm-text="清空"
+      tone="danger"
+      @confirm="clearHistory"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
 import BackBtn from '@/components/common/BackBtn.vue';
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
 import { http, useThemeStore } from '@/config';
+import { waitForLogin } from '@/utils/init';
 import { useScrollDirection } from '@/composables/useScrollDirection';
 import { useMenuButton } from '@/composables/useMenuButton';
 import { useViewport } from '@/composables/useViewport';
 import { useInput, useSuggest } from '@/composables/useFind';
 import { useChoose } from '@/composables/useChoose';
+import { showInfo } from '@/composables/useStatus';
 const themeStore = useThemeStore();
 import type {
   DtoSearchHistoryVO,
@@ -484,7 +553,7 @@ const _resumeGuard = ref(false);
 // Import searchText and placeHolder from useInput
 const { searchText, placeHolder } = useInput();
 
-const { suggestList, suggestContent } = useSuggest(searchText);
+const { suggestList, suggestContent, isLoading } = useSuggest(searchText);
 
 const {
   keyword: resultKeyword,
@@ -492,6 +561,7 @@ const {
   rows,
   page,
   loading,
+  error,
   reachedEnd,
   doSearch,
   filterForm,
@@ -519,16 +589,18 @@ const resumeState = () => {
     if (!rows.value || rows.value.length === 0) {
       performSearch(savedState.searchText);
     }
+  } else if (guessList.value.length === 0) {
+    // 无待恢复状态（首次进入 / 上次请求未拿到数据）时兜底拉取「猜你想搜」
+    waitForLogin().then(fetchGuessProposals);
   }
+  // 状态只消费一次：从详情页返回时恢复，之后再次进入搜索框不再带上旧关键词
+  uni.removeStorageSync('find_page_state');
 };
 
 // 暴露给父组件
 defineExpose({
   resumeState
 });
-
-// Restore from Storage on Show (Might not trigger in Component)
-// onShow(() => { ... }) // Removed component level onShow to define proper flow from page
 
 const groupedRows = computed(() => {
   const list = rows.value || [];
@@ -557,11 +629,17 @@ let deptTimer: ReturnType<typeof setTimeout> | null = null;
 let categoryTimer: ReturnType<typeof setTimeout> | null = null;
 
 const toggleDropdown = (name: string) => {
-  openDropdown.value = openDropdown.value === name ? '' : name;
+  // 再次点击已展开的筛选项 -> 视为「确定」，应用当前选择
+  if (openDropdown.value === name) {
+    applyFilters();
+    return;
+  }
+  openDropdown.value = name;
 };
 
 const closeDropdown = () => {
-  openDropdown.value = '';
+  // 点击空白处关闭筛选栏 -> 视为「确定」，应用当前选择
+  applyFilters();
 };
 
 const toggleCampus = (c: string) => {
@@ -637,11 +715,42 @@ const resetFilters = () => {
   if (isAll || openDropdown.value === 'category') filterState.categories = [];
 };
 
+// 输入框有内容但没有任何模糊匹配项时，提示并清空输入框，阻止本次应用
+const blockUnmatchedFieldInput = () => {
+  const unmatched: string[] = [];
+  if (deptKeyword.value.trim() && deptResults.value.length === 0) {
+    deptKeyword.value = '';
+    deptResults.value = [];
+    unmatched.push('院系');
+  }
+  if (categoryKeyword.value.trim() && categoryResults.value.length === 0) {
+    categoryKeyword.value = '';
+    categoryResults.value = [];
+    unmatched.push('分类');
+  }
+  if (!unmatched.length) return false;
+  showInfo(`未找到匹配的${unmatched.join('、')}`);
+  return true;
+};
+
+const sameStringSet = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((x) => b.includes(x));
+
+// 编辑中的筛选与已应用的筛选是否一致
+const filtersUnchanged = () =>
+  sameStringSet(filterState.campuses, filterForm.campus) &&
+  sameStringSet(filterState.departments, filterForm.department) &&
+  sameStringSet(filterState.categories, filterForm.category);
+
 const applyFilters = () => {
+  if (blockUnmatchedFieldInput()) return;
   openDropdown.value = '';
+  const unchanged = filtersUnchanged();
   filterForm.campus = [...filterState.campuses];
   filterForm.department = [...filterState.departments];
   filterForm.category = [...filterState.categories];
+  // 筛选没变化：不重搜、不清空结果，保留当前滚动位置
+  if (unchanged) return;
   if (searchText.value && isResultMode.value) performSearch(searchText.value);
 };
 
@@ -670,7 +779,6 @@ const searchBarWrapperStyle = refinedSearchBarWrapperStyle;
 const { isScrollingDown, onScroll: handleScrollDirection } =
   useScrollDirection(30);
 const isFilterHidden = ref(false);
-let lastScrollTop = 0;
 
 // 筛选条实际高度 = 上下 padding(12rpx*2) + 胶囊高度(56rpx)
 const FILTER_BAR_HEIGHT = computed(() => (viewport.width / 750) * 80);
@@ -682,18 +790,39 @@ const FILTER_BAR_TOP_OFFSET = computed(() => (viewport.width / 750) * 20);
 const FIRST_CARD_GAP = computed(() =>
   Math.max(0, SEARCH_BAR_PADDING_BOTTOM.value - (viewport.width / 750) * 12)
 );
-const contentPaddingTop = computed(() => {
-  if (!isResultMode.value) return headerHeight.value + 'px';
+// 第一张卡片距滚动区顶部的高度（可滚动占位块的高度）
+const firstCardTop = computed(() => {
   const filterHeight = isFilterHidden.value ? 0 : FILTER_BAR_HEIGHT.value;
   const filterOffset = isFilterHidden.value ? 0 : FILTER_BAR_TOP_OFFSET.value;
   return (
-    headerHeight.value +
-    filterOffset +
-    filterHeight +
-    FIRST_CARD_GAP.value +
-    'px'
+    headerHeight.value + filterOffset + filterHeight + FIRST_CARD_GAP.value
   );
 });
+const contentPaddingTop = computed(() =>
+  isResultMode.value ? firstCardTop.value + 'px' : headerHeight.value + 'px'
+);
+// 搜索结果页空状态：相对「整个页面」垂直居中。
+// 空状态排在 content-spacer（高 firstCardTop）之后，故其中心 =
+// firstCardTop + minHeight/2，令其等于 viewport.height/2 即可。
+const emptyMinHeight = computed(() =>
+  Math.max(0, viewport.height - firstCardTop.value * 2)
+);
+
+// 松手刷新指示器的下限：筛选栏下沿
+const refreshTopOffset = computed(
+  () =>
+    headerHeight.value + FILTER_BAR_TOP_OFFSET.value + FILTER_BAR_HEIGHT.value
+);
+const refreshing = ref(false);
+const onRefresh = () => {
+  if (!isResultMode.value || !searchText.value.trim()) {
+    refreshing.value = false;
+    return;
+  }
+  doSearch(true).finally(() => {
+    refreshing.value = false;
+  });
+};
 
 interface ScrollDetail {
   detail?: { scrollTop?: number };
@@ -784,8 +913,9 @@ function fetchGuessProposals() {
     });
 }
 
-onMounted(() => {
+onMounted(async () => {
   fetchSearchHistory();
+  await waitForLogin();
   fetchGuessProposals();
 });
 
@@ -794,16 +924,14 @@ onUnmounted(() => {
   if (deptTimer) clearTimeout(deptTimer);
   if (categoryTimer) clearTimeout(categoryTimer);
   if (tipTimer) clearTimeout(tipTimer);
+  if (blurCloseTimer) clearTimeout(blurCloseTimer);
 });
 
 // 方法定义
 const goBack = () => {
-  // If in result mode, go back to explore mode
+  // 结果模式：不返回上一页，等同点击搜索框的叉，清空搜索栏回到搜索页
   if (isResultMode.value) {
-    isResultMode.value = false;
-    showSuggest.value = false;
-    // searchText.value = ''; // Keep text to allow refinement
-    uni.removeStorageSync('find_page_state'); // Clear stored state
+    clearSearch();
     return;
   }
 
@@ -853,15 +981,15 @@ const onInputFocus = () => {
 
   // 结果页聚焦时，直接用当前关键词立即搜一次
   if (isResultMode.value && searchText.value) {
-    suggestContent(0);
+    suggestContent();
   }
 };
 
 const onInputBlur = () => {
-  isFocused.value = false;
-  // 延迟收起，避免点击建议项时因失焦先行卸载导致点击丢失
+  // 延迟收起，避免点击建议项 / 搜索按钮时因失焦先行卸载导致点击丢失
   if (blurCloseTimer) clearTimeout(blurCloseTimer);
   blurCloseTimer = setTimeout(() => {
+    isFocused.value = false;
     showSuggest.value = false;
     blurCloseTimer = null;
   }, 200);
@@ -875,7 +1003,7 @@ const onInputChange = () => {
   }
   suggestDebounceTimer = setTimeout(() => {
     if (searchText.value && searchText.value.length > 0) {
-      suggestContent(0);
+      suggestContent();
     }
   }, SUGGEST_DEBOUNCE_MS);
 };
@@ -885,6 +1013,7 @@ const performSearch = (keyword: string) => {
   if (!keyword) return;
 
   // 收起建议浮层
+  isFocused.value = false;
   showSuggest.value = false;
   if (blurCloseTimer) {
     clearTimeout(blurCloseTimer);
@@ -916,7 +1045,8 @@ const performSearch = (keyword: string) => {
   doSearch(true);
 };
 
-// 清空历史记录
+// 清空历史记录（需二次确认）
+const showClearConfirm = ref(false);
 const clearHistory = () => {
   historyList.value = [];
   uni.removeStorageSync('searchHistory');
@@ -977,9 +1107,9 @@ const goToProposalPlaza = () => {
 // 提案卡片点击
 const clickProposal = (proposal: MixedResult) => {
   const dataStr = encodeURIComponent(JSON.stringify(proposal));
-  // 强制跳转到 course/proposal-detail
+  // 强制跳转到 proposal/proposal-detail
   uni.navigateTo({
-    url: `/pages/course/proposal-detail?data=${dataStr}`,
+    url: `/pages/proposal/proposal-detail?data=${dataStr}`,
     fail: (err) => {
       console.error('[FindPage] Jump to proposal failed:', err);
     }
@@ -1026,27 +1156,7 @@ const clickCourse = (course: MixedResult) => {
   jump(course);
 };
 
-// 组件挂载后，检查是否有存储的搜索状态
-onShow(() => {
-  // 检查是否有存储的搜索状态
-  const savedState = uni.getStorageSync('find_page_state');
-  if (savedState && savedState.searchText) {
-    searchText.value = savedState.searchText;
-    // 恢复结果模式
-    isResultMode.value = true;
-    showSuggest.value = false;
-    _resumeGuard.value = true; // 设置保护标记，防止 onInputFocus 误切模式
-
-    // 可选：如果不希望每次回来都重新搜索，可以不调用 performSearch
-    // 但如果不调用，列表可能是空的（因为页面被销毁了？）
-    // 如果 find 页面作为 TabBar 页面，组件可能并未销毁，状态还在
-    // 但如果从详情页返回，onShow 会触发
-    // 如果 rows 还在，就不需要重新搜索
-    if ((!rows.value || rows.value.length === 0) && searchText.value) {
-      performSearch(searchText.value);
-    }
-  }
-});
+// 页面级 onShow 会调用 resumeState()，此处不再注册组件级 onShow（不可靠且重复）。
 
 // 点击历史记录
 const clickHistory = (tag: string) => {

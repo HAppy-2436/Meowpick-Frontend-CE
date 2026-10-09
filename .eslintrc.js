@@ -68,7 +68,9 @@ module.exports = {
       }
     ],
     "vue/prefer-import-from-vue": "error",
-    "import/no-empty-named-blocks": "error"
+    "import/no-empty-named-blocks": "error",
+    // 小程序原生 slot（如 scroll-view 的 slot="refresher"）依赖该写法，非 Vue 废弃用法
+    "vue/no-deprecated-slot-attribute": "off"
   },
   settings: {
     "import/resolver": {

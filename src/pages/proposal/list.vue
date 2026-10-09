@@ -17,12 +17,12 @@
           :class="{ 'is-focused': isFocused }"
           :style="{ height: contentHeight + 'px' }"
         >
-          <text class="search-icon">🔍</text>
+          <MwpIcon name="search" size="34rpx" class="search-icon" />
           <input
             v-model="keyword"
             class="search-input"
-            placeholder="搜索课程或教师"
-            placeholder-class="placeholder-style"
+            placeholder="搜索课程、教师"
+            placeholder-class="mwp-placeholder"
             :focus="false"
             confirm-type="search"
             @focus="isFocused = true"
@@ -34,19 +34,22 @@
             v-if="keyword"
             class="clear-icon"
             hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
             @click="clearSearch"
           >
-            <text class="clear-text">×</text>
+            <MwpIcon name="x" size="26rpx" class="clear-text" />
           </view>
         </view>
 
-        <!-- 右侧搜索按钮：仅在没有系统胶囊（PC 端）时出现 -->
-        <view
+        <!-- PC 端：独立常驻的搜索按钮（无系统胶囊时，搜索框右端为其让位） -->
+        <MwpButton
           v-if="!viewport.hasCapsule"
-          class="nav-search-btn"
-          hover-class="mwp-hover"
+          class="search-pc-btn"
+          tone="brand"
+          size="md"
           @click="doSearch(true)"
-          >搜索</view
+          >搜索</MwpButton
         >
       </view>
     </view>
@@ -66,14 +69,14 @@
             'is-open': openDropdown === 'campus' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('campus')"
         >
           <text class="chip-text">{{
-            filterForm.campus.length
-              ? filterForm.campus.map((c) => c.replace('校区', '')).join('+')
-              : '校区'
+            filterForm.campus.length ? filterForm.campus.join('+') : '校区'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
           class="filter-chip"
@@ -83,6 +86,8 @@
             'is-open': openDropdown === 'department' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('department')"
         >
           <text class="chip-text">{{
@@ -92,7 +97,7 @@
                 : filterForm.department[0]
               : '院系'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
           class="filter-chip"
@@ -102,6 +107,8 @@
             'is-open': openDropdown === 'category' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('category')"
         >
           <text class="chip-text">{{
@@ -111,10 +118,10 @@
                 : filterForm.category[0]
               : '分类'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
-          v-if="isAdmin"
+          v-if="isAdminView"
           class="filter-chip"
           style="flex: 1 1 auto; min-width: 0"
           :class="{
@@ -122,6 +129,8 @@
             'is-open': openDropdown === 'status' || openDropdown === 'all'
           }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('status')"
         >
           <text class="chip-text">{{
@@ -129,15 +138,17 @@
               ? filterForm.status.map((s) => statusLabel(s)).join('+')
               : '状态'
           }}</text>
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
         <view
           class="filter-chip filter-chip--expand"
           :class="{ 'is-open': openDropdown === 'all' }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleDropdown('all')"
         >
-          <text class="chip-arrow">▾</text>
+          <MwpIcon name="chevron-down" size="24rpx" class="chip-arrow" />
         </view>
       </view>
 
@@ -161,6 +172,8 @@
                 class="fd-tag"
                 :class="{ active: filterForm.campus.includes(c) }"
                 hover-class="mwp-hover"
+                :hover-start-time="0"
+                :hover-stay-time="0"
                 @click="toggleFilter('campus', c)"
                 >{{ c }}</view
               >
@@ -181,9 +194,12 @@
                 <view
                   class="fd-selected-clear"
                   hover-class="mwp-hover-sm"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="toggleFilterArray('department', d)"
-                  >×</view
                 >
+                  <MwpIcon name="x" size="24rpx" />
+                </view>
               </view>
             </view>
             <view class="fd-search">
@@ -191,7 +207,7 @@
                 v-model="deptKeyword"
                 class="fd-search-input"
                 placeholder="搜索院系..."
-                placeholder-class="fd-placeholder"
+                placeholder-class="mwp-placeholder--sm"
                 @input="onDeptSearch"
               />
               <view v-if="deptResults.length" class="fd-suggest-list">
@@ -200,6 +216,8 @@
                   :key="item.value"
                   class="fd-suggest-item"
                   hover-class="mwp-hover"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="selectDept(item)"
                   >{{ item.label || item.value }}</view
                 >
@@ -221,9 +239,12 @@
                 <view
                   class="fd-selected-clear"
                   hover-class="mwp-hover-sm"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="toggleFilterArray('category', cat)"
-                  >×</view
                 >
+                  <MwpIcon name="x" size="24rpx" />
+                </view>
               </view>
             </view>
             <view class="fd-search">
@@ -231,7 +252,7 @@
                 v-model="categoryKeyword"
                 class="fd-search-input"
                 placeholder="搜索分类..."
-                placeholder-class="fd-placeholder"
+                placeholder-class="mwp-placeholder--sm"
                 @input="onCategorySearch"
               />
               <view v-if="categoryResults.length" class="fd-suggest-list">
@@ -240,6 +261,8 @@
                   :key="item.value"
                   class="fd-suggest-item"
                   hover-class="mwp-hover"
+                  :hover-start-time="0"
+                  :hover-stay-time="0"
                   @click="selectCategory(item)"
                   >{{ item.label || item.value }}</view
                 >
@@ -248,7 +271,8 @@
           </view>
           <view
             v-if="
-              isAdmin && (openDropdown === 'status' || openDropdown === 'all')
+              isAdminView &&
+              (openDropdown === 'status' || openDropdown === 'all')
             "
             class="fd-group"
           >
@@ -260,6 +284,8 @@
                 class="fd-tag"
                 :class="{ active: filterForm.status.includes(s.value) }"
                 hover-class="mwp-hover"
+                :hover-start-time="0"
+                :hover-stay-time="0"
                 @click="toggleFilter('status', s.value)"
                 >{{ s.label }}</view
               >
@@ -267,28 +293,29 @@
           </view>
         </view>
         <view class="fd-footer">
-          <view
-            class="fd-btn fd-btn--reset"
-            hover-class="mwp-hover"
-            @click="resetFilters"
-            >重置</view
+          <MwpButton class="fd-btn" tone="plain" size="sm" @click="resetFilters"
+            >重置</MwpButton
           >
-          <view
+          <MwpButton
             class="fd-btn fd-btn--confirm"
-            hover-class="mwp-hover"
+            tone="brand"
+            size="sm"
             @click="applyFilters"
-            >确定</view
+            >确定</MwpButton
           >
         </view>
       </view>
     </view>
 
     <!-- 内容区 -->
-    <scroll-view
-      scroll-y
+    <MwpScrollView
+      v-model:refreshing="refreshing"
       class="content-scroll"
       enhanced
       :show-scrollbar="false"
+      :content-offset="firstCardTop"
+      :indicator-min="refreshTopOffset"
+      @refresh="onRefresh"
       @scroll="onScroll"
       @scrolltolower="loadMore"
     >
@@ -302,11 +329,24 @@
         class="skeleton-wrap"
       />
 
+      <!-- 加载失败（仅首屏无数据时整页展示） -->
+      <EmptyState
+        v-else-if="error && proposals.length === 0"
+        tone="danger"
+        title="加载失败"
+        :min-height="emptyMinHeight"
+      >
+        <template #action>
+          <MwpButton tone="brand" @click="fetchProposals(1)">重试</MwpButton>
+        </template>
+      </EmptyState>
+
       <!-- 空状态 -->
       <EmptyState
         v-else-if="!loading && proposals.length === 0"
         title="暂无提案"
-        desc="快来发起第一个吧"
+        desc="投票中的提案会显示在这里；通过的提案已上架为课程"
+        :min-height="emptyMinHeight"
       >
         <template #action>
           <MwpButton tone="brand" @click="goToPropose">发起提案</MwpButton>
@@ -320,94 +360,122 @@
           :key="item.id"
           class="result-card"
           hover-class="result-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           :style="{ animationDelay: `${Math.min(idx * 60, 300)}ms` }"
           @click="goToDetail(item)"
         >
-          <view class="result-card-wrapper proposal-card">
-            <view class="proposal-content">
-              <view class="proposal-row-top">
-                <text class="proposal-name">{{ item.courseName }}</text>
-                <StatusBadge
-                  v-if="item.status"
-                  :status="item.status"
-                  :label="statusLabel(item.status)"
-                  pill
-                />
-              </view>
-              <view class="proposal-row-middle">
-                <view v-if="item.teachers" class="proposal-info-item">
-                  <image src="@/images/teacher-icon.png" class="info-icon" />
-                  <text>{{ item.teachers }}</text>
-                </view>
-                <view v-if="item.department" class="proposal-info-item">
-                  <image src="@/images/depart-icon.png" class="info-icon" />
-                  <text>{{ item.department }}</text>
-                </view>
-                <view v-if="item.campus" class="proposal-info-item">
-                  <image src="@/images/campus-icon.png" class="info-icon" />
-                  <text>{{ item.campus }}</text>
-                </view>
-              </view>
-              <view v-if="item.contributor" class="proposal-row-contributor">
-                <text class="contributor-text"
-                  >贡献者：{{ item.contributor }}</text
-                >
-              </view>
-            </view>
-            <!-- 管理员操作 -->
-            <view v-if="isAdmin && adminMode" class="admin-actions" @click.stop>
-              <template v-if="item.status === 'pending'">
-                <view
-                  class="admin-btn admin-btn--approve"
-                  hover-class="mwp-hover"
-                  @click="handleApprove(item)"
-                  >通过</view
-                >
-                <view
-                  class="admin-btn admin-btn--reject"
-                  hover-class="mwp-hover"
-                  @click="handleReject(item)"
-                  >拒绝</view
-                >
-              </template>
+          <CourseCard
+            :name="item.courseName"
+            :teachers="item.teachers"
+            :department="item.department"
+          >
+            <template #top-right>
               <view
-                v-else
-                class="admin-btn admin-btn--withdraw"
-                hover-class="mwp-hover"
-                @click="handleWithdraw(item)"
+                v-if="item.hasRevision"
+                class="revision-tag"
+                :hover-stop-propagation="true"
               >
-                {{ item.status === 'approved' ? '撤回审批' : '撤回' }}
+                <text>已修订</text>
               </view>
-            </view>
-            <!-- 已通过：查看课程 -->
-            <view
-              v-if="item.status === 'approved' && item.courseId"
-              class="view-course-row"
-              hover-class="mwp-hover"
-              @click.stop="goToCourse(item.courseId)"
-            >
-              <text class="view-course-text">查看课程</text>
-              <text class="view-course-arrow">→</text>
-            </view>
-          </view>
+              <StatusBadge
+                v-if="item.status"
+                :status="item.status"
+                :label="statusLabel(item.status)"
+                pill
+              />
+            </template>
+
+            <!-- 卡片底部：左侧（支持人数 + 贡献者）/ 右侧管理员操作 -->
+            <template #footer>
+              <view class="card-footer">
+                <view class="card-meta">
+                  <view
+                    class="support-count"
+                    :class="{
+                      'is-voted': item.isVoted,
+                      'is-popping': poppingId === item.id
+                    }"
+                    :hover-stop-propagation="true"
+                    hover-class="mwp-hover-sm"
+                    :hover-start-time="0"
+                    :hover-stay-time="0"
+                    @click.stop="handleQuickSupport(item)"
+                  >
+                    <MwpIcon
+                      :name="item.isVoted ? 'heart-filled' : 'heart'"
+                      size="28rpx"
+                      class="support-icon"
+                    />
+                    <text class="support-num">{{ item.voteCount || 0 }}</text>
+                    <text class="support-label">人支持</text>
+                  </view>
+                  <text v-if="item.contributor" class="contributor-text"
+                    >贡献者：{{ item.contributor }}</text
+                  >
+                </view>
+                <view
+                  v-if="isAdminView"
+                  class="admin-actions"
+                  :hover-stop-propagation="true"
+                  @click.stop
+                >
+                  <template v-if="item.status === 'pending'">
+                    <!-- 通过/修改后通过统一收敛到详情页，卡片只保留快速拒绝 -->
+                    <MwpButton
+                      class="admin-btn"
+                      tone="danger-outline"
+                      size="sm"
+                      @click="handleReject(item)"
+                      >快速拒绝</MwpButton
+                    >
+                  </template>
+                  <view
+                    v-else-if="isRevokeExpired(item)"
+                    class="admin-btn admin-btn--expired"
+                    :hover-stop-propagation="true"
+                    @click.stop
+                    >已超24小时</view
+                  >
+                  <MwpButton
+                    v-else
+                    class="admin-btn admin-btn--withdraw"
+                    tone="plain"
+                    size="sm"
+                    @click="handleWithdraw(item)"
+                    >撤回审批</MwpButton
+                  >
+                </view>
+              </view>
+            </template>
+          </CourseCard>
         </view>
         <view v-if="noMore && proposals.length > 0" class="bottom-prompt">
           <text>— 到底了 —</text>
         </view>
       </view>
-    </scroll-view>
+    </MwpScrollView>
 
     <!-- FAB：普通用户=加号，管理员=日志 -->
     <view class="fab-group">
       <view
-        v-if="isAdmin && adminMode"
+        v-if="isAdminView"
         class="fab-btn"
         hover-class="mwp-hover"
+        :hover-start-time="0"
+        :hover-stay-time="0"
         @click="goToLogs"
       >
-        <text class="fab-icon">📑</text>
+        <MwpIcon name="clipboard-list" size="48rpx" />
       </view>
-      <view v-else class="fab-btn" hover-class="mwp-hover" @click="goToPropose">
+      <view
+        v-else
+        class="fab-btn"
+        hover-class="mwp-hover"
+        :hover-start-time="0"
+        :hover-stay-time="0"
+        @click="goToPropose"
+      >
         <PlusIcon class="fab-icon" size="52rpx" thickness="6rpx" />
       </view>
     </view>
@@ -417,6 +485,28 @@
       v-model:visible="showRejectModal"
       @confirm="handleRejectConfirm"
     />
+
+    <!-- 管理员撤回审批确认：解释会下架课程 / 扣回贡献值，避免与「修改后通过」混淆 -->
+    <MwpConfirmDialog
+      v-model:visible="showRevokeConfirm"
+      title="撤回审批"
+      :description="revokeDescription"
+      confirm-text="撤回审批"
+      tone="danger"
+      @confirm="performRevoke"
+    />
+
+    <!-- 全局状态弹窗宿主 -->
+    <MwpStatusOverlay />
+
+    <!-- 筛选未带入提示：纯告知，居中单按钮 -->
+    <MwpConfirmDialog
+      v-model:visible="showFilterNotice"
+      title="部分筛选未能带入"
+      :description="filterNoticeText"
+      confirm-text="知道了"
+      cancel-text=""
+    />
   </view>
 </template>
 
@@ -424,23 +514,26 @@
 import { ref, reactive, computed, onUnmounted } from 'vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';
 import { http, useThemeStore } from '@/config';
+import { useScrollDirection } from '@/composables/useScrollDirection';
 import { useMenuButton } from '@/composables/useMenuButton';
 import { useViewport } from '@/composables/useViewport';
-import { useScrollDirection } from '@/composables/useScrollDirection';
+import { showSuccess, showError, showInfo } from '@/composables/useStatus';
 import {
   DEFAULT_PAGE_SIZE,
   CAMPUS_OPTIONS,
   PROPOSAL_CATEGORY_OPTIONS
 } from '@/utils/constants';
+import { errorMessageOf } from '@/utils/review-error';
+import { hasCourseRevision } from '@/utils/proposal-revision';
 import type {
   DtoFieldSuggestionVO,
+  DtoProposalCourseVO,
   DtoProposalVO,
-  DtoTeacherVO,
-  HandlerResponseDtoListProposalResp
+  DtoTeacherVO
 } from '@/api/data-contracts';
-import type { AxiosResponse } from 'axios';
 import RejectModal from '@/components/common/RejectModal.vue';
 import BackBtn from '@/components/common/BackBtn.vue';
+import CourseCard from '@/components/choose/CourseCard.vue';
 
 const themeStore = useThemeStore();
 const viewport = useViewport();
@@ -465,17 +558,34 @@ const SEARCH_BAR_PADDING_BOTTOM = computed(() => rpx(24));
 const FIRST_CARD_GAP = computed(() =>
   Math.max(0, SEARCH_BAR_PADDING_BOTTOM.value - rpx(12))
 );
-const contentPaddingTop = computed(() => {
+// 第一张卡片距滚动区顶部的高度（可滚动占位块的高度）
+const firstCardTop = computed(() => {
   const filterHeight = isFilterHidden.value ? 0 : FILTER_BAR_HEIGHT.value;
   const filterOffset = isFilterHidden.value ? 0 : FILTER_BAR_TOP_OFFSET.value;
   return (
-    headerHeight.value +
-    filterOffset +
-    filterHeight +
-    FIRST_CARD_GAP.value +
-    'px'
+    headerHeight.value + filterOffset + filterHeight + FIRST_CARD_GAP.value
   );
 });
+const contentPaddingTop = computed(() => firstCardTop.value + 'px');
+// 空状态相对「整个页面」垂直居中：空状态排在 content-spacer（高 firstCardTop）
+// 之后，令 firstCardTop + minHeight/2 = viewport.height/2。
+const emptyMinHeight = computed(() =>
+  Math.max(0, viewport.height - firstCardTop.value * 2)
+);
+
+// 松手刷新指示器的下限：筛选栏下沿
+const refreshTopOffset = computed(
+  () =>
+    headerHeight.value + FILTER_BAR_TOP_OFFSET.value + FILTER_BAR_HEIGHT.value
+);
+const refreshing = ref(false);
+const onRefresh = async () => {
+  try {
+    await fetchProposals(1);
+  } finally {
+    refreshing.value = false;
+  }
+};
 
 const onScroll = (e: { detail?: { scrollTop?: number } }) => {
   const top = e.detail?.scrollTop ?? 0;
@@ -506,10 +616,17 @@ const searchBarWrapperStyle = computed(() => {
 // ===== 状态 =====
 const isAdmin = ref(false);
 const adminMode = ref(true);
+// 管理员退出管理模式后即视为普通用户，广场只展示投票中的提案
+const isAdminView = computed(() => isAdmin.value && adminMode.value);
 const isFocused = ref(false);
 const keyword = ref('');
 const loading = ref(false);
+const error = ref(false);
 const noMore = ref(false);
+// 请求序号：慢响应回来时若已有更新请求，则丢弃，避免旧结果覆盖新结果
+let fetchVersion = 0;
+// 刚被支持的心形 id（用于播放一次性心跳动画，避免已支持项在加载时误播）
+const poppingId = ref('');
 const currentPage = ref(1);
 
 type ProposalVM = {
@@ -527,7 +644,18 @@ type ProposalVM = {
   reason: string;
   voteCount: number;
   isVoted: boolean;
+  // 一键支持进行中（防连点）
+  supporting?: boolean;
   createdAt: string;
+  // 最近一次编辑 / 审批时间；用于判断「通过超过 24 小时不可撤回审批」
+  updatedAt: string;
+  // 未合并的校区数组，供普通用户客户端筛选使用
+  campusList: string[];
+  // 管理员「修改后通过」时 finalCourse 与原始 course 存在差异
+  hasRevision: boolean;
+  // 原始提交 / 管理员最终确认版本，随路由带到详情页用于区分修订
+  courseSnapshot?: DtoProposalCourseVO;
+  finalCourseSnapshot?: DtoProposalCourseVO;
 };
 
 const proposals = ref<ProposalVM[]>([]);
@@ -537,6 +665,11 @@ const total = ref(0);
 const openDropdown = ref('');
 const showRejectModal = ref(false);
 const rejectTargetId = ref('');
+
+// 管理员撤回审批（revoke）确认
+const showRevokeConfirm = ref(false);
+const revokeTargetId = ref('');
+const revokeActionType = ref<'' | 'approve' | 'reject'>('');
 
 // 内联搜索（院系 / 分类）
 const deptKeyword = ref('');
@@ -569,22 +702,22 @@ const detectAdmin = async () => {
   } catch {
     isAdmin.value = false;
   }
-  if (!isAdmin.value && uni.getStorageSync('meowpick_temp_admin'))
-    isAdmin.value = true;
   if (isAdmin.value) {
     adminMode.value = uni.getStorageSync('meowpick_admin_mode') !== false;
   }
-  // 普通用户默认只看审核中（待审核）的提案
-  if (!isAdmin.value && filterForm.status.length === 0) {
+  // 普通视角（含管理员退出管理模式）默认只看审核中（待审核）的提案
+  if (!isAdminView.value && filterForm.status.length === 0) {
     filterForm.status = ['pending'];
   }
 };
 
 // ===== 数据 =====
 const mapProposal = (item: DtoProposalVO): ProposalVM => {
-  const course = item.course || item.finalCourse || {};
-  const teachers = Array.isArray(course.teachers)
-    ? course.teachers
+  // 已通过提案：展示管理员最终确认并上架的版本（finalCourse），
+  // 未上架/拿不到 finalCourse 时回退到用户原始内容
+  const published = item.finalCourse || item.course || {};
+  const teachers = Array.isArray(published.teachers)
+    ? published.teachers
         .map((t: DtoTeacherVO | string) =>
           typeof t === 'string' ? t : t.name || ''
         )
@@ -592,20 +725,28 @@ const mapProposal = (item: DtoProposalVO): ProposalVM => {
     : '';
   return {
     id: item.id || '',
-    courseName: item.title || course.name || '未知课程',
-    campus: Array.isArray(course.campuses) ? course.campuses.join('、') : '',
-    department: course.department || '',
-    category: course.category || '',
+    // 已通过提案展示上架版本名称（可能被管理员修订），无上架版本时回退提案标题
+    courseName: published.name || item.title || '未知课程',
+    campus: Array.isArray(published.campuses)
+      ? published.campuses.join('、')
+      : '',
+    department: published.department || '',
+    category: published.category || '',
     teachers,
     status: item.status || 'pending',
-    courseId: item.finalCourse?.id || course.id || '',
+    courseId: item.finalCourse?.id || item.course?.id || '',
     contributor: item.showUsername === false ? '匿名' : '',
     userId: item.userId || '',
     showUsername: item.showUsername !== false,
     reason: item.content || '',
     voteCount: item.likeCnt || 0,
     isVoted: !!item.like,
-    createdAt: item.createdAt || ''
+    createdAt: item.createdAt || '',
+    updatedAt: item.updatedAt || '',
+    campusList: Array.isArray(published.campuses) ? published.campuses : [],
+    hasRevision: hasCourseRevision(item.course, item.finalCourse),
+    courseSnapshot: item.course,
+    finalCourseSnapshot: item.finalCourse
   };
 };
 
@@ -617,35 +758,134 @@ const hasActiveFilters = computed(
     filterForm.status.length > 0
 );
 
+// 当前筛选选择的指纹，用于判断再次「确定」时筛选是否真的变化
+const filterSignature = () =>
+  JSON.stringify({
+    campus: [...filterForm.campus].sort(),
+    department: [...filterForm.department].sort(),
+    category: [...filterForm.category].sort(),
+    status: [...filterForm.status].sort()
+  });
+
+// 打开筛选面板时的筛选快照；「确定」时与当前一致则不重搜，保留滚动位置
+let filterSnapshot = '';
+
+// 管理员视角的状态筛选；普通用户固定走 pending 接口，不用该字段
+const effectiveStatus = computed<string[] | undefined>(() =>
+  filterForm.status.length ? filterForm.status : undefined
+);
+
+// 已通过提案：审批通过满 24 小时后后端不再允许撤回审批。
+// updatedAt 可能因点赞被推后，因此仅当它已超过 24 小时才判定为过期（此时必定过期）。
+const REVOKE_WINDOW_MS = 24 * 60 * 60 * 1000;
+const isRevokeExpired = (item: ProposalVM): boolean => {
+  if (item.status !== 'approved') return false;
+  const t = new Date(item.updatedAt || '').getTime();
+  if (Number.isNaN(t)) return false;
+  return Date.now() - t >= REVOKE_WINDOW_MS;
+};
+
+// 普通用户广场固定在 pending 列表上，关键词 / 筛选在客户端完成
+const matchesClientFilters = (p: ProposalVM): boolean => {
+  const kw = keyword.value.trim().toLowerCase();
+  if (kw) {
+    const hay = [p.courseName, p.teachers, p.department, p.category]
+      .join(' ')
+      .toLowerCase();
+    if (!hay.includes(kw)) return false;
+  }
+  if (
+    filterForm.campus.length &&
+    !filterForm.campus.some((c) => p.campusList.includes(c))
+  ) {
+    return false;
+  }
+  if (
+    filterForm.department.length &&
+    !filterForm.department.includes(p.department)
+  ) {
+    return false;
+  }
+  if (filterForm.category.length && !filterForm.category.includes(p.category)) {
+    return false;
+  }
+  return true;
+};
+
+// 普通用户 pending 广场的分页大小；pending 接口最大支持 100
+const PENDING_PAGE_SIZE = 50;
+// 客户端筛选时最多汇总的页数，避免极端情况下无限翻页
+const PENDING_FILTER_MAX_PAGES = 5;
+
+// 已加载的原始条目数（客户端筛选前），用于判断是否还有更多
+let loadedRawCount = 0;
+
 // 提案列表接口不返回创建者昵称，需按 userId 补充查询
 const fillContributors = async (list: ProposalVM[]) => {
-  await Promise.all(
-    list
-      .filter((p) => p.showUsername && p.userId)
-      .map(async (p) => {
-        try {
-          const res = await http.UserController.userUsernameDetail(p.userId, {
-            proposalId: p.id
-          });
-          const name = res.data?.data?.username?.trim();
-          p.contributor = name || '匿名';
-        } catch {
-          p.contributor = '匿名';
-        }
-      })
+  const targets = list.filter((p) => p.showUsername && p.userId);
+  const names = await Promise.all(
+    targets.map(async (p) => {
+      try {
+        const res = await http.UserController.userUsernameDetail(p.userId, {
+          proposalId: p.id
+        });
+        return res.data?.data?.username?.trim() || '匿名';
+      } catch {
+        return '匿名';
+      }
+    })
   );
+  // 汇总后一次性写入，避免每个响应各触发一次整列表重渲染
+  targets.forEach((p, i) => {
+    p.contributor = names[i];
+  });
 };
 
 const fetchProposals = async (page = 1) => {
   if (loading.value && page > 1) return;
+  const version = ++fetchVersion;
   loading.value = true;
+  if (page === 1) error.value = false;
   try {
-    let res: AxiosResponse<HandlerResponseDtoListProposalResp>;
-    if (hasActiveFilters.value || keyword.value.trim()) {
-      // 有筛选条件或搜索关键词时用 suggest 接口
-      res = await http.ProposalController.proposalSuggestList({
+    // 普通用户 + 关键词/筛选：pending 接口不支持查询，改成一次性汇总后客户端过滤，
+    // 避免过滤后首屏为空却还藏有后续页
+    const clientFilterMode =
+      !isAdminView.value && (hasActiveFilters.value || !!keyword.value.trim());
+    if (clientFilterMode && page > 1) return;
+
+    let rawList: DtoProposalVO[] = [];
+    let serverTotal = 0;
+
+    if (clientFilterMode) {
+      const collected: DtoProposalVO[] = [];
+      let p = 1;
+      let total = 0;
+      while (p <= PENDING_FILTER_MAX_PAGES) {
+        const res = await http.ProposalController.proposalPendingList({
+          page: p,
+          pageSize: PENDING_PAGE_SIZE
+        });
+        const list = res.data?.data?.proposals ?? [];
+        total = res.data?.data?.total ?? collected.length + list.length;
+        collected.push(...list);
+        if (list.length < PENDING_PAGE_SIZE || collected.length >= total) break;
+        p++;
+      }
+      rawList = collected;
+      serverTotal = total;
+    } else if (!isAdminView.value) {
+      // 普通用户只能看「投票中」的提案，固定调用 pending 接口
+      const res = await http.ProposalController.proposalPendingList({
+        page,
+        pageSize: PENDING_PAGE_SIZE
+      });
+      rawList = res.data?.data?.proposals ?? [];
+      serverTotal = res.data?.data?.total ?? rawList.length;
+    } else if (hasActiveFilters.value || keyword.value.trim()) {
+      // 管理员有筛选条件或搜索关键词时用 suggest 接口
+      const res = await http.ProposalController.proposalSuggestList({
         keyword: keyword.value.trim() || undefined,
-        status: filterForm.status.length ? filterForm.status : undefined,
+        status: effectiveStatus.value,
         campus: filterForm.campus.length ? filterForm.campus : undefined,
         department: filterForm.department.length
           ? filterForm.department[0]
@@ -656,35 +896,69 @@ const fetchProposals = async (page = 1) => {
         page,
         pageSize: DEFAULT_PAGE_SIZE
       });
+      rawList = res.data?.data?.proposals ?? [];
+      serverTotal = res.data?.data?.total ?? rawList.length;
     } else {
-      // 无筛选条件时用简单列表接口（后端自动按权限过滤）
-      res = await http.ProposalController.proposalListList({
+      // 管理员无筛选条件时用简单列表接口
+      const res = await http.ProposalController.proposalListList({
+        status: undefined,
         page,
         pageSize: DEFAULT_PAGE_SIZE
       });
+      rawList = res.data?.data?.proposals ?? [];
+      serverTotal = res.data?.data?.total ?? rawList.length;
     }
-    const data = res.data?.data;
-    const list = data?.proposals ?? [];
-    const mapped = list.filter(Boolean).map(mapProposal);
-    if (page === 1) proposals.value = mapped;
-    else proposals.value = [...proposals.value, ...mapped];
-    total.value = data?.total ?? proposals.value.length;
-    noMore.value = proposals.value.length >= total.value;
+
+    const mapped = rawList
+      .filter(Boolean)
+      .map(mapProposal)
+      // 非管理模式：pending 接口已保证状态，再兜底并按客户端条件筛选
+      .filter(
+        (p) =>
+          isAdminView.value ||
+          (p.status === 'pending' && matchesClientFilters(p))
+      );
+
+    if (version !== fetchVersion) return; // 过期响应丢弃
+
+    const pageSizeUsed = isAdminView.value
+      ? DEFAULT_PAGE_SIZE
+      : PENDING_PAGE_SIZE;
+    if (page === 1) {
+      proposals.value = mapped;
+      loadedRawCount = rawList.length;
+    } else {
+      proposals.value = [...proposals.value, ...mapped];
+      loadedRawCount += rawList.length;
+    }
+    total.value = serverTotal;
+    noMore.value = clientFilterMode
+      ? true
+      : loadedRawCount >= serverTotal || rawList.length < pageSizeUsed;
     currentPage.value = page;
     await fillContributors(mapped);
   } catch (err) {
+    if (version !== fetchVersion) return; // 过期响应丢弃
     console.error('[proposal] fetch error:', err);
-    if (page === 1) uni.showToast({ title: '加载失败', icon: 'none' });
+    if (page === 1) {
+      // 首屏失败：走整页错误态（不再用 toast，避免与空状态混淆）
+      error.value = true;
+    } else {
+      showError('加载失败');
+    }
   } finally {
-    loading.value = false;
+    if (version === fetchVersion) loading.value = false;
   }
 };
 
-const doSearch = (reset = false) => {
-  if (reset) {
+const doSearch = (reset = false, silent = false) => {
+  // silent：保留现有列表（不切骨架屏、不塌缩内容），用于返回本页时的静默刷新，
+  // 避免 scroll-view 因内容清空而丢失滚动位置
+  if (reset && !silent) {
     proposals.value = [];
     currentPage.value = 1;
     noMore.value = false;
+    loadedRawCount = 0;
   }
   fetchProposals(reset ? 1 : currentPage.value);
 };
@@ -710,11 +984,19 @@ const clearSearch = () => {
 const isDropdownOpen = computed(() => openDropdown.value !== '');
 
 const toggleDropdown = (name: string) => {
-  openDropdown.value = openDropdown.value === name ? '' : name;
+  // 再次点击已展开的筛选项 -> 视为「确定」，应用当前选择
+  if (openDropdown.value === name) {
+    applyFilters();
+    return;
+  }
+  // 从关闭态打开时记录快照（面板内切换标签不重记，避免漏掉之前的改动）
+  if (!openDropdown.value) filterSnapshot = filterSignature();
+  openDropdown.value = name;
 };
 
 const closeDropdown = () => {
-  openDropdown.value = '';
+  // 点击空白处关闭筛选栏 -> 视为「确定」，应用当前选择
+  applyFilters();
 };
 
 const toggleFilter = (type: 'campus' | 'status', value: string) => {
@@ -737,11 +1019,32 @@ const resetFilters = () => {
   if (isAll || openDropdown.value === 'department') filterForm.department = [];
   if (isAll || openDropdown.value === 'category') filterForm.category = [];
   if (isAll || openDropdown.value === 'status')
-    filterForm.status = isAdmin.value ? [] : ['pending'];
+    filterForm.status = isAdminView.value ? [] : ['pending'];
+};
+
+// 输入框有内容但没有任何模糊匹配项时，提示并清空输入框，阻止本次应用
+const blockUnmatchedFieldInput = () => {
+  const unmatched: string[] = [];
+  if (deptKeyword.value.trim() && deptResults.value.length === 0) {
+    deptKeyword.value = '';
+    deptResults.value = [];
+    unmatched.push('院系');
+  }
+  if (categoryKeyword.value.trim() && categoryResults.value.length === 0) {
+    categoryKeyword.value = '';
+    categoryResults.value = [];
+    unmatched.push('分类');
+  }
+  if (!unmatched.length) return false;
+  showInfo(`未找到匹配的${unmatched.join('、')}`);
+  return true;
 };
 
 const applyFilters = () => {
+  if (blockUnmatchedFieldInput()) return;
   openDropdown.value = '';
+  // 筛选没变化（例如打开面板后未选择任何项，或改了又改回来）：不重搜、不清空列表
+  if (filterSignature() === filterSnapshot) return;
   doSearch(true);
 };
 
@@ -797,12 +1100,6 @@ const selectCategory = (item: DtoFieldSuggestionVO) => {
 };
 
 // ===== 管理员操作 =====
-const handleApprove = (item: ProposalVM) => {
-  uni.navigateTo({
-    url: `/pages/proposal/propose?approveProposalId=${String(item.id)}`
-  });
-};
-
 const handleReject = (item: ProposalVM) => {
   rejectTargetId.value = item.id;
   showRejectModal.value = true;
@@ -816,48 +1113,127 @@ const handleRejectConfirm = async (reason: string) => {
       { proposalId: rejectTargetId.value, reason }
     );
     if (res.data?.code === 0 || res.data?.code === 200) {
-      uni.showToast({ title: '已拒绝', icon: 'success' });
+      showSuccess('已拒绝');
       doSearch(true);
     } else {
-      uni.showToast({ title: res.data?.msg || '操作失败', icon: 'none' });
+      showError(
+        errorMessageOf(res.data?.code, res.data?.msg) ||
+          res.data?.msg ||
+          '操作失败，请重试'
+      );
     }
-  } catch {
-    uni.showToast({ title: '拒绝失败', icon: 'none' });
+  } catch (err) {
+    const e = err as { response?: { data?: { code?: number; msg?: string } } };
+    showError(
+      errorMessageOf(e.response?.data?.code, e.response?.data?.msg) ||
+        e.response?.data?.msg ||
+        '拒绝失败'
+    );
   } finally {
     rejectTargetId.value = '';
   }
 };
 
-const handleWithdraw = async (item: ProposalVM) => {
+const revokeDescription = computed(() =>
+  revokeActionType.value === 'approve'
+    ? '撤回审批后，已上架课程将下架、已结算贡献值将扣回，提案回到待审核状态。确定撤回审批吗？'
+    : '撤回审批后，拒绝理由将被清空，提案回到待审核状态。确定撤回审批吗？'
+);
+
+const handleWithdraw = (item: ProposalVM) => {
+  // revoke 仅支持已通过（approve）/ 已拒绝（reject）提案，待审核由本人走 delete 接口
   const actionType =
     item.status === 'approved'
       ? 'approve'
       : item.status === 'rejected'
       ? 'reject'
-      : 'delete';
+      : '';
+  if (!actionType) return;
+  revokeTargetId.value = item.id;
+  revokeActionType.value = actionType;
+  showRevokeConfirm.value = true;
+};
+
+// 卡片左下一键支持/取消（乐观更新，失败回滚）
+const handleQuickSupport = async (item: ProposalVM) => {
+  if (item.supporting) return;
+  const prevVoted = item.isVoted;
+  const prevCount = item.voteCount;
+  item.supporting = true;
+  item.isVoted = !prevVoted;
+  item.voteCount = prevCount + (item.isVoted ? 1 : -1);
+  // 仅在「变为已支持」时播放心跳，取消不加动画
+  if (item.isVoted) {
+    poppingId.value = item.id;
+    setTimeout(() => {
+      if (poppingId.value === item.id) poppingId.value = '';
+    }, 520);
+  }
   try {
-    const res = await http.ProposalController.proposalRevokeCreate(item.id, {
+    const res = await http.ActionController.likeCreate(item.id, {
+      targetType: 'proposal'
+    });
+    const result = res.data?.data;
+    if (result?.like !== undefined) item.isVoted = result.like;
+    if (result?.likeCnt !== undefined) item.voteCount = result.likeCnt;
+  } catch (err) {
+    console.error('[proposal/list] like error:', err);
+    item.isVoted = prevVoted;
+    item.voteCount = prevCount;
+    showError('操作失败，请稍后重试');
+  } finally {
+    item.supporting = false;
+  }
+};
+
+const performRevoke = async () => {
+  if (!revokeTargetId.value || !revokeActionType.value) return;
+  const actionType = revokeActionType.value;
+  const targetId = revokeTargetId.value;
+  try {
+    const res = await http.ProposalController.proposalRevokeCreate(targetId, {
       actionType
     });
-    if (res.data?.code === 0 || res.data?.code === 200) {
-      uni.showToast({ title: '已撤回', icon: 'success' });
+    const code = res.data?.code;
+    if (code === 0 || code === 200) {
+      showSuccess('已撤回审批');
       doSearch(true);
     } else {
-      uni.showToast({ title: res.data?.msg || '操作失败', icon: 'none' });
+      showError(errorMessageOf(code, res.data?.msg) || '操作失败，请重试');
+      // 通过超过 24 小时：后端拒绝撤回审批，刷新列表以同步卡片状态
+      if (code === 108000028) doSearch(true, true);
     }
-  } catch {
-    uni.showToast({ title: '撤回失败', icon: 'none' });
+  } catch (err) {
+    const e = err as { response?: { data?: { code?: number; msg?: string } } };
+    showError(
+      errorMessageOf(e.response?.data?.code, e.response?.data?.msg) ||
+        e.response?.data?.msg ||
+        '撤回审批失败'
+    );
+  } finally {
+    revokeTargetId.value = '';
+    revokeActionType.value = '';
   }
 };
 
 // ===== 导航 =====
-const statusLabel = (s: string) =>
-  ({ pending: '待审核', approved: '已通过', rejected: '已拒绝' }[s] || s);
+// 状态文案：用户侧说「投票」，管理侧说「审核」（与 proposal-detail 保持一致）
+const statusLabel = (s: string) => {
+  const adminSide = isAdminView.value;
+  return (
+    {
+      pending: adminSide ? '待审核' : '投票中',
+      approved: '已通过',
+      rejected: adminSide ? '已拒绝' : '未通过'
+    }[s] || s
+  );
+};
 
 const goToDetail = (item: ProposalVM) => {
   const dataStr = encodeURIComponent(
     JSON.stringify({
       id: item.id,
+      userId: item.userId,
       name: item.courseName,
       teacher: item.teachers,
       campus: item.campus,
@@ -865,15 +1241,16 @@ const goToDetail = (item: ProposalVM) => {
       reason: item.reason,
       voteCount: item.voteCount,
       isVoted: item.isVoted,
-      date: item.createdAt
+      date: item.createdAt,
+      status: item.status,
+      // 普通用户详情接口拿不到 finalCourse，靠列表带过去做「原/改」对照
+      course: item.courseSnapshot,
+      finalCourse: item.finalCourseSnapshot
     })
   );
   uni.navigateTo({
-    url: `/pages/course/proposal-detail?data=${dataStr}`
+    url: `/pages/proposal/proposal-detail?data=${dataStr}`
   });
-};
-const goToCourse = (courseId: string) => {
-  uni.navigateTo({ url: `/pages/course/detail?id=${courseId}` });
 };
 const goToPropose = () => uni.navigateTo({ url: '/pages/proposal/propose' });
 const goToLogs = () => uni.navigateTo({ url: '/pages/proposal/log' });
@@ -940,6 +1317,9 @@ const validateDepartments = async (
   };
 };
 
+const showFilterNotice = ref(false);
+const filterNoticeText = ref('');
+
 const applyIncomingFilters = async (options: Record<string, string>) => {
   if (!options) return;
   const kw = options.keyword ? safeDecode(options.keyword) : '';
@@ -964,35 +1344,59 @@ const applyIncomingFilters = async (options: Record<string, string>) => {
     ...droppedDept
   ];
   if (dropped.length) {
-    uni.showModal({
-      title: '部分筛选未能带入',
-      content: `${dropped.join('、')} 在当前提案广场不可用，已忽略。`,
-      showCancel: false
-    });
+    filterNoticeText.value = `${dropped.join(
+      '、'
+    )} 在当前提案广场不可用，已忽略。`;
+    showFilterNotice.value = true;
   }
 };
 
 // ===== 生命周期 =====
+let initialized = false;
+let lastAdminView = false;
 onLoad(async (options: Record<string, string> = {}) => {
   await detectAdmin();
+  lastAdminView = isAdminView.value;
   await applyIncomingFilters(options);
+  initialized = true;
   doSearch(true);
 });
 
+// 提案提交/审核后由 propose / proposal-detail 发出；标记待刷新，回到本页 onShow 时统一拉取
+let pendingRefresh = false;
+const handleProposalListRefresh = () => {
+  pendingRefresh = true;
+};
+uni.$on('proposalListShouldRefresh', handleProposalListRefresh);
+
 onShow(() => {
-  const tempAdmin = uni.getStorageSync('meowpick_temp_admin');
-  if (tempAdmin && !isAdmin.value) {
-    isAdmin.value = true;
-    adminMode.value = uni.getStorageSync('meowpick_admin_mode') !== false;
-  }
   if (isAdmin.value)
     adminMode.value = uni.getStorageSync('meowpick_admin_mode') !== false;
-  if (proposals.value.length > 0) doSearch(true);
+
+  // 管理员在「个人中心」切换用户/管理模式后，回到本页需要按新视角重置状态筛选并重拉
+  const currentAdminView = isAdminView.value;
+  if (initialized && currentAdminView !== lastAdminView) {
+    lastAdminView = currentAdminView;
+    filterForm.status = currentAdminView ? [] : ['pending'];
+    doSearch(true);
+    return;
+  }
+
+  // 与搜索页一致：从详情页返回时保留列表与滚动位置。
+  // 有跨页刷新信号时静默重拉（不清空列表），否则仅在列表为空时重新拉取
+  if (pendingRefresh) {
+    pendingRefresh = false;
+    doSearch(true, true);
+  } else if (initialized && proposals.value.length === 0) {
+    doSearch(true);
+  }
 });
 
 onUnmounted(() => {
   if (searchTimer) clearTimeout(searchTimer);
   if (deptTimer) clearTimeout(deptTimer);
+  if (categoryTimer) clearTimeout(categoryTimer);
+  uni.$off('proposalListShouldRefresh', handleProposalListRefresh);
 });
 </script>
 

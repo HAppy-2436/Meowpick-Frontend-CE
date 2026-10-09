@@ -1,6 +1,3 @@
-//定义一个PubSub对象
-const PubSub = {};
-
 //分析数据结构  (用来保存所有待处理的回调函数的容器)
 /*
   {
@@ -69,7 +66,7 @@ export default new (class {
     });
   }
 
-  unsubscribe(flag: string) {
+  unsubscribe(flag?: string) {
     if (flag === undefined) {
       // 如果没传递flag直接将所有消息清除
       this.callbackContainer = {};

@@ -1,16 +1,19 @@
 <template>
   <view class="course-header-container" :class="themeStore.themeClass">
     <view class="header-card">
-      <!-- 1. 课程名称 -->
+      <!-- 1. 课程名称 + 贡献者（无可展示贡献者时整块隐藏） -->
       <view class="card-top">
         <view class="course-title">{{ data.name || '未知课程' }}</view>
+        <view v-if="contributorName" class="contributor">
+          贡献者：{{ contributorName }}
+        </view>
       </view>
 
       <!-- 2. 基本信息 Grid -->
       <view class="info-grid" :class="{ 'is-expanded': expanded }">
         <!-- 类别 -->
         <view class="info-item">
-          <view class="icon-wrapper bg-blue">
+          <view class="icon-wrapper">
             <MwpIcon name="tag" size="40rpx" class="icon" />
           </view>
           <view class="info-content">
@@ -21,7 +24,7 @@
 
         <!-- 院系 -->
         <view class="info-item">
-          <view class="icon-wrapper bg-green">
+          <view class="icon-wrapper">
             <MwpIcon name="building-2" size="40rpx" class="icon" />
           </view>
           <view class="info-content">
@@ -32,7 +35,7 @@
 
         <!-- 教师 -->
         <view class="info-item">
-          <view class="icon-wrapper bg-orange">
+          <view class="icon-wrapper">
             <MwpIcon name="user-round" size="40rpx" class="icon" />
           </view>
           <view class="info-content">
@@ -52,7 +55,7 @@
 
         <!-- 校区 -->
         <view class="info-item">
-          <view class="icon-wrapper bg-purple">
+          <view class="icon-wrapper">
             <MwpIcon name="map-pin" size="40rpx" class="icon" />
           </view>
           <view class="info-content">
@@ -74,6 +77,8 @@
         v-if="expanded || isOverflowing"
         class="expand-toggle mwp-pressable"
         hover-class="mwp-hover"
+        :hover-start-time="0"
+        :hover-stay-time="0"
         @click="toggleExpand"
       >
         <text class="toggle-text">{{ expanded ? '收起' : '展开' }}</text>
@@ -119,6 +124,13 @@ const teacherText = computed(() => teacherNames.value.join('、') || '待定');
 const campusText = computed(
   () => (props.data.campuses || []).join('、') || '暂无校区'
 );
+
+// 来源提案贡献者：仅当来源提案允许展示昵称且昵称非空时展示，否则整块隐藏
+const contributorName = computed(() => {
+  const contributor = props.data?.contributor;
+  if (!contributor || contributor.showUsername !== true) return '';
+  return String(contributor.username || '').trim();
+});
 
 const expanded = ref(false);
 const isOverflowing = ref(false);

@@ -12,10 +12,10 @@
 
 ```
 src/styles/
-├── _tokens.scss      # 122 设计 tokens（颜色/间距/字号/圆角/阴影/动画/渐变）
-├── _mixins.scss       # 11 个 SCSS mixins（@include pressable, glass, card, ellipsis）
-├── _animations.scss   # 14 个 keyframes + 12 个公共动画类 + .mwp-placeholder
-└── index.scss         # 入口（除了 _tokens.css 内部用外，SFC 里 import 它就行）
+├── _tokens.scss      # 210 设计 tokens（颜色/间距/字号/圆角/阴影/动画/渐变/页边距）
+├── _mixins.scss       # 31 个 SCSS mixins（@include pressable, card, section-title, fab ...）
+├── _animations.scss   # 13 个 keyframes + 公共动画类 + .mwp-placeholder
+└── index.scss         # 入口（SFC 里 @import 它即可）
 ```
 
 **所有 28+ 个 SFC 都通过 sass `additionalData`（vite.config.ts）自动注入这些 tokens 与 mixins**——所以你在 .vue 里写 `color: $text-primary-light` 直接可用。
@@ -59,20 +59,24 @@ src/styles/
 
 ---
 
-## 2. 10 个公共组件（src/components/common/）
+## 2. 14 个公共组件（src/components/common/）
 
 | 组件 | 用途 | 关键 API |
 |---|---|---|
 | `TopNavBar.vue` | 顶部导航栏 | `<TopNavBar title subtitle :show-back @back>` |
-| `BackBtn.vue` | 返回按钮 | `<BackBtn color="white">` |
-| `Button.vue` | 通用按钮 | `<Button tone="brand" size="lg" block loading>` |
+| `BackBtn.vue` | 返回按钮 | `<BackBtn :intercept>` |
+| `MwpButton.vue` | 通用按钮 | `<MwpButton tone="brand" size="lg" block loading>`（`#icon` 插槽放图标） |
+| `MwpConfirmDialog.vue` | 居中确认弹窗 | `<MwpConfirmDialog :visible title @confirm @cancel>` |
+| `MwpActionSheet.vue` | 底部操作面板 | `<MwpActionSheet :visible :actions @select>` |
+| `MwpStatusOverlay.vue` | 全局状态浮层 | 由 `useStatus` 驱动，页面挂载一次 |
+| `MwpScrollView.vue` | 统一滚动容器 | `<MwpScrollView :enabled @refresh>` |
+| `MwpIcon.vue` | 图标（lucide） | `<MwpIcon name="chevron-down" size="24rpx" />` |
+| `PlusIcon.vue` | 加号图标 | `<PlusIcon size="52rpx" />` |
 | `StatusBadge.vue` | 状态徽标 | `<StatusBadge status="pending" pill dot>` |
-| `EmptyState.vue` | 空/加载失败 | `<EmptyState title desc emoji="🐾">` |
-| `SkeletonCard.vue` | 骨架屏 | `<SkeletonCard count="3">` |
-| `SearchModal.vue` | 字段搜索弹窗 | `<SearchModal field="department" title>` |
-| `TeacherListModal.vue` | 教师列表 | `<TeacherListModal :teachers @add @remove>` |
-| `AddTeacherModal.vue` | 添加教师 | `<AddTeacherModal @confirm>` |
-| `RejectModal.vue` | 拒绝理由 | `<RejectModal @confirm>` |
+| `EmptyState.vue` | 空 / 错误态 | `<EmptyState title desc tone>` |
+| `SkeletonCard.vue` | 骨架屏 | `<SkeletonCard :count="3">` |
+| `NicknameDialog.vue` | 昵称设置 | `<NicknameDialog v-model:visible>` |
+| `RejectModal.vue` | 拒绝理由 | `<RejectModal v-model:visible @confirm>` |
 
 **总计约 1500 行**——可被任何页面复用。
 
@@ -93,9 +97,11 @@ src/styles/
 
 ---
 
-## 3. 1 个 composable（src/composables/）
+## 3. 11 个 composable（src/composables/）
 
-`useMenuButton()` —— 取代所有页面里重复的 `uni.getMenuButtonBoundingClientRect()` 样板：
+`useStatus()` / `useMenuButton()` / `useViewport()` / `useScreenScale()` / `useScrollDirection()` / `useSwipeDownClose()` / `useChoose()` / `useCourse()` / `useCourseComment()` / `useFind()`（含 `useInput` / `useSuggest`）/ `statusCore`。
+
+以 `useMenuButton()` 为例——取代所有页面里重复的 `uni.getMenuButtonBoundingClientRect()` 样板：
 
 ```vue
 <script setup>
@@ -115,13 +121,12 @@ const { menuButtonInfo, navBarHeight, contentSpacerHeight } = useMenuButton();
 
 ---
 
-## 4. 4 条 API 接入路径
+## 4. 3 条 API 接入路径
 
 | 路径 | 状态 |
 |---|---|
 | `src/api/User.ts` | ✅ 新增（UserController.userProfileList / userProfileUpdateCreate） |
 | `src/api/Proposal.ts` | ✅ 完整（filterList / rejectCreate / revokeCreate / approveCreate 加 body） |
-| `src/api/response.ts` | ✅ 兼容新旧后端响应结构（扁平 ↔ 嵌套自动归一） |
 | `src/utils/teacher-display.ts` | ✅ 教师字段 `string \| DtoTeacherVO` 归一化 |
 
 **响应兼容**：前端 `res.data?.data` 与 `res.data?.proposalId` 都能跑。
@@ -368,8 +373,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app';  // ← 正确
 
 ### 关键配置
 - `vite.config.ts` —— `additionalData` 注入 tokens（核心）
-- `src/styles/_mixins.scss` —— 11 个 mixin
-- `src/api/response.ts` —— 新旧后端响应兼容
+- `src/styles/_mixins.scss` —— 31 个 mixin
 - `src/utils/teacher-display.ts` —— 教师字段归一化
 
 ---

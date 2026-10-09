@@ -1,107 +1,53 @@
 <template>
   <view class="search-result-box" :class="themeStore.themeClass">
-    <!-- Proposal Card Style -->
-    <template v-if="isProposal">
-      <view class="proposal-card">
-        <view class="proposal-content">
-          <view class="proposal-row-top">
-            <text class="proposal-name">{{ props.data?.name }}</text>
-          </view>
-
-          <view class="proposal-row-middle">
-            <view class="proposal-info-item">
-              <image src="@/images/teacher-icon.png" class="info-icon" />
-              <text>{{ props.data?.teacherName || '未知教师' }}</text>
-            </view>
-            <view class="proposal-info-item">
-              <image src="@/images/depart-icon.png" class="info-icon" />
-              <text>{{ props.data?.department || '全校' }}</text>
-            </view>
-          </view>
-
-          <view class="proposal-row-bottom">
-            <text class="proposal-badge">提案新增</text>
-            <view
-              class="vote-count-box"
-              :class="{ 'is-liked': isLiked }"
-              hover-class="mwp-hover"
-              @click.stop="handleLike"
-            >
-              <image src="@/images/like_active.png" class="vote-icon" />
-              <text class="vote-num">{{ likeCount }}</text>
-              <text class="vote-label">支持</text>
-            </view>
-          </view>
-        </view>
-      </view>
-    </template>
-
-    <!-- Original Course Card Style -->
-    <view v-else class="search-result">
-      <view class="course-content">
-        <view class="course-row-top">
-          <text class="course-name">{{ props.data?.name }}</text>
-          <text v-if="props.data?.category" class="course-category">{{
-            props.data?.category
-          }}</text>
-        </view>
-
-        <view class="course-row-middle">
-          <view v-if="teacherDisplayList.length" class="course-info-item">
-            <image src="@/images/teacher-icon.png" class="info-icon" />
-            <text class="teacher-name-list">
-              {{ teacherDisplayList.join(' / ') }}
-            </text>
-          </view>
-          <view class="course-info-item">
-            <image src="@/images/depart-icon.png" class="info-icon" />
-            <text>{{ props.data?.department || '暂无院系' }}</text>
-          </view>
-        </view>
-
-        <!-- Tags section - Simplified -->
+    <CourseCard
+      :name="data?.name || ''"
+      :teachers="teacherText"
+      :department="data?.department"
+      :category="data?.category"
+    >
+      <!-- 标签：精简为前三个 -->
+      <view
+        v-if="data?.tagCount && Object.keys(data.tagCount).length > 0"
+        class="course-row-bottom"
+      >
         <view
-          v-if="
-            props.data?.tagCount && Object.keys(props.data.tagCount).length > 0
-          "
-          class="course-row-bottom"
+          v-for="(item, idx) of getTop3List(data?.tagCount!)"
+          :key="idx"
+          class="tag-item"
         >
-          <view
-            v-for="(item, idx) of getTop3List(props.data?.tagCount!)"
-            :key="idx"
-            class="tag-item"
-          >
-            <image
-              v-if="Emoji(item.tag)"
-              :src="Emoji(item.tag)"
-              class="emoji-icon"
-              mode="aspectFit"
-            />
-            <image
-              v-else
-              src="@/images/cat.png"
-              class="emoji-icon"
-              mode="aspectFit"
-            />
-            <text class="emoji-text">{{ item.tag }}</text>
-            <view class="tag-count">{{ item.count }}</view>
-          </view>
-        </view>
-        <!-- Description fallback -->
-        <view v-if="props.data?.describe" class="desc">
-          {{ props.data.describe }}
+          <image
+            v-if="Emoji(item.tag)"
+            :src="Emoji(item.tag)"
+            class="emoji-icon"
+            mode="aspectFit"
+          />
+          <image
+            v-else
+            src="@/images/cat.png"
+            class="emoji-icon"
+            mode="aspectFit"
+          />
+          <text class="emoji-text">{{ item.tag }}</text>
+          <view class="tag-count">{{ item.count }}</view>
         </view>
       </view>
-    </view>
+
+      <!-- 无标签时回退到描述 -->
+      <view v-if="data?.describe" class="desc">
+        {{ data.describe }}
+      </view>
+    </CourseCard>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, defineProps } from 'vue'; // Import computed
+import { computed } from 'vue';
+import CourseCard from '@/components/choose/CourseCard.vue';
 import type { DtoCourseVO, DtoTeacherVO } from '@/api/data-contracts';
 import { Emoji, getTop3List } from '@/utils/tags';
-import { http, useThemeStore } from '@/config';
-import { joinTeachers, teachersToStrings } from '@/utils/teacher-display';
+import { useThemeStore } from '@/config';
+import { teachersToStrings } from '@/utils/teacher-display';
 const themeStore = useThemeStore();
 
 // Extend type locally
@@ -136,35 +82,7 @@ const teacherDisplayList = computed<string[]>(() => {
   return [];
 });
 
-const isProposal = computed(() => {
-  return props.data?.resultType === 'proposal';
-});
-
-const isLiked = ref(props.data?.isLiked || false);
-const likeCount = ref(
-  props.data?.likeCnt || props.data?.voteCount || props.data?.agreeCount || 0
-);
-
-const handleLike = async () => {
-  if (!props.data?.id) return;
-  try {
-    const res = await http.ActionController.likeCreate(props.data.id, {
-      targetId: props.data.id,
-      targetType: 'proposal'
-    });
-    const result = res.data?.data;
-    if (result !== undefined) {
-      if (result.like !== undefined) {
-        isLiked.value = result.like;
-      }
-      if (result.likeCnt !== undefined) {
-        likeCount.value = result.likeCnt;
-      }
-    }
-  } catch (err) {
-    console.error('[choose-course] like error:', err);
-  }
-};
+const teacherText = computed(() => teacherDisplayList.value.join(' / '));
 </script>
 
 <style lang="scss" scoped src="./ChooseCourse.scss" />

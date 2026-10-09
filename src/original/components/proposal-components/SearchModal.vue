@@ -1,0 +1,343 @@
+<template>
+  <view class="modal-mask" v-if="visible" @click="handleClose">
+    <view class="modal-content" @click.stop>
+      <view class="modal-header">
+        <view class="modal-title">{{ title }}</view>
+        <view class="close-btn" @click="handleClose">×</view>
+      </view>
+      <view class="search-container">
+        <input 
+          class="search-input" 
+          v-model="searchKeyword" 
+          :placeholder="placeholder"
+          @input="handleSearch"
+        />
+        <view class="add-btn" @click="handleAddNew">
+          <text class="add-icon">+</text>
+          <text class="add-text">新增</text>
+        </view>
+      </view>
+      <scroll-view class="search-results" scroll-y>
+        <view v-if="searchLoading" class="loading-state">
+          <text class="loading-text">搜索中...</text>
+        </view>
+        <template v-else>
+          <view
+            class="result-item"
+            v-for="(item, index) in searchResults"
+            :key="index"
+            @click="handleSelect(item)"
+          >
+            <text class="result-text">{{ item.value }}</text>
+            <view class="teacher-courses" v-if="field === 'teacherName' && item.courses.length">
+              <text class="course-tag">已开课程：{{ item.courses.join('、') }}</text>
+            </view>
+          </view>
+          <view class="no-result" v-if="searchResults.length === 0 && searchKeyword">
+            未找到匹配项，请点击"新增"按钮添加
+          </view>
+        </template>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, watch } from 'vue';
+import { http } from '@/original/config';
+
+interface Props {
+  visible: boolean;
+  title: string;
+  placeholder: string;
+  /** 后端 field-suggestions 接口的 field 参数，如 department/category/campus/courseName/courseCode/teacherName */
+  field: string;
+  multiple?: boolean;
+  selectedItems?: string[];
+  initialValue?: string;
+}
+
+interface Suggestion {
+  value: string;
+  courses: string[];
+}
+
+export default defineComponent({
+  name: 'SearchModal',
+  props: {
+    visible: {
+      type: Boolean,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    placeholder: {
+      type: String,
+      required: true
+    },
+    field: {
+      type: String,
+      required: true
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    selectedItems: {
+      type: Array as () => string[],
+      default: () => []
+    },
+    initialValue: {
+      type: String,
+      default: ''
+    }
+  },
+  emits: ['update:visible', 'select', 'close'],
+  setup(props, { emit }) {
+    const searchKeyword = ref('');
+    const searchResults = ref<Suggestion[]>([]);
+    const searchLoading = ref(false);
+    let searchTimer: ReturnType<typeof setTimeout> | null = null;
+
+    watch(() => props.visible, (newVal) => {
+      if (newVal) {
+        searchKeyword.value = props.initialValue || '';
+        searchResults.value = [];
+        if (searchKeyword.value.trim()) {
+          fetchSuggestions(searchKeyword.value.trim());
+        }
+      }
+    });
+
+    const fetchSuggestions = async (keyword: string) => {
+      if (!keyword) {
+        searchResults.value = [];
+        return;
+      }
+
+      searchLoading.value = true;
+      try {
+        const res = await http.ProposalController.proposalFieldSuggestionsList({
+          field: props.field,
+          keyword,
+          page: 1,
+          pageSize: 50
+        });
+
+        if (res.data?.code === 0) {
+          const responseData = res.data.data || res.data;
+          const suggestions = responseData?.suggestions || [];
+          searchResults.value = suggestions
+            .map((s: any) => ({
+              value: s.value || s.label || '',
+              courses: Array.isArray(s.courses)
+                ? s.courses.map((course: any) => course.name || '').filter(Boolean)
+                : []
+            }))
+            .filter((suggestion: Suggestion) => suggestion.value);
+        } else {
+          searchResults.value = [];
+        }
+      } catch (err) {
+        console.error('[API] 获取字段建议失败:', err);
+        searchResults.value = [];
+      } finally {
+        searchLoading.value = false;
+      }
+    };
+
+    const handleSearch = () => {
+      const keyword = searchKeyword.value.trim();
+      if (!keyword) {
+        searchResults.value = [];
+        return;
+      }
+
+      if (searchTimer) clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        fetchSuggestions(keyword);
+      }, 300);
+    };
+
+    const handleSelect = (item: Suggestion) => {
+      emit('select', item.value);
+      emit('update:visible', false);
+    };
+
+    const handleAddNew = () => {
+      const value = searchKeyword.value.trim();
+      if (!value) {
+        uni.showToast({ title: '请输入内容', icon: 'none' });
+        return;
+      }
+      handleSelect({ value, courses: [] });
+    };
+
+    const handleClose = () => {
+      emit('close');
+      emit('update:visible', false);
+    };
+
+    return {
+      searchKeyword,
+      searchResults,
+      searchLoading,
+      handleSearch,
+      handleSelect,
+      handleAddNew,
+      handleClose
+    };
+  }
+});
+</script>
+
+<style lang="scss" scoped>
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modal-content {
+  width: 100%;
+  height: 85vh;
+  background: #fff;
+  border-radius: var(--app-component-radius, 5vw) var(--app-component-radius, 5vw) 0 0;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  animation: modalSlideUp 0.3s ease-out forwards;
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 60rpx;
+  color: #999;
+  line-height: 1;
+  padding: 0 20rpx;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  height: 80rpx;
+  padding: 0 30rpx;
+  background: #F5F5F5;
+  border-radius: var(--app-component-radius, 5vw);
+  font-size: 28rpx;
+  color: #333;
+}
+
+.add-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: 10rpx 20rpx;
+  background: #FFF0F6;
+  border-radius: var(--app-component-radius, 5vw);
+  min-width: 80rpx;
+}
+
+.add-icon {
+  font-size: 40rpx;
+  color: #b70030;
+  line-height: 1;
+}
+
+.add-text {
+  font-size: 20rpx;
+  color: #b70030;
+}
+
+.search-results {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.result-item {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #F5F5F5;
+  font-size: 28rpx;
+  color: #333;
+
+  .result-text {
+    font-size: 28rpx;
+    color: #333;
+  }
+
+  .teacher-courses {
+    margin-top: 12rpx;
+    padding-left: 16rpx;
+
+    .course-tag {
+      font-size: 24rpx;
+      color: #999;
+      background: #f5f5f5;
+      padding: 4rpx 12rpx;
+      border-radius: var(--app-component-radius, 5vw);
+    }
+  }
+
+  &:active {
+    background: #F5F5F5;
+  }
+}
+
+.no-result {
+  padding: 60rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #999;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60rpx 0;
+
+  .loading-text {
+    font-size: 28rpx;
+    color: #999;
+  }
+}
+</style>

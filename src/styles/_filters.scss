@@ -1,0 +1,403 @@
+// =====================================================================
+// 筛选条 + 下拉面板统一样式（提案广场 proposal/list 与发现页 FindView 共用）
+// 用法：在页面 scoped 样式中 `@import '<相对路径>/styles/filters';`
+// 依赖 tokens / mixins（由全局 additionalData 注入）
+// 结构：.filter-bar-wrapper > .filter-chip-bar(.filter-chip+.chip-text+.chip-arrow)
+//       + .filter-dropdown-mask + .filter-dropdown(.fd-*)
+// =====================================================================
+
+.filter-bar-wrapper {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  // 与模糊搜索浮层上边缘对齐
+  margin-top: $space-5;
+  z-index: $z-base;
+  overflow: visible;
+  transition: transform $dur-medium $ease-standard, opacity $dur-base $ease-standard;
+
+  &.is-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.filter-chip-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 12rpx 20rpx;
+  position: relative;
+  z-index: $z-sticky + 2;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  height: 56rpx;
+  padding: 0 $space-4;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  border-radius: $radius-pill;
+  box-shadow: $shadow-xs;
+  transition: border-color $dur-fast $ease-standard,
+              background $dur-fast $ease-standard,
+              box-shadow $dur-fast $ease-standard,
+              color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $divider-dark;
+    box-shadow: $shadow-xs-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.is-open {
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+      border-color: $brand-red-soft;
+    }
+  }
+
+  &.has-value {
+    background: $gradient-brand;
+    border-color: transparent;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+      background: $gradient-brand-dark;
+    }
+  }
+
+  &.has-value.is-open {
+    background: $bg-card-light;
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+      background: $bg-card-dark;
+      border-color: $brand-red-soft;
+    }
+  }
+
+  &--expand {
+    flex-shrink: 0;
+    padding: 0 $space-4;
+    justify-content: center;
+  }
+}
+
+.chip-text {
+  font-size: $font-sm;
+  font-weight: $weight-medium;
+  color: $text-secondary-light;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+
+  // 有值时白字（非展开态）
+  .filter-chip.has-value:not(.is-open) & {
+    color: $pure-white;
+    font-weight: $weight-semibold;
+  }
+
+  // 展开时红字
+  .filter-chip.is-open & {
+    color: $brand-red;
+    font-weight: $weight-semibold;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
+  }
+}
+
+.chip-arrow {
+  flex-shrink: 0;
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  transition: transform $dur-base $ease-standard, color $dur-fast $ease-standard;
+  line-height: 1;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+
+  .filter-chip.is-open & {
+    transform: rotate(180deg);
+    color: $brand-red;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
+  }
+
+  .filter-chip.has-value:not(.is-open) & {
+    color: $pure-white;
+  }
+}
+
+// 遮罩
+.filter-dropdown-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: $z-sticky + 1;
+}
+
+// 下拉面板
+.filter-dropdown {
+  position: relative;
+  z-index: $z-sticky + 3;
+  margin: 0 $space-5;
+  background: $bg-card-light;
+  border-radius: $radius-card;
+  box-shadow: $shadow-md;
+  display: flex;
+  flex-direction: column;
+  animation: mwp-fade-down $dur-base $ease-decelerate backwards;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    box-shadow: $shadow-md-dark;
+  }
+}
+
+.fd-scroll {
+  max-height: 50vh;
+  padding: 28rpx 32rpx 0;
+  position: relative;
+  z-index: $z-popover;
+}
+
+.fd-group {
+  margin-bottom: $space-6;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.fd-label {
+  display: block;
+  font-size: $font-sm;
+  font-weight: $weight-semibold;
+  color: $text-tertiary-light;
+  margin-bottom: $space-4;
+  letter-spacing: 2rpx;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.fd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.fd-tag {
+  height: 56rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-muted-light;
+  border: 1rpx solid transparent;
+  border-radius: $radius-pill;
+  font-size: $font-sm;
+  color: $text-secondary-light;
+  font-weight: $weight-medium;
+  transition: border-color $dur-fast $ease-standard,
+              color $dur-fast $ease-standard,
+              background $dur-fast $ease-standard;
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+    color: $text-secondary-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-sm);
+  }
+
+  &.active {
+    background: $brand-red-tint;
+    border-color: $brand-red;
+    color: $brand-red;
+
+    .dark-theme & {
+      background: $brand-red-tint-dark;
+      border-color: $brand-red-soft;
+      color: $brand-red-soft;
+    }
+  }
+}
+
+.fd-hint {
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  font-weight: $weight-regular;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+.fd-selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-3;
+}
+
+.fd-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  height: 44rpx;
+  padding: 0 16rpx;
+  background: $brand-red-tint;
+  border: 1rpx solid $border-color-brand;
+  border-radius: $radius-pill;
+
+  .dark-theme & {
+    background: $brand-red-tint-dark;
+    border-color: $border-color-brand-dark;
+  }
+}
+
+.fd-selected-text {
+  font-size: $font-xs;
+  color: $brand-red;
+  font-weight: $weight-medium;
+
+  .dark-theme & {
+    color: $brand-red-soft;
+  }
+}
+
+.fd-selected-clear {
+  font-size: $font-base;
+  color: $text-tertiary-light;
+  padding: 0 2rpx;
+  line-height: 1;
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+
+  &:active {
+    color: $brand-red;
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
+  }
+}
+
+.fd-search {
+  margin-top: $space-3;
+  position: relative;
+}
+
+.fd-search-input {
+  width: 100%;
+  height: 72rpx;
+  padding: 0 $space-6;
+  background: $bg-muted-light;
+  border: 2rpx solid transparent;
+  border-radius: $radius-control;
+  font-size: $font-sm;
+  color: $text-primary-light;
+  box-sizing: border-box;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+    color: $text-primary-dark;
+  }
+
+  &:focus {
+    background: $bg-card-light;
+    border-color: $brand-red;
+    box-shadow: $shadow-brand-sm;
+
+    .dark-theme & {
+      background: $bg-card-dark;
+      border-color: $brand-red-soft;
+    }
+  }
+}
+
+.fd-suggest-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: $space-2;
+  background: $bg-card-light;
+  border: 1rpx solid $divider-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
+  z-index: $z-popover;
+
+  .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $divider-dark;
+    box-shadow: $shadow-md-dark;
+  }
+}
+
+.fd-suggest-item {
+  height: 64rpx;
+  padding: 0 $space-5;
+  display: flex;
+  align-items: center;
+  font-size: $font-sm;
+  color: $text-primary-light;
+  // 与搜索建议浮层一致：无分割线
+  background: $bg-card-light;
+  transition: background-color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+    background: $bg-card-dark;
+  }
+
+  &:active {
+    background: $bg-muted-light;
+    .dark-theme & {
+      background: $bg-muted-dark;
+    }
+  }
+}
+
+.fd-footer {
+  display: flex;
+  gap: $space-4;
+  padding: $space-5 $space-7;
+  flex-shrink: 0;
+  position: relative;
+  z-index: $z-base;
+}
+
+.fd-btn--confirm {
+  margin-left: auto;
+}

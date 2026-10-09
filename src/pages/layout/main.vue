@@ -9,18 +9,18 @@
       @transition="onSwiperTransition"
       @animationfinish="onSwiperAnimationFinish"
     >
-      <!-- 首页 -->
+      <!-- 首页（无刷新语义） -->
       <swiper-item>
-        <scroll-view scroll-y class="scroll-view">
+        <MwpScrollView class="scroll-view" :enabled="false">
           <HomeView />
-        </scroll-view>
+        </MwpScrollView>
       </swiper-item>
 
-      <!-- 我的 -->
+      <!-- 我的（无刷新语义） -->
       <swiper-item>
-        <scroll-view scroll-y class="scroll-view">
-          <ProfileView />
-        </scroll-view>
+        <MwpScrollView class="scroll-view" :enabled="false">
+          <ProfileView :active="profileActive" :entering="profileEntering" />
+        </MwpScrollView>
       </swiper-item>
     </swiper>
 
@@ -44,6 +44,8 @@
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 0 }]"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="switchTab(0)"
         >
           首页
@@ -52,7 +54,9 @@
           class="tab-item"
           :class="[themeStore.themeClass, { active: currentIndex === 1 }]"
           hover-class="mwp-hover"
-          @click="onMyTabClick"
+          :hover-start-time="0"
+          :hover-stay-time="0"
+          @click="switchTab(1)"
         >
           我的
         </view>
@@ -62,63 +66,17 @@
       <view class="indicator-line" :style="{ left: indicatorLeft + '%' }" />
     </view>
 
-    <!-- More Button (☰) - 移至 profile-view 内部，与筛选胶囊同步滚动 -->
+    <!-- More Button - 移至 profile-view 内部，与筛选胶囊同步滚动 -->
 
     <!-- Popover 由 profile-view 触发 -->
 
-    <!-- 临时管理员验证弹窗 -->
-    <view
-      v-if="showAdminVerify"
-      class="admin-verify-overlay"
-      @click="showAdminVerify = false"
-    >
-      <view
-        class="admin-verify-card"
-        :class="themeStore.themeClass"
-        @click.stop
-      >
-        <view class="admin-verify-header">
-          <text class="admin-verify-title">管理员验证</text>
-          <view
-            class="admin-verify-close"
-            hover-class="mwp-hover"
-            @click="showAdminVerify = false"
-            >×</view
-          >
-        </view>
-        <view class="admin-verify-body">
-          <text class="admin-verify-label">请输入管理员密码</text>
-          <input
-            v-model="adminPassword"
-            class="admin-verify-input"
-            type="text"
-            password
-            placeholder="请输入密码"
-            @confirm="verifyAdminPassword"
-          />
-        </view>
-        <view class="admin-verify-footer">
-          <view
-            class="admin-verify-btn admin-verify-btn--cancel"
-            hover-class="mwp-hover"
-            @click="showAdminVerify = false"
-            >取消</view
-          >
-          <view
-            class="admin-verify-btn admin-verify-btn--confirm"
-            hover-class="mwp-hover"
-            @click="verifyAdminPassword"
-            >确认</view
-          >
-        </view>
-      </view>
-    </view>
+    <!-- 全局状态弹窗宿主 -->
+    <MwpStatusOverlay />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { onShow, onLoad } from '@dcloudio/uni-app';
 import HomeView from '@/components/home/HomeView.vue';
 import ProfileView from '@/components/profile/ProfileView.vue';
 import { useThemeStore } from '@/config';
@@ -130,6 +88,12 @@ const themeStore = useThemeStore();
 const viewport = useViewport();
 
 const currentIndex = ref(0);
+// 「我的」页是否已稳定激活：swiper 动画结束后才置真，
+// 保证引导弹窗里的原生 chooseAvatar 按钮在无 transform 位移时创建
+const profileActive = ref(false);
+// 「我的」页正在滑入（点击切 tab 或滑动方向指向它时提前置真），
+// 用于让引导浮层随页面一起出现，避免停稳后才弹出造成闪烁
+const profileEntering = ref(false);
 const indicatorLeft = ref(25); // 初始值 25%
 // 滑动距离基准：跟随窗口宽度变化
 const windowWidth = computed(() => viewport.width);
@@ -141,45 +105,10 @@ const safeBottom = computed(() => useScreenScale().safeBottom);
 // ⋯ 按钮已迁回 profile-view 内部，与筛选胶囊同步滚动
 // showMoreMenu / toggleMoreMenu / handleMenuClick 在 profile-view 中定义
 
-onLoad(() => {
-  // 清除上次的临时管理员身份
-  uni.removeStorageSync('meowpick_temp_admin');
-});
-
-// ===== 临时管理员验证 =====
-const showAdminVerify = ref(false);
-const adminPassword = ref('');
-let tapCount = 0;
-let tapTimer: ReturnType<typeof setTimeout> | null = null;
-
-function onMyTabClick() {
-  switchTab(1);
-  tapCount++;
-  if (tapTimer) clearTimeout(tapTimer);
-  if (tapCount >= 5) {
-    tapCount = 0;
-    showAdminVerify.value = true;
-    adminPassword.value = '';
-  } else {
-    tapTimer = setTimeout(() => {
-      tapCount = 0;
-    }, 2000);
-  }
-}
-
-function verifyAdminPassword() {
-  if (adminPassword.value === '123456') {
-    uni.setStorageSync('meowpick_temp_admin', true);
-    showAdminVerify.value = false;
-    adminPassword.value = '';
-    uni.showToast({ title: '临时管理员已激活', icon: 'success' });
-  } else {
-    uni.showToast({ title: '密码错误', icon: 'none' });
-  }
-}
-
 function switchTab(index: number) {
   currentIndex.value = index;
+  profileEntering.value = index === 1;
+  if (index !== 1) profileActive.value = false;
 }
 
 function onSwiperChange(e: { detail: { current?: number } }) {
@@ -207,11 +136,18 @@ function onSwiperTransition(e: { detail: { dx?: number } }) {
   targetLeft = Math.max(25, Math.min(75, targetLeft));
 
   indicatorLeft.value = targetLeft;
+
+  // 从首页滑向「我的」时提前标记进入，让引导浮层先于动画结束渲染
+  if (currentIndex.value === 0 && dx > 0) {
+    profileEntering.value = true;
+  }
 }
 
 function onSwiperAnimationFinish(e: { detail: { current?: number } }) {
   // 动画结束后，强制校正位置，消除可能的浮点数误差
   currentIndex.value = e.detail.current ?? 0;
+  profileEntering.value = currentIndex.value === 1;
+  profileActive.value = currentIndex.value === 1;
   indicatorLeft.value = currentIndex.value === 0 ? 25 : 75;
 }
 </script>
@@ -261,12 +197,12 @@ function onSwiperAnimationFinish(e: { detail: { current?: number } }) {
   width: 100%;
   height: auto;
   min-height: 100rpx;
-  background-color: rgba(255, 255, 255, 0.98);
+  background-color: rgba($bg-card-light, 0.98);
   border-top-left-radius: $radius-2xl;
   border-top-right-radius: $radius-2xl;
   @include safe-area-bottom;
   padding-bottom: calc(env(safe-area-inset-bottom) * 0.5);
-  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.12);
+  box-shadow: $shadow-up-light;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -275,8 +211,8 @@ function onSwiperAnimationFinish(e: { detail: { current?: number } }) {
     box-shadow $dur-medium $ease-standard;
 
   &.dark-theme {
-    background-color: rgba(30, 30, 30, 0.98);
-    box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.4);
+    background-color: rgba($bg-card-dark, 0.98);
+    box-shadow: $shadow-up-dark;
   }
 
   .tabs-container {
@@ -295,7 +231,7 @@ function onSwiperAnimationFinish(e: { detail: { current?: number } }) {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: $font-lg + 2rpx;
+    font-size: $font-lg-plus;
     color: $text-tertiary-light;
     font-weight: $weight-medium;
     @include mwp-transition($dur-instant, $ease-emphasized);
@@ -332,140 +268,6 @@ function onSwiperAnimationFinish(e: { detail: { current?: number } }) {
     transition: left $dur-instant linear;
     z-index: $z-base + 1;
     box-shadow: $shadow-brand-sm;
-  }
-}
-
-// ===== 临时管理员验证弹窗 =====
-.admin-verify-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $space-9;
-  box-sizing: border-box;
-}
-
-.admin-verify-card {
-  width: 100%;
-  max-width: 600rpx;
-  max-height: 100%;
-  overflow-y: auto;
-  background: $bg-card-light;
-  border-radius: $radius-card;
-  overflow: hidden;
-
-  &.dark-theme {
-    background: $bg-card-dark;
-  }
-}
-
-.admin-verify-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $space-7;
-  border-bottom: 1rpx solid $divider-light;
-
-  .dark-theme & {
-    border-bottom-color: $divider-card-dark;
-  }
-}
-
-.admin-verify-title {
-  font-size: $font-lg;
-  font-weight: $weight-bold;
-  color: $text-primary-light;
-
-  .dark-theme & {
-    color: $text-primary-dark;
-  }
-}
-
-.admin-verify-close {
-  width: 48rpx;
-  height: 48rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-2xl;
-  color: $text-tertiary-light;
-  @include pressable($press-scale-md);
-
-  .dark-theme & {
-    color: $text-tertiary-dark;
-  }
-}
-
-.admin-verify-body {
-  padding: $space-7;
-}
-
-.admin-verify-label {
-  font-size: $font-base;
-  color: $text-secondary-light;
-  display: block;
-  margin-bottom: $space-4;
-
-  .dark-theme & {
-    color: $text-secondary-dark;
-  }
-}
-
-.admin-verify-input {
-  width: 100%;
-  height: 80rpx;
-  background: $bg-muted-light;
-  border-radius: $radius-sm;
-  padding: 0 $space-6;
-  font-size: $font-base;
-  color: $text-primary-light;
-  box-sizing: border-box;
-
-  .dark-theme & {
-    background: $bg-muted-dark;
-    color: $text-primary-dark;
-  }
-}
-
-.admin-verify-footer {
-  display: flex;
-  border-top: 1rpx solid $divider-light;
-
-  .dark-theme & {
-    border-top-color: $divider-card-dark;
-  }
-}
-
-.admin-verify-btn {
-  flex: 1;
-  height: 96rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-md;
-  font-weight: $weight-semibold;
-  @include pressable($press-scale-sm);
-
-  &--cancel {
-    color: $text-secondary-light;
-    .dark-theme & {
-      color: $text-tertiary-dark;
-    }
-  }
-
-  &--confirm {
-    color: $brand-red;
-    border-left: 1rpx solid $divider-light;
-    .dark-theme & {
-      border-left-color: $divider-card-dark;
-    }
-
-    &:active {
-      background: $danger-soft;
-    }
   }
 }
 </style>

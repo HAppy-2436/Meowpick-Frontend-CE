@@ -13,7 +13,7 @@
     <!-- 顶部区域三档：full(问候语+logo) / logo(仅 logo) / none(都不显示) -->
     <view
       v-if="L.headerMode !== 'none'"
-      class="header-welcome"
+      class="header-welcome mwp-fade-in"
       :style="{ marginBottom: L.gapTight + 'px' }"
     >
       <view v-if="L.headerMode === 'full'" class="welcome-Line">
@@ -22,8 +22,10 @@
           :class="{ 'is-refreshing': refreshingAuth }"
           :style="{ fontSize: L.helloSize + 'px' }"
           hover-class="mwp-hover-sm"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="onHelloTap"
-          >Hello,</text
+          >Hello</text
         >
         <text class="name-text" :style="{ fontSize: L.nameSize + 'px' }">{{
           greetingText()
@@ -47,15 +49,17 @@
       @click="goToSearch"
     >
       <view
-        class="search-box mwp-pressable"
+        class="search-box"
         hover-class="search-hover"
+        :hover-start-time="0"
+        :hover-stay-time="0"
         :style="{
           height: L.searchHeight + 'px',
           borderRadius: L.radius + 'px'
         }"
       >
-        <text class="search-icon">🔍</text>
-        <text class="search-placeholder">搜索课程、老师或吐槽...</text>
+        <MwpIcon name="search" size="34rpx" class="search-icon" />
+        <text class="search-placeholder">搜索课程或老师...</text>
       </view>
     </view>
 
@@ -72,47 +76,52 @@
         <view
           class="card-item log-card mwp-pressable mwp-fade-in"
           hover-class="card-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           :style="{
             animationDelay: '60ms',
-            padding: L.cardPadding + 'px',
             borderRadius: L.radius + 'px'
           }"
           @click="goToProposalFeed"
         >
-          <text class="card-title">提案广场</text>
-          <text
-            class="card-subtitle"
-            :style="{ marginTop: L.cardTitleGap + 'px' }"
-            >Proposals</text
-          >
-          <text
-            class="card-bg-icon"
-            :style="{ fontSize: L.cardIconSize + 'px' }"
-            >📋</text
-          >
+          <view class="card-inner" :style="{ padding: L.cardPadding + 'px' }">
+            <text class="card-title">提案广场</text>
+            <text
+              class="card-subtitle"
+              :style="{ marginTop: L.cardTitleGap + 'px' }"
+              >Proposals</text
+            >
+          </view>
+          <view class="card-bg-icon">
+            <MwpIcon name="clipboard-list" :size="L.cardIconSize + 'px'" />
+          </view>
         </view>
 
         <view
-          class="card-item letter-card mwp-pressable mwp-fade-in"
+          class="card-wrap mwp-pressable mwp-fade-in"
           hover-class="card-hover"
-          :style="{
-            animationDelay: '120ms',
-            padding: L.cardPadding + 'px',
-            borderRadius: L.radius + 'px'
-          }"
+          :hover-start-time="0"
+          :hover-stay-time="0"
+          :style="{ animationDelay: '120ms' }"
           @click="goToLetter"
         >
-          <text class="card-title">致用户的一封信</text>
-          <text
-            class="card-subtitle"
-            :style="{ marginTop: L.cardTitleGap + 'px' }"
-            >To Users</text
+          <view
+            class="card-item letter-card"
+            :style="{
+              padding: L.cardPadding + 'px',
+              borderRadius: L.radius + 'px'
+            }"
           >
-          <text
-            class="card-bg-icon"
-            :style="{ fontSize: L.cardIconSize + 'px' }"
-            >✉️</text
-          >
+            <text class="card-title">致用户的一封信</text>
+            <text
+              class="card-subtitle"
+              :style="{ marginTop: L.cardTitleGap + 'px' }"
+              >To Users</text
+            >
+            <view class="card-bg-icon">
+              <MwpIcon name="mail" :size="L.cardIconSize + 'px'" />
+            </view>
+          </view>
           <view v-if="showNewIcon" class="new-tag">NEW</view>
         </view>
       </view>
@@ -128,13 +137,20 @@
         >
           <view class="stat-title">已收录吐槽</view>
           <view
-            class="stat-number"
-            :style="{
-              fontSize: L.statNumSize + 'px',
-              marginBottom: L.cardTitleGap + 'px'
-            }"
-            >{{ totalComment }}</view
+            class="stat-number-row"
+            :style="{ marginBottom: L.cardTitleGap + 'px' }"
           >
+            <text
+              v-for="(digit, i) in statDigitsList"
+              :key="i"
+              class="stat-number"
+              :style="{
+                fontSize: L.statNumSize + 'px',
+                width: L.statSlotWidth + 'px'
+              }"
+              >{{ digit }}</text
+            >
+          </view>
           <view class="stat-unit">条</view>
         </view>
       </view>
@@ -160,7 +176,9 @@
         </view>
         <view class="guide-steps">
           <view class="guide-step">
-            <view class="step-icon">🔍</view>
+            <view class="step-icon">
+              <MwpIcon name="search" size="34rpx" />
+            </view>
             <view class="step-body">
               <text class="step-title">搜索课程，查看评价</text>
               <text class="step-desc"
@@ -169,7 +187,9 @@
             </view>
           </view>
           <view class="guide-step">
-            <view class="step-icon">✏️</view>
+            <view class="step-icon">
+              <MwpIcon name="square-pen" size="34rpx" />
+            </view>
             <view class="step-body">
               <text class="step-title">发布吐槽，分享体验</text>
               <text class="step-desc"
@@ -178,7 +198,9 @@
             </view>
           </view>
           <view class="guide-step">
-            <view class="step-icon">📝</view>
+            <view class="step-icon">
+              <MwpIcon name="file-text" size="34rpx" />
+            </view>
             <view class="step-body">
               <text class="step-title">提案新课，投票支持</text>
               <text class="step-desc"
@@ -194,14 +216,94 @@
         </view>
       </view>
     </view>
+
+    <!-- 旧版迁移欢迎弹窗 -->
+    <view
+      v-if="showMigrationWelcome"
+      class="guide-overlay"
+      :class="themeStore.themeClass"
+      @click="onMigrationDismiss"
+    >
+      <view class="guide-content" @click.stop>
+        <view class="guide-header">
+          <text class="guide-badge">全新版本</text>
+          <text class="guide-title">欢迎回来</text>
+          <text class="guide-subtitle">选课猫换新装啦，这些变化别错过</text>
+        </view>
+        <view class="guide-steps">
+          <view class="guide-step">
+            <view class="step-icon">
+              <MwpIcon name="palette" size="34rpx" />
+            </view>
+            <view class="step-body">
+              <text class="step-title">全新页面</text>
+              <text class="step-desc"
+                >首页、课程、提案等页面全面重绘，信息更清晰、操作更顺手</text
+              >
+            </view>
+          </view>
+          <view class="guide-step">
+            <view class="step-icon">
+              <MwpIcon name="moon" size="34rpx" />
+            </view>
+            <view class="step-body">
+              <text class="step-title">深色模式</text>
+              <text class="step-desc"
+                >跟随系统或手动切换深色主题，夜间使用更护眼</text
+              >
+            </view>
+          </view>
+          <view class="guide-step">
+            <view class="step-icon">
+              <MwpIcon name="clipboard-list" size="34rpx" />
+            </view>
+            <view class="step-body">
+              <text class="step-title">提案广场</text>
+              <text class="step-desc"
+                >「新增」标签页迁移至首页「提案广场」，提案的发起与投票都从这里进入</text
+              >
+            </view>
+          </view>
+          <view class="guide-step">
+            <view class="step-icon">
+              <MwpIcon name="settings" size="34rpx" />
+            </view>
+            <view class="step-body">
+              <text class="step-title">回退方式</text>
+              <text class="step-desc"
+                >用不习惯？在「我的」更多菜单可一键切回旧版外观</text
+              >
+            </view>
+          </view>
+        </view>
+        <view class="guide-footer">
+          <MwpButton tone="brand" block size="lg" @click="onMigrationDismiss"
+            >开始体验</MwpButton
+          >
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, watchEffect } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onUnmounted,
+  watchEffect
+} from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { waitForLogin, relogin } from '@/utils/init';
-import { http, useThemeStore, useTokenStore } from '@/config';
+import {
+  showLoading,
+  hideLoading,
+  showSuccess,
+  showError
+} from '@/composables/useStatus';
+import { http, useThemeStore } from '@/config';
 import { useScreenScale } from '@/composables/useScreenScale';
 import { useMenuButton } from '@/composables/useMenuButton';
 import { WIDE_ASPECT } from '@/composables/useViewport';
@@ -213,6 +315,10 @@ const { menuButtonInfo } = useMenuButton();
 
 // 状态定义
 const totalComment = ref(0);
+// 数字按字符拆分，模板里每个字符占一个等宽槽位
+const statDigitsList = computed(() =>
+  String(totalComment.value ?? 0).split('')
+);
 const showNewIcon = ref(true);
 const userName = ref('同学');
 const isAdmin = ref(false);
@@ -234,6 +340,7 @@ const L = reactive({
   searchHeight: 48,
   toolboxHeight: 300,
   statNumSize: 36,
+  statSlotWidth: 23,
   cardGap: 8,
   cardTitleGap: 4,
   cardPadding: 16,
@@ -257,7 +364,7 @@ const PHONE_REF_WIDTH = 375;
 const WIDE_SCALE_MAX = 2;
 
 const calcLayout = () => {
-  const { r, available, radius, aspect, windowWidth, pxPerRpx } =
+  const { r, available, radius, aspect, windowWidth, pxPerRpx, safeBottom } =
     useScreenScale();
 
   L.container = available;
@@ -280,14 +387,9 @@ const calcLayout = () => {
   L.bottomGap = Math.round(gap * 1.4);
 
   L.logoHeight = Math.min(Math.round(180 * scale), 220);
-  L.helloSize = Math.min(Math.round(28 * scale), 34);
+  L.helloSize = Math.min(Math.round(34 * scale), 40);
   L.nameSize = Math.min(Math.round(36 * scale), 44);
   L.searchHeight = Math.round(56 * scale);
-  // 展示层数字：保留动态，手机下上限收紧到 42
-  L.statNumSize = Math.min(
-    Math.round(40 * scale),
-    L.isWide ? Math.round(40 * WIDE_SCALE_MAX) : 42
-  );
   L.cardGap = Math.round(Math.max(gap * 0.5, 8));
   L.cardTitleGap = Math.round(Math.max(8 * scale, 4));
   // 盒子尺寸：32rpx / 40rpx / 90rpx 的 px 口径基准
@@ -309,6 +411,23 @@ const calcLayout = () => {
 
   // 卡片列宽（容器 40rpx×2 + toolbox 10rpx×2 内距，再对半分）
   const colWidth = (L.contentWidth - 100 * pxPerRpx - L.cardGap) / 2;
+
+  // 「已收录吐槽」数字采用等分槽位排布：模板中每个字符占一个固定宽度槽位，
+  // 整排宽度由槽宽 × 位数决定，与字体字形宽度无关（旧方案按 0.66em 估算字形宽度，
+  // 在字形偏窄的系统字体下会把数字算小）。字号只由卡片可用高度决定，并以槽宽的
+  // 0.58em 作横向安全线，避免极宽字形溢出到相邻槽位。手机比例不设上限；仅宽屏保留上限。
+  const statLen = Math.max(String(totalComment.value ?? 0).length, 1);
+  const statContentW = Math.max(colWidth - L.statPadding * 2, 0);
+  const statInnerH = Math.max(L.toolboxHeight - L.statPadding * 2, 0);
+  L.statSlotWidth = statContentW / statLen;
+  const STAT_GLYPH_EM = 0.58;
+  const statNumSizeRaw = Math.min(
+    L.statSlotWidth / STAT_GLYPH_EM,
+    statInnerH * 0.46
+  );
+  L.statNumSize = Math.round(
+    L.isWide ? Math.min(statNumSizeRaw, 40 * WIDE_SCALE_MAX) : statNumSizeRaw
+  );
 
   if (L.isWide) {
     // ===== 宽屏 / 平板：内容列居中；过渡比例下只留 logo（不含问候语）=====
@@ -345,50 +464,43 @@ const calcLayout = () => {
     L.bottomGap = bottom;
     L.paddingTop += leftover - bottom;
   } else {
-    // ===== 手机：问候语 + logo hero =====
-    const helloArea = Math.round(30 * r);
+    // ===== 手机：严格三对齐构图 =====
+    // 1) 搜索框上沿 = 可用区竖直中线
+    // 2) logo 与上方文字、与搜索框上沿的间距相等（两侧同取 gapTight）
+    // 3) 卡片上沿距搜索框下沿 = 卡片下沿距菜单栏上沿（两侧同取 gapLoose）
+    // 有小白条时：useScreenScale.available 预留了整个安全区，
+    // 而底部菜单栏 CSS 只占半个安全区（padding-bottom: env * 0.5）。
+    // 补回差额，使首页容器底边对齐菜单栏真实上沿，三对齐才成立。
+    const barStrip =
+      safeBottom > 0 ? safeBottom - Math.round(safeBottom * 0.5) : 0;
+    const regionH = available + barStrip;
+    L.container = regionH;
+
+    const helloArea = Math.round(36 * r);
     const nameArea = Math.round(40 * r);
-    // headerH 含 logo 上边距（gapTight）
+    const searchTop = Math.round(regionH / 2);
+
+    // 规则2：gapTight 同时作为 logo 上/下间距（模板已复用）。短屏下收窄，
+    // 保证顶部留白不低于系统胶囊上沿，从而使规则1 可精确成立。
+    const maxLogoGap = Math.floor(
+      (searchTop - helloArea - nameArea - L.logoHeight - L.paddingTop) / 2
+    );
+    L.gapTight = Math.max(0, Math.min(L.gapTight, maxLogoGap));
+
+    // 规则1：反推顶部留白，使搜索框上沿恰好落在中线
     const headerH = helloArea + nameArea + L.gapTight + L.logoHeight;
+    L.paddingTop = Math.max(L.paddingTop, searchTop - headerH - L.gapTight);
 
-    const reserved =
-      L.paddingTop +
-      headerH +
-      L.gapTight + // header 下边距（logo → 搜索）
-      L.searchHeight +
-      L.gapLoose + // 搜索 → 卡片
-      L.bottomGap;
-
-    const slack = available - reserved;
-    // 卡片区最多占可用高度的 30%
-    const box = Math.max(Math.min(slack, Math.round(available * 0.3)), 0);
-    L.toolboxHeight = box;
-
-    // 冗余分配：先松开间距（带上限）
-    // gapTight 占两个槽位（logo 上边距 + header 下边距）
-    let rest = Math.max(slack - box, 0);
-
-    const addTight = Math.min(
-      Math.round(rest * 0.2),
-      Math.max(Math.round(gap * 1.5) - L.gapTight, 0)
-    );
-    L.gapTight += addTight;
-    rest -= addTight * 2;
-
-    const addLoose = Math.min(
-      Math.round(rest * 0.3),
-      Math.max(Math.round(gap * 2.0) - L.gapLoose, 0)
-    );
-    L.gapLoose += addLoose;
-
-    // 上下留白对称：让 Hello 上沿到屏幕顶的间距 ≈ 卡片底到菜单栏顶的间距，
-    // 避免首页整体视觉重心偏上。顶部不得高于系统胶囊，故取其较大值。
-    const headerHFinal = helloArea + nameArea + L.gapTight + L.logoHeight;
-    const contentH =
-      headerHFinal + L.gapTight + L.searchHeight + L.gapLoose + box;
-    const balanced = Math.round((available - contentH) / 2);
-    L.paddingTop = Math.max(L.paddingTop, balanced);
-    L.bottomGap = Math.max(available - contentH - L.paddingTop, 0);
+    // 规则3：中线以下、搜索框以外的高度 belowH = 卡片高 + 两侧等距
+    const belowH = Math.max(regionH - searchTop - L.searchHeight, 0);
+    const minGap = Math.round(8 * scale);
+    let box = Math.round(regionH * 0.3);
+    box = Math.min(box, Math.max(belowH - minGap * 2, 0));
+    box = Math.max(box, 0);
+    // 取整后反推卡片高度，保证上下间距严格相等（消除 1px 余数）
+    L.gapLoose = Math.max(Math.floor((belowH - box) / 2), 0);
+    L.toolboxHeight = Math.max(belowH - L.gapLoose * 2, 0);
+    L.bottomGap = L.gapLoose;
   }
 
   // 圆角安全夹：不超过卡片短边的 25%，避免极矮视口下变成水泡
@@ -404,10 +516,6 @@ const greetingText = () => {
   if (userName.value && userName.value !== '同学')
     return userName.value + ' ' + suffix;
   return suffix;
-};
-
-const openFeedback = () => {
-  showFeedback.value = true;
 };
 
 // 首次使用引导弹窗
@@ -428,8 +536,7 @@ const detectAdmin = async () => {
     const res = await http.AuthController.authIsAdminList();
     isAdmin.value = !!(res.data?.data?.isAdmin ?? false);
   } catch {
-    const tempAdmin = uni.getStorageSync('meowpick_temp_admin');
-    isAdmin.value = !!tempAdmin;
+    isAdmin.value = false;
   }
 };
 
@@ -438,39 +545,53 @@ const detectAdmin = async () => {
 const onHelloTap = async () => {
   if (refreshingAuth.value) return;
   refreshingAuth.value = true;
-  uni.showLoading({ title: '更新登录中...', mask: true });
+  showLoading('更新登录中...');
   try {
-    const token = await relogin();
-    uni.hideLoading();
+    // 手动刷新登录：跳过重登冷却，强制走一次完整登录
+    const token = await relogin(true);
     if (token) {
-      const userId = useTokenStore().userId || '-';
-      uni.showModal({
-        title: '登录已更新',
-        content: `token: ${token.slice(0, 10)}...\n用户ID: ${userId}`,
-        showCancel: false
-      });
-      // 刷新首页与「我的」的数据
-      fetchTotalComment();
-      loadUserInfo();
-      detectAdmin();
+      showSuccess('登录已更新');
+      // 广播刷新首页与「我的」的数据，并清除 Hello 高亮
       uni.$emit('authRefreshed');
     } else {
-      uni.showModal({
-        title: '登录更新失败',
-        content: '未拿到 token，请检查网络/合法域名/后端登录接口',
-        showCancel: false
-      });
+      showError('登录更新失败：请检查网络或后端登录接口');
     }
   } catch (err) {
-    uni.hideLoading();
-    uni.showModal({
-      title: '登录更新异常',
-      content: String((err as Error)?.message || err),
-      showCancel: false
-    });
+    console.error('[home-view] onHelloTap error:', err);
+    showError('登录更新异常');
   } finally {
+    hideLoading();
     refreshingAuth.value = false;
   }
+};
+
+// ===== 旧版迁移欢迎弹窗 =====
+// 新版与旧版共用 storage、无版本号可依，改用「旧版使用痕迹」判断：
+// 命中任一旧版会写入的 key，且尚未写过迁移标记，即认为是从旧版迁移过来。
+// 注意：全新用户走新手引导（onGuideDismiss）时也会写入迁移标记，从而不会误触发。
+const MIGRATION_KEY = 'meowpick_new_version_welcome_seen';
+const LEGACY_KEYS = [
+  'meowpick_guide_seen',
+  'meowpick_profile_guide_seen',
+  'hasReadLetter',
+  'searchHistory',
+  'find_page_state'
+];
+const showMigrationWelcome = ref(false);
+
+const hasLegacyTrace = () =>
+  LEGACY_KEYS.some((key) => {
+    const v = uni.getStorageSync(key);
+    return v !== '' && v !== null && v !== undefined && v !== false;
+  });
+
+// 是否应弹出迁移欢迎：非全新用户、且本次改版尚未欢迎过
+const shouldWelcomeMigration = () =>
+  !uni.getStorageSync(MIGRATION_KEY) && hasLegacyTrace();
+
+const onMigrationDismiss = () => {
+  showMigrationWelcome.value = false;
+  uni.setStorageSync(MIGRATION_KEY, true);
 };
 
 // ===== 引导弹窗 =====
@@ -478,6 +599,8 @@ const onGuideDismiss = () => {
   applyDefaults();
   showGuide.value = false;
   uni.setStorageSync(GUIDE_KEY, true);
+  // 全新用户已看过新手引导，视为已欢迎，迁移弹窗不再触发
+  uni.setStorageSync(MIGRATION_KEY, true);
 };
 
 const generateDefaultName = () => {
@@ -504,6 +627,13 @@ watchEffect(() => {
 });
 
 // 生命周期
+// 登录刷新成功（首页点 Hello）后刷新首页数据
+const onAuthRefreshed = () => {
+  fetchTotalComment();
+  loadUserInfo();
+  detectAdmin();
+};
+
 onMounted(async () => {
   await waitForLogin();
   fetchTotalComment();
@@ -511,6 +641,7 @@ onMounted(async () => {
   detectAdmin();
   // 监听授权成功事件，实时更新昵称
   uni.$on('userInfoUpdated', loadUserInfo);
+  uni.$on('authRefreshed', onAuthRefreshed);
 
   const hasReadLetter = uni.getStorageSync('hasReadLetter');
   showNewIcon.value = !hasReadLetter;
@@ -519,6 +650,9 @@ onMounted(async () => {
   const hasSeenGuide = uni.getStorageSync(GUIDE_KEY);
   if (!hasSeenGuide) {
     showGuide.value = true;
+  } else if (shouldWelcomeMigration()) {
+    // 非全新用户：从旧版迁移过来，欢迎一次新版
+    showMigrationWelcome.value = true;
   }
 });
 
@@ -529,12 +663,14 @@ onShow(() => {
 
 onUnmounted(() => {
   uni.$off('userInfoUpdated', loadUserInfo);
+  uni.$off('authRefreshed', onAuthRefreshed);
 });
 
 const fetchTotalComment = () => {
-  http.CommentController.searchTotalList()
+  return http.CommentController.searchTotalList()
     .then((res) => {
-      totalComment.value = res.data?.data?.count ?? 0;
+      const count = res.data?.data?.count ?? 0;
+      totalComment.value = count;
     })
     .catch((err: unknown) => {
       console.error('[home-view] fetchTotalComment error:', err);
@@ -558,10 +694,6 @@ const goToLetter = () => {
 
   // 2. 然后立即跳转，不等待 storage 写入
   uni.navigateTo({ url: '/pages/home/letter' });
-};
-
-const goToUpdate = () => {
-  uni.navigateTo({ url: '/pages/home/update-log' });
 };
 
 const goToProposalFeed = () => {
@@ -607,10 +739,10 @@ const goToProposalFeed = () => {
   }
 
   .hello-text {
-    font-weight: 300;
-    color: $text-tertiary-light;
-    font-family: sans-serif;
+    font-weight: $weight-semibold;
+    color: $text-placeholder-light;
     font-style: normal;
+    opacity: 0.8;
     transition: opacity $dur-fast $ease-standard;
 
     &.is-refreshing {
@@ -619,14 +751,8 @@ const goToProposalFeed = () => {
   }
 
   .name-text {
-    font-weight: 900;
+    font-weight: $weight-heavy;
     color: $text-primary-light;
-    letter-spacing: -2rpx;
-    // 长昵称必须单行，否则会撑高 header、挤掉底部气口
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .brand-logo {
@@ -642,7 +768,7 @@ const goToProposalFeed = () => {
 
 .dark-theme .header-welcome {
   .hello-text {
-    color: $text-secondary-dark;
+    color: $text-tertiary-dark;
   }
   .name-text {
     color: $text-primary-dark;
@@ -685,10 +811,12 @@ const goToProposalFeed = () => {
     border: none;
 
     .search-icon {
-      font-size: $font-xl;
       margin-right: 24rpx;
-      opacity: 0.4;
-      line-height: 1;
+      color: $text-tertiary-light;
+
+      .dark-theme & {
+        color: $text-tertiary-dark;
+      }
     }
 
     .search-placeholder {
@@ -696,7 +824,7 @@ const goToProposalFeed = () => {
       font-size: $font-lg;
       color: $text-tertiary-light;
       letter-spacing: 1rpx;
-      font-weight: 400;
+      font-weight: $weight-regular;
     }
   }
 
@@ -742,15 +870,26 @@ const goToProposalFeed = () => {
   }
 }
 
+// 卡片外壳：不裁剪，让 NEW 角标能悬挂到卡片外。
+// 纵向 flex，使内部卡片 flex:1 作用在高度上（与直接作为列子项时一致）。
+.card-wrap {
+  position: relative;
+  flex: 3;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 // 通用卡片 - 面板风格
+// 注意：flex 子项自身不设 padding（border-box 下 flex-basis:0% 会把 padding
+// 计入基准尺寸，导致 flex-grow 比例被破坏），内边距统一交给 .card-inner。
 .card-item {
   background-color: $bg-card-light;
   border-radius: $radius-card;
-  padding: $space-7;
+  padding: 0;
   position: relative;
   overflow: hidden;
   box-shadow: $shadow-comp;
-  border: 1rpx solid rgba(0, 0, 0, 0.03);
 
   flex: 1;
   min-height: 0;
@@ -759,9 +898,17 @@ const goToProposalFeed = () => {
   justify-content: center;
   @include mwp-transition($dur-instant, $ease-standard);
 
+  // 承载内边距，纵向居中；使 .card-item 自身保持零 padding
+  .card-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .card-title {
-    font-size: $font-md;
-    font-weight: 700;
+    font-size: $font-lg;
+    font-weight: $weight-bold;
     color: $text-primary-light;
     margin-bottom: 2rpx;
     z-index: 2;
@@ -782,11 +929,14 @@ const goToProposalFeed = () => {
     position: absolute;
     right: -10rpx;
     bottom: -10rpx;
-    font-size: 90rpx;
-    line-height: 1;
     opacity: 0.15;
     z-index: 1;
+    color: $brand-red;
     transform: rotate(-15deg);
+
+    .dark-theme & {
+      color: $brand-red-soft;
+    }
   }
 
   &:active {
@@ -794,18 +944,35 @@ const goToProposalFeed = () => {
   }
 
   // 主功能卡：提案广场，品牌渐变 + 品牌标题色
+  // 左列上/下卡高度比 4:3（下方 letter-card 在外壳 .card-wrap 上取 flex:3）
   &.log-card {
+    flex: 4;
     background: $gradient-brand-soft;
     .card-title {
-      color: $brand-red;
+      @include text-gradient;
+    }
+    // 图标略往左上移，避免被卡片边缘裁掉太多
+    .card-bg-icon {
+      right: -10rpx;
+      bottom: -2rpx;
+    }
+  }
+
+  // 致用户的一封信：标题略小，与主功能卡形成层级
+  &.letter-card {
+    .card-title {
+      font-size: $font-base;
     }
   }
 }
 
 // hover-class 按压态：小程序 `view` 用 hover-class 比 `:active` 更可靠
-.card-hover,
-.search-hover {
+.card-hover {
   transform: scale($press-scale-sm);
+}
+// 搜索框是整宽大块，缩放位移更明显，单独用更小的幅度
+.search-hover {
+  transform: scale(0.99);
 }
 
 .dark-theme .card-item {
@@ -824,21 +991,28 @@ const goToProposalFeed = () => {
 .dark-theme .log-card {
   background: $gradient-brand-soft-dark;
   .card-title {
-    color: $brand-red-soft;
+    @include text-gradient($brand-red-soft, $brand-red);
   }
 }
 
 .new-tag {
   position: absolute;
-  top: 16rpx;
-  right: 16rpx;
+  // 越出卡片上/右边界，形成悬挂在右上角的角标
+  top: -12rpx;
+  right: -12rpx;
   background: $gradient-brand;
   color: $pure-white;
   font-size: $font-xs;
-  font-weight: 700;
+  font-weight: $weight-bold;
   padding: 4rpx 12rpx;
   border-radius: $radius-pill;
+  box-shadow: $shadow-sm;
   z-index: 3;
+
+  .dark-theme & {
+    background: $gradient-brand-dark;
+    box-shadow: $shadow-sm-dark;
+  }
 }
 
 // 统计卡片：纵向大卡片
@@ -846,7 +1020,6 @@ const goToProposalFeed = () => {
   flex: 1;
   min-height: 0;
   background-color: $bg-card-light;
-  border: 1rpx solid rgba(0, 0, 0, 0.03);
   color: $text-primary-light;
   border-radius: $radius-card;
   padding: $space-8;
@@ -857,26 +1030,31 @@ const goToProposalFeed = () => {
   box-shadow: $shadow-comp;
 
   .stat-title {
-    font-size: $font-md;
-    font-weight: 700;
+    font-size: $font-lg;
+    font-weight: $weight-bold;
     opacity: 1;
     color: $text-tertiary-light;
   }
 
+  // 数字行：等分槽位，每字固定槽宽、整排居中
+  .stat-number-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .stat-number {
-    font-size: 80rpx;
-    font-weight: 900;
+    display: block;
+    text-align: center;
+    font-weight: $weight-heavy;
     line-height: 1;
-    margin: 20rpx 0;
-    letter-spacing: -2rpx;
-    color: $brand-red;
-    text-shadow: none;
+    @include text-gradient;
   }
 
   .stat-unit {
-    font-size: $font-base;
-    opacity: 0.6;
-    color: $text-tertiary-light;
+    font-size: $font-md;
+    color: $text-secondary-light;
     align-self: flex-end;
   }
 }
@@ -889,7 +1067,7 @@ const goToProposalFeed = () => {
     color: $text-tertiary-dark;
   }
   .stat-number {
-    color: $brand-red-soft;
+    @include text-gradient($brand-red-soft, $brand-red);
   }
   .stat-unit {
     color: $text-secondary-dark;
@@ -916,154 +1094,13 @@ const goToProposalFeed = () => {
     font-size: $font-base;
     color: $text-tertiary-light;
     text-decoration: underline;
-    transition: color 0.15s;
+    transition: color $dur-fast $ease-standard;
 
     &:active {
       color: $brand-red;
     }
   }
 }
-// ===== 引导弹窗 =====
-
-.guide-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: $z-modal + 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $space-9;
-  box-sizing: border-box;
-  animation: mwp-fade-in $motion-enter-sm $ease-standard backwards;
-}
-
-.guide-content {
-  width: 100%;
-  max-width: 600rpx;
-  // 高度超限时在弹窗内部滚动，避免溢出屏幕
-  max-height: 100%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  background: $bg-card-light;
-  border-radius: $radius-2xl;
-  padding: $space-8 $space-7;
-  box-shadow: $shadow-xl;
-  animation: mwp-bounce-in $motion-heart $ease-spring backwards;
-  transition: background-color $dur-medium $ease-standard;
-}
-
-.guide-header {
-  text-align: center;
-  margin-bottom: $space-7;
-
-  .guide-title {
-    display: block;
-    font-size: $font-3xl;
-    font-weight: $weight-black;
-    color: $text-primary-light;
-    margin-bottom: $space-2;
-    text-align: center;
-  }
-
-  .guide-subtitle {
-    display: block;
-    font-size: $font-sm + 2rpx;
-    color: $text-tertiary-light;
-    text-align: center;
-  }
-}
-
-.guide-steps {
-  margin-bottom: $space-7;
-}
-
-.guide-step {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: $space-6;
-  gap: $space-5;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  .step-icon {
-    width: 64rpx;
-    height: 64rpx;
-    background: $brand-red-tint;
-    border-radius: $radius-lg;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: $font-2xl;
-    flex-shrink: 0;
-  }
-
-  .step-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: $space-2;
-  }
-
-  .step-title {
-    font-size: $font-md;
-    font-weight: $weight-semibold;
-    color: $text-primary-light;
-    display: block;
-  }
-
-  .step-desc {
-    font-size: $font-sm;
-    color: $text-tertiary-light;
-    line-height: 1.5;
-    display: block;
-  }
-}
-
-.guide-footer {
-  .guide-dont-ask {
-    text-align: center;
-    font-size: $font-xs;
-    color: $text-tertiary-light;
-    padding: $space-3 0;
-    margin-top: $space-2;
-  }
-}
-
-// 暗色模式（统一 .dark-theme 嵌套）
-.dark-theme {
-  .guide-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-  }
-  .guide-content {
-    background: $bg-card-dark;
-  }
-  .guide-header .guide-title {
-    color: $text-primary-dark;
-  }
-  .guide-header .guide-subtitle {
-    color: $text-tertiary-dark;
-  }
-  .guide-step {
-    .step-title {
-      color: $text-primary-dark;
-    }
-    .step-desc {
-      color: $text-tertiary-dark;
-    }
-  }
-  .guide-dont-ask {
-    color: $text-tertiary-dark;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .guide-overlay,
-  .guide-content {
-    animation: none;
-    transition: none;
-  }
-}
+// ===== 引导弹窗（样式统一在 styles/_guide.scss） =====
+@import '../../styles/guide';
 </style>

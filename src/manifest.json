@@ -8,9 +8,14 @@
   "mp-weixin": {
     "appid": "wxdffc445bde3313aa",
     "resizable": true,
+    "darkmode": true,
+    "lazyCodeLoading": "requiredComponents",
     "setting": {
       "es6": true,
       "urlCheck": false,
+      "minified": true,
+      "minifyWXSS": true,
+      "minifyWXML": true,
       "packNpmManually": true,
       "packNpmRelationList": [
         {

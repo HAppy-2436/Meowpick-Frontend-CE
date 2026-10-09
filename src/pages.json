@@ -10,66 +10,145 @@
   },
   "pages": [
     {
-      "path": "pages/layout/main",
-      "style": {
-        "navigationStyle": "custom"
-      }
+      "path": "pages/gateway/gateway"
+    },
+    {
+      "path": "pages/layout/main"
     },
     {
       "path": "pages/course/detail",
       "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "课程详情"
+        "navigationBarTitleText": "课程详情",
+        "disableScroll": true
       }
     },
     {
-      "path": "pages/course/comment",
-      "style": {
-        "enablePullDownRefresh": true
-      }
+      "path": "pages/course/comment"
     },
     {
       "path": "pages/find/index",
-      "style": {}
+      "style": {
+        "disableScroll": true
+      }
     },
     {
       "path": "pages/home/letter",
       "style": {
-        "navigationBarTitleText": "给用户的一封信",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "给用户的一封信"
       }
     },
     {
-      "path": "pages/home/update-log",
+      "path": "pages/profile/update-log",
       "style": {
-        "navigationBarTitleText": "版本更新日志",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "版本更新日志"
       }
     },
     {
-      "path": "pages/proposal/propose",
-      "style": {
-        "navigationStyle": "custom"
-      }
+      "path": "pages/proposal/propose"
     },
     {
       "path": "pages/proposal/list",
       "style": {
-        "navigationStyle": "custom"
+        "disableScroll": true
       }
     },
     {
       "path": "pages/proposal/log",
       "style": {
-        "navigationStyle": "custom"
+        "disableScroll": true
       }
     },
     {
-      "path": "pages/course/proposal-detail",
+      "path": "pages/proposal/proposal-detail",
       "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "提案详情"
+        "navigationBarTitleText": "提案详情",
+        "disableScroll": true
       }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "original",
+      "pages": [
+        {
+          "path": "pages/home/home",
+          "style": {
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/course/index/index",
+          "style": {}
+        },
+        {
+          "path": "pages/course/comment/index",
+          "style": {
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "pages/find/index/index",
+          "style": {}
+        },
+        {
+          "path": "pages/find/choose/index",
+          "style": {
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/find/choose/teacher",
+          "style": {}
+        },
+        {
+          "path": "pages/my-comments/my-comments",
+          "style": {
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "pages/home/letter",
+          "style": {
+            "navigationBarTitleText": "给用户的一封信",
+            "navigationStyle": "default"
+          }
+        },
+        {
+          "path": "pages/home/update-log",
+          "style": {
+            "navigationBarTitleText": "版本更新日志",
+            "navigationStyle": "default"
+          }
+        },
+        {
+          "path": "pages/web-frame/web-frame",
+          "style": {}
+        },
+        {
+          "path": "pages/proposal/list",
+          "style": {
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/proposal/propose",
+          "style": {
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/proposal/detail",
+          "style": {
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "pages/proposal/log",
+          "style": {
+            "navigationStyle": "custom"
+          }
+        }
+      ]
     }
   ]
 }

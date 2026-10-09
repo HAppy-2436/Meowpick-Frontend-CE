@@ -2,10 +2,32 @@
 @import "./styles/tokens.scss";
 @import "./styles/animations.scss";
 
-// 移除 NutUI TabPane 内部 padding（全局覆盖）
-.nut-tab-pane {
-  padding: 0 !important;
-  background-color: transparent !important;
+// 原始版（上游 main）皮肤统一使用的组件圆角变量。
+// 上游原本在 App.vue 的 page 上声明；此处提升为全局，保证分包内的原版页面可用。
+//
+// 锁定 page 底色与默认文字色为浅色主题：
+// 微信在 darkmode: true 下会依据系统主题改写 page 画布与原生基础组件的默认样式，
+// 旧版（原始版）皮肤没有深色适配，页面根容器多为透明，会露出深色画布（搜索页 / 提案页
+// 的空白区域）与白字。此处把 page 画布钉在浅色页面底色——与 globalStyle.backgroundColor
+// 一致，也与旧版页面迁移前的观感一致（window.backgroundColor 只作用于下拉区域，不画 page 画布）。
+// 新版所有页面根容器均为 100vh 且自带主题底色，会完整覆盖 page，故不受影响。
+page {
+  --app-component-radius: 5vw;
+  color: $text-primary-light;
+  background-color: $bg-page-light !important;
+}
+
+// 原生输入控件默认不继承 page 文字色，微信深色模式下会被刷成白字。
+// 强制继承所在主题的文字色：旧版继承 page 的深色文字，新版继承 .dark-theme 的浅色文字。
+input,
+textarea {
+  color: inherit;
+}
+
+// 新版深色根容器的文字色，供上方的 inherit 与未显式设色的文本使用。
+// 显式声明了 color 的元素优先级更高，不受影响。
+.dark-theme {
+  color: $text-primary-dark;
 }
 
 // 全局可访问性：所有可点击元素在移动端移除点击高亮

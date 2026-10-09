@@ -18,6 +18,8 @@
           :class="{ 'is-active': item.isSelected }"
           :style="{ animationDelay: `${Math.min(index * 60, 240)}ms` }"
           hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
           @click="toggleTag(item)"
         >
           <image :src="item.icon" class="tag-icon" mode="aspectFit" />
@@ -35,34 +37,32 @@
         <textarea
           v-model="text"
           class="comment-input"
-          placeholder-class="mwp-placeholder"
-          placeholder="请输入您的吐槽内容 (200字以内)..."
-          :maxlength="200"
+          placeholder-class="mwp-placeholder--area"
+          placeholder="请输入您的吐槽内容 (140字以内)..."
+          :maxlength="140"
           :disabled="isClicked"
         />
-        <text class="word-count">{{ text.length }}/200</text>
+        <text class="word-count">{{ text.length }}/140 字</text>
       </view>
     </view>
 
     <!-- 发布按钮 -->
-    <view
-      class="publish-btn mwp-pressable"
-      :class="{ 'is-disabled': isClicked || !canSubmit }"
-      hover-class="mwp-hover"
+    <MwpButton
+      class="publish-btn"
+      tone="brand"
+      size="lg"
+      block
+      :loading="isLoading"
+      :disabled="isClicked || !canSubmit"
       @click="commit"
     >
-      <text class="publish-btn__label">{{
-        isLoading ? '发布中...' : '发布吐槽'
-      }}</text>
-    </view>
+      {{ isLoading ? '发布中...' : '发布吐槽' }}
+    </MwpButton>
 
     <view class="safe-area-bottom" />
 
-    <!-- 加载蒙层 -->
-    <view v-if="isLoading" class="loading-overlay">
-      <view class="loading-spinner" />
-      <text class="loading-text">发布中...</text>
-    </view>
+    <!-- 全局状态弹窗宿主 -->
+    <MwpStatusOverlay />
   </view>
 </template>
 
@@ -72,7 +72,15 @@ import { onLoad } from '@dcloudio/uni-app';
 import TopNavBar from '@/components/common/TopNavBar.vue';
 import { http, useThemeStore, PubSub } from '@/config';
 import { useMenuButton } from '@/composables/useMenuButton';
+import {
+  showLoading,
+  hideLoading,
+  showSuccess,
+  showError,
+  showInfo
+} from '@/composables/useStatus';
 import { TOAST_DURATION_MS } from '@/utils/constants';
+import { errorMessageOf } from '@/utils/review-error';
 import { TotalTags, InitTags, type Tags } from '@/utils/tags';
 
 const themeStore = useThemeStore();
@@ -84,11 +92,7 @@ const SelectedTags = ref<Tags[]>([]);
 const isClicked = ref(false);
 const isLoading = ref(false);
 
-const canSubmit = computed(
-  () => text.value.trim().length > 0 || SelectedTags.value.length > 0
-);
-
-const goBack = () => uni.navigateBack();
+const canSubmit = computed(() => text.value.trim().length > 0);
 
 const toggleTag = (tag: Tags) => {
   if (isClicked.value) return;
@@ -97,7 +101,8 @@ const toggleTag = (tag: Tags) => {
     SelectedTags.value = SelectedTags.value.filter((t) => t.text !== tag.text);
   } else {
     if (SelectedTags.value.length >= 4) {
-      return uni.showToast({ title: '最多选择4个标签', icon: 'none' });
+      showInfo('最多选择4个标签');
+      return;
     }
     tag.isSelected = true;
     SelectedTags.value.push(tag);
@@ -107,33 +112,55 @@ const toggleTag = (tag: Tags) => {
 const commit = async () => {
   if (isClicked.value) return;
   if (!canSubmit.value) {
-    return uni.showToast({ title: '请选择标签或填写内容', icon: 'none' });
+    showInfo('请填写吐槽内容');
+    return;
   }
 
   isClicked.value = true;
   isLoading.value = true;
+  showLoading('发布中...');
   try {
     const tagTexts = SelectedTags.value.map((t) => t.text);
-    await http.CommentController.commentAddCreate({
+    const res = await http.CommentController.commentAddCreate({
       courseId: course_id.value,
       content: text.value,
       tags: tagTexts
     });
+    const code = res.data?.code;
+    if (!(code === 200 || code === 0 || code === 201)) {
+      hideLoading();
+      showError(errorMessageOf(code, res.data?.msg) || '发布失败，请重试');
+      isClicked.value = false;
+      isLoading.value = false;
+      return;
+    }
 
+    hideLoading();
     isLoading.value = false;
     PubSub.publish('comment-refresh', course_id.value);
-    uni.showToast({ title: '发布成功', icon: 'success' });
+    showSuccess('发布成功');
     setTimeout(() => uni.navigateBack(), TOAST_DURATION_MS);
   } catch (e) {
     console.error('[course/comment] publish error:', e);
-    uni.showToast({ title: '发布失败', icon: 'none' });
+    hideLoading();
+    showError('发布失败');
     isClicked.value = false;
     isLoading.value = false;
   }
 };
 
 onLoad((options: Record<string, string> = {}) => {
-  course_id.value = options.id || '';
+  if (options.id) {
+    course_id.value = options.id;
+  }
+  if (options.data) {
+    try {
+      const data = JSON.parse(decodeURIComponent(options.data));
+      if (data?.id) course_id.value = data.id;
+    } catch (e) {
+      console.error('[course/comment] parse data error:', e);
+    }
+  }
 });
 
 onMounted(() => {

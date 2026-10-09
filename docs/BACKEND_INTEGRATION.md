@@ -188,7 +188,7 @@ yarn dev:mp-weixin
 }
 ```
 
-**前端处理**：已在 `src/api/response.ts` 中做了**新旧响应结构兼容**：
+**前端处理**：读取数据时兼容「扁平 / 嵌套」两种结构：
 ```typescript
 const data = res.data?.data ?? res.data;  // 兼容扁平结果
 ```

@@ -64,11 +64,15 @@ if (missing.length) {
 }
 
 const body = Object.entries(targets)
-  .map(([mode, keys]) => {
-    const lines = Object.entries(keys)
-      .map(([key, name]) => `    ${key}: "${tokens.get(name)}",`)
+  .map(([mode, keys], modeIndex, modes) => {
+    const entries = Object.entries(keys);
+    const lines = entries
+      .map(([key, name], i) =>
+        `    ${key}: '${tokens.get(name)}'${i < entries.length - 1 ? ',' : ''}`
+      )
       .join("\n");
-    return `  ${mode}: {\n${lines}\n  },`;
+    const trailing = modeIndex < modes.length - 1 ? "," : "";
+    return `  ${mode}: {\n${lines}\n  }${trailing}`;
   })
   .join("\n");
 

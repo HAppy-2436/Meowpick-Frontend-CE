@@ -52,6 +52,36 @@
   }
 }
 
+// ---------- 悬浮操作按钮（FAB）----------
+// 统一尺寸 / 圆形 / 品牌渐变 / 按压 / 暗色；位置与额外阴影由调用方补充。
+@mixin fab(
+  $size: 110rpx,
+  $shadow: $shadow-brand-md,
+  $active-scale: $press-scale-lg,
+  $dark-shadow: $shadow-brand-glow
+) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $gradient-brand;
+  color: $pure-white;
+  box-shadow: $shadow;
+  transition: transform $dur-fast $ease-emphasized,
+              box-shadow $dur-medium $ease-standard;
+
+  .dark-theme & {
+    background: $gradient-brand-dark;
+    box-shadow: $dark-shadow;
+  }
+
+  &:active {
+    transform: scale($active-scale);
+  }
+}
+
 // ---------- 渐变品牌按钮 ----------
 @mixin brand-button($bg: $gradient-brand) {
   background: $bg;
@@ -62,17 +92,26 @@
               box-shadow $dur-base $ease-standard,
               opacity $dur-fast $ease-standard;
 
+  .dark-theme & {
+    background: $gradient-brand-dark;
+  }
+
   &:active {
-    transform: scale(0.97);
+    transform: scale($press-scale-sm);
     box-shadow: $shadow-brand-md;
   }
 
   &[disabled],
   &.disabled {
-    background: $text-placeholder-light;
-    color: $pure-white;
+    background: $bg-muted-light;
+    color: $text-tertiary-light;
     box-shadow: none;
     transform: none;
+
+    .dark-theme & {
+      background: $bg-muted-darker;
+      color: $text-tertiary-dark;
+    }
   }
 }
 
@@ -93,6 +132,55 @@
     width: $width;
     border-radius: $radius-xs;
     background: $gradient-brand-vertical;
+  }
+}
+
+// 卡片/区块标题：左侧品牌强调条 + 主文本色（同形同意，字号由调用方定）
+@mixin section-title {
+  @include title-accent;
+  color: $text-primary-light;
+  transition: color $dur-fast $ease-standard;
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+// 选中态 chip：品牌极淡底 + 品牌描边 + 品牌字（同形同意）
+@mixin tag-chip-active {
+  background: $brand-red-tint;
+  border-color: $brand-red;
+  color: $brand-red;
+
+  .dark-theme & {
+    background: $brand-red-tint-dark;
+    border-color: $brand-red-soft;
+    color: $brand-red-soft;
+  }
+}
+
+// 可点选标签 chip：中性底 + 选中品牌态 + 按压反馈（全站同形同意）。
+// 调用方只负责布局与字号（尺寸、排列、字重）。
+// $radius：扁长 chip 用 pill（默认）；正方形选择块按「圆角与面积成正比」传入较大半径（如 $radius-xl）。
+@mixin selectable-tag($radius: $radius-pill) {
+  background: $bg-muted-light;
+  border: 1rpx solid transparent;
+  border-radius: $radius;
+  color: $text-secondary-light;
+  @include mwp-transition($dur-fast, $ease-emphasized);
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+    color: $text-secondary-dark;
+  }
+
+  &:active {
+    transform: scale($press-scale-md);
+  }
+
+  &.is-active,
+  &.active {
+    @include tag-chip-active;
   }
 }
 
@@ -219,6 +307,101 @@
   @include mwp-transition($dur-fast, $ease-standard);
 }
 
+// ---------- 多行输入框（textarea 容器 + 文本域 + 字数）----------
+// 统一「新增吐槽 / 新增提案 / 拒绝理由」等输入框外观与聚焦态。
+// 用法：外层 view 加 @include textarea-box; 内部 textarea 加 @include textarea-field;
+@mixin textarea-box($padding: $space-5) {
+  position: relative;
+  padding: $padding;
+  background: $bg-muted-light;
+  border: 2rpx solid transparent;
+  border-radius: $radius-control;
+  box-sizing: border-box;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    background: $bg-muted-dark;
+  }
+
+  &:focus-within {
+    background: $bg-card-light;
+    border-color: $border-color-brand;
+    box-shadow: $focus-ring-light;
+
+    .dark-theme & {
+      background: $bg-card-dark;
+      border-color: $border-color-brand-dark;
+      box-shadow: $focus-ring-dark;
+    }
+  }
+}
+
+// 高度：固定高度用 $height（非 auto-height），自增高用 $min-height（auto-height）
+@mixin textarea-field($height: null, $min-height: null) {
+  width: 100%;
+  @if $height {
+    height: $height;
+  }
+  @if $min-height {
+    min-height: $min-height;
+  }
+  font-size: $font-base;
+  line-height: 1.6;
+  color: $text-primary-light;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    color: $text-primary-dark;
+  }
+}
+
+@mixin textarea-counter {
+  display: block;
+  text-align: right;
+  font-size: $font-xs;
+  color: $text-tertiary-light;
+  margin-top: $space-3;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    color: $text-tertiary-dark;
+  }
+}
+
+// ---------- 提示横幅（主题色边框）----------
+// 用法：容器加 @include banner; 内部使用 &__icon / &__text
+@mixin banner($padding: $space-4 $space-6) {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $padding;
+  background: $danger-soft;
+  border: 1rpx solid $border-color-brand;
+  border-radius: $radius-md;
+  color: $brand-red;
+  font-size: $font-sm;
+  @include mwp-transition($dur-fast, $ease-standard);
+
+  .dark-theme & {
+    background: $danger-soft-dark;
+    color: $brand-red-soft;
+    border-color: $border-color-brand-dark;
+  }
+
+  &__icon {
+    font-size: $font-lg;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    font-weight: $weight-medium;
+  }
+}
+
 // ---------- 渐变文字 ----------
 @mixin text-gradient($from: $brand-red, $to: $brand-red-soft) {
   background: linear-gradient(135deg, $from 0%, $to 100%);
@@ -228,33 +411,67 @@
   color: transparent;
 }
 
-// ---------- 焦点环（可访问性）----------
-@mixin focus-ring($color: rgba(178, 0, 53, 0.35)) {
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 4rpx $color;
+// ---------- 日志动作类型 → 文本色（浅/深色通用）----------
+// $sel 为基类前缀（如 .act / .raw-action），会生成 `#{$sel}--create` 等修饰类。
+@mixin log-action-color($sel) {
+  #{$sel}--create,
+  #{$sel}--update,
+  #{$sel}--unknown {
+    color: $info;
+  }
+  #{$sel}--approve,
+  #{$sel}--grant_admin {
+    color: $success;
+  }
+  #{$sel}--reject {
+    color: $brand-red;
+  }
+  #{$sel}--delete,
+  #{$sel}--revoke_admin {
+    color: $warning-text;
+  }
+
+  .dark-theme {
+    #{$sel}--create,
+    #{$sel}--update,
+    #{$sel}--unknown {
+      color: $info-text-dark;
+    }
+    #{$sel}--approve,
+    #{$sel}--grant_admin {
+      color: $success-text-dark;
+    }
+    #{$sel}--reject {
+      color: $brand-red-soft;
+    }
+    #{$sel}--delete,
+    #{$sel}--revoke_admin {
+      color: $warning-text-dark;
+    }
   }
 }
 
 // ---------- 加载中 shimmer（用于骨架屏）----------
 @mixin shimmer {
-  background: linear-gradient(
+  background-color: $bg-muted-light;
+  background-image: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0.45) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.6s linear infinite;
+  animation: mwp-shimmer 1.6s linear infinite;
 }
 
 @mixin shimmer-dark {
-  background: linear-gradient(
+  background-color: $bg-muted-dark;
+  background-image: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0.08) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.6s linear infinite;
+  animation: mwp-shimmer 1.6s linear infinite;
 }

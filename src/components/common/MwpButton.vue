@@ -4,13 +4,17 @@
     :class="[
       `tone-${tone}`,
       `size-${size}`,
-      { 'is-block': block, 'is-loading': loading, 'is-disabled': disabled }
+      { 'is-block': block, 'is-loading': loading, 'is-disabled': disabled },
+      themeStore.themeClass
     ]"
     hover-class="mwp-hover"
+    :hover-start-time="0"
+    :hover-stay-time="0"
     @click="handleClick"
   >
     <view v-if="loading" class="mwp-btn-spinner" />
-    <text v-else-if="icon" class="mwp-btn-icon">{{ icon }}</text>
+    <slot v-else name="icon" />
+    <text v-if="icon && !loading" class="mwp-btn-icon">{{ icon }}</text>
     <text class="mwp-btn-label"><slot /></text>
   </view>
 </template>
@@ -19,15 +23,25 @@
 /**
  * 通用按钮
  *
- * tone:  brand（红渐变） | primary（实色） | ghost（描边） | danger | plain
+ * tone:  brand（红渐变） | primary（实色） | ghost（红描边） | danger（淡红底） | danger-outline（白底红边框） | plain
  * size:  sm | md | lg
  * block: 通栏
+ * slots: 默认 = 文案；#icon = 前置图标（可放 <MwpIcon> 等自定义节点）
  */
 import { withDefaults } from 'vue';
+import { useThemeStore } from '@/config';
+
+const themeStore = useThemeStore();
 
 const props = withDefaults(
   defineProps<{
-    tone?: 'brand' | 'primary' | 'ghost' | 'danger' | 'plain';
+    tone?:
+      | 'brand'
+      | 'primary'
+      | 'ghost'
+      | 'danger'
+      | 'danger-outline'
+      | 'plain';
     size?: 'sm' | 'md' | 'lg';
     block?: boolean;
     disabled?: boolean;
@@ -88,11 +102,7 @@ const handleClick = (e: { detail?: unknown }) => {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.5) 10%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, $ripple-white 10%, transparent 70%);
     opacity: 0;
     transform: scale(0);
     transition: opacity $dur-medium $ease-standard,
@@ -130,6 +140,9 @@ const handleClick = (e: { detail?: unknown }) => {
   background: $gradient-brand;
   color: $pure-white;
   box-shadow: $shadow-brand-sm;
+  &.dark-theme {
+    background: $gradient-brand-dark;
+  }
   &:active:not(.is-disabled):not([disabled]) {
     box-shadow: $shadow-brand-md;
   }
@@ -139,38 +152,50 @@ const handleClick = (e: { detail?: unknown }) => {
   background: $bg-card-light;
   color: $text-primary-light;
   border-color: $divider-light;
-  .dark-theme & {
+  &.dark-theme {
     background: $bg-card-dark;
     color: $text-primary-dark;
-    border-color: $divider-dark;
+    border-color: $divider-card-dark;
   }
 }
 
 .tone-ghost {
   background: transparent;
   color: $brand-red;
-  border-color: rgba(178, 0, 53, 0.35);
-  .dark-theme & {
+  border-color: $border-color-brand-strong;
+  &.dark-theme {
     color: $brand-red-soft;
-    border-color: rgba(255, 77, 106, 0.45);
+    border-color: $border-color-brand-strong-dark;
   }
 }
 
 .tone-danger {
   background: $danger-soft;
   color: $brand-red;
-  border-color: rgba(178, 0, 53, 0.2);
-  .dark-theme & {
-    background: rgba(255, 77, 106, 0.14);
+  border-color: $danger-border;
+  &.dark-theme {
+    background: $danger-soft-dark;
     color: $brand-red-soft;
-    border-color: rgba(255, 77, 106, 0.3);
+    border-color: $danger-border-dark;
+  }
+}
+
+// 白底红边框：与提案页「拒绝」动作按钮一致，用于破坏性操作的确认键
+.tone-danger-outline {
+  background: $bg-card-light;
+  color: $danger;
+  border-color: $danger;
+  &.dark-theme {
+    background: $bg-card-dark;
+    color: $brand-red-soft;
+    border-color: $brand-red-soft;
   }
 }
 
 .tone-plain {
   background: $bg-muted-light;
   color: $text-secondary-light;
-  .dark-theme & {
+  &.dark-theme {
     background: $bg-muted-dark;
     color: $text-secondary-dark;
   }

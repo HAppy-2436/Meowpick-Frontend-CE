@@ -1,35 +1,67 @@
 <template>
-  <view v-if="visible" class="mwp-sheet" @click="handleCancel">
-    <view class="mwp-sheet__panel" @click.stop>
-      <view class="mwp-sheet__handle" />
-      <text v-if="title" class="mwp-sheet__title">{{ title }}</text>
-      <text v-if="description" class="mwp-sheet__desc">{{ description }}</text>
-
-      <view class="mwp-sheet__actions">
-        <view
-          v-for="action in actions"
-          :key="action.value"
-          class="mwp-sheet__action"
-          :class="`tone-${action.tone || 'default'}`"
-          hover-class="mwp-hover"
-          @click="handleSelect(action)"
-        >
-          <text class="mwp-sheet__action-text">{{ action.label }}</text>
-        </view>
-      </view>
-
+  <!--
+    root-portal：提升到页面根节点，脱离 swiper / scroll-view 等被 transform 的祖先。
+    否则 fixed 会以 swiper-item 为包含块，弹窗底部被底部 tab bar 遮挡。
+  -->
+  <root-portal>
+    <view
+      v-if="visible"
+      class="mwp-sheet"
+      :class="themeStore.themeClass"
+      @click="handleCancel"
+    >
       <view
-        v-if="cancelText"
-        class="mwp-sheet__cancel"
-        hover-class="mwp-hover"
-        @click="handleCancel"
+        class="mwp-sheet__panel"
+        :style="[
+          panelStyle,
+          viewport.safeBottom === 0 ? { paddingBottom: '32rpx' } : {}
+        ]"
+        @click.stop
       >
-        <text>{{ cancelText }}</text>
-      </view>
+        <view
+          class="mwp-sheet__grabber"
+          @touchstart="onTouchStart"
+          @touchmove.stop.prevent="onTouchMove"
+          @touchend="onTouchEnd"
+          @touchcancel="onTouchEnd"
+        >
+          <view class="mwp-sheet__handle" />
+        </view>
+        <text v-if="title" class="mwp-sheet__title">{{ title }}</text>
+        <text v-if="description" class="mwp-sheet__desc">{{
+          description
+        }}</text>
 
-      <view class="mwp-sheet__safe" />
+        <view class="mwp-sheet__actions">
+          <view
+            v-for="action in actions"
+            :key="action.value"
+            class="mwp-sheet__action"
+            :class="`tone-${action.tone || 'default'}`"
+            hover-class="mwp-hover"
+            :hover-start-time="0"
+            :hover-stay-time="0"
+            @click="handleSelect(action)"
+          >
+            <text class="mwp-sheet__action-text">{{ action.label }}</text>
+          </view>
+        </view>
+
+        <view
+          v-if="cancelText"
+          class="mwp-sheet__cancel"
+          hover-class="mwp-hover"
+          :hover-start-time="0"
+          :hover-stay-time="0"
+          @click="handleCancel"
+        >
+          <text>{{ cancelText }}</text>
+        </view>
+
+        <view class="mwp-sheet__safe" />
+      </view>
     </view>
-  </view>
+  </root-portal>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +78,14 @@
  *     @select="onSelect"
  *   />
  */
+import { useThemeStore } from '@/config';
+import { useSwipeDownClose } from '@/composables/useSwipeDownClose';
+import { useViewport } from '@/composables/useViewport';
+
+const themeStore = useThemeStore();
+// 无小白条设备 env(safe-area-inset-bottom) 为 0，需补一段底部距离
+const viewport = useViewport();
+
 interface ActionItem {
   label: string;
   value: string;
@@ -83,6 +123,12 @@ const handleCancel = () => {
   emit('cancel');
   close();
 };
+
+const { panelStyle, onTouchStart, onTouchMove, onTouchEnd } = useSwipeDownClose(
+  {
+    onClose: handleCancel
+  }
+);
 </script>
 
 <style lang="scss" scoped>
@@ -96,7 +142,7 @@ const handleCancel = () => {
   justify-content: center;
   animation: mwp-fade-in $motion-pop $ease-standard backwards;
 
-  .dark-theme & {
+  &.dark-theme {
     background: $bg-overlay-dark;
   }
 }
@@ -104,7 +150,8 @@ const handleCancel = () => {
 .mwp-sheet__panel {
   width: 100%;
   box-sizing: border-box;
-  padding: $space-4 $space-7 $space-4;
+  // 有小白条：$space-4 + env()（原始位置）；无小白条：由内联样式补 32rpx
+  padding: $space-5 $space-7 $space-4;
   background: $bg-card-light;
   border-radius: $radius-2xl $radius-2xl 0 0;
   animation: mwp-slide-up $motion-enter-lg $ease-decelerate backwards;
@@ -114,10 +161,15 @@ const handleCancel = () => {
   }
 }
 
+.mwp-sheet__grabber {
+  display: flex;
+  justify-content: center;
+  padding: $space-3 0 $space-6;
+}
+
 .mwp-sheet__handle {
   width: 72rpx;
   height: 8rpx;
-  margin: 0 auto $space-5;
   border-radius: $radius-pill;
   background: $divider-light;
 
@@ -180,6 +232,10 @@ const handleCancel = () => {
   background: $gradient-brand;
   box-shadow: $shadow-brand-sm;
 
+  .dark-theme & {
+    background: $gradient-brand-dark;
+  }
+
   .mwp-sheet__action-text {
     color: $pure-white;
   }
@@ -201,14 +257,20 @@ const handleCancel = () => {
   }
 }
 
+// 白底红边框：与确认弹窗的破坏性确认键一致，用于删除/撤回/不保存等操作
 .mwp-sheet__action.tone-danger {
-  background: $danger-soft;
+  box-sizing: border-box;
+  background: $bg-card-light;
+  border: 1rpx solid $danger;
 
   .mwp-sheet__action-text {
     color: $brand-red;
   }
 
   .dark-theme & {
+    background: $bg-card-dark;
+    border-color: $brand-red-soft;
+
     .mwp-sheet__action-text {
       color: $brand-red-soft;
     }
@@ -216,8 +278,8 @@ const handleCancel = () => {
 }
 
 .mwp-sheet__cancel {
-  margin-top: $space-5;
-  height: 88rpx;
+  margin-top: $space-4;
+  height: 64rpx;
   border-radius: $radius-pill;
   display: flex;
   align-items: center;

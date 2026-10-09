@@ -1,0 +1,23 @@
+
+.background {
+  min-height: 100vh;
+  background-color: $bg-page-light;
+  padding: 0 $page-gutter;
+  box-sizing: border-box;
+  transition: background-color $dur-medium $ease-standard;
+
+  &.dark-theme {
+    background-color: $bg-page-dark;
+  }
+}
+
+.log-list {
+  position: relative;
+  z-index: $z-base;
+  animation: mwp-fade-up $motion-bounce $ease-decelerate $dur-instant backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .log-list {
+    animation: none;
+  }
+}

@@ -16,11 +16,12 @@ type CourseSearchReq = {
 
 export function useChoose() {
   const keyword = ref('');
-  const type = ref('course');
 
   const resultList = ref<MixedResult[]>([]);
   const page = ref(1);
   const loading = ref(false);
+  // 请求失败（用于区分「加载失败」与「没有结果」两种空状态）
+  const error = ref(false);
   // 是否已加载到最后一页（本次请求无新数据）
   const reachedEnd = ref(false);
 
@@ -54,14 +55,10 @@ export function useChoose() {
   }
 
   function jump(item: MixedResult) {
-    if (item.resultType === 'teacher') {
-      // 搜索该教师的课程
-      keyword.value = item.name || '';
-      doSearch(true, 'default');
-    } else if (item.resultType === 'proposal') {
+    if (item.resultType === 'proposal') {
       const dataStr = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: `/pages/course/proposal-detail?data=${dataStr}`
+        url: `/pages/proposal/proposal-detail?data=${dataStr}`
       });
     } else {
       uni.navigateTo({
@@ -70,18 +67,23 @@ export function useChoose() {
     }
   }
 
+  // 请求序号：慢响应返回时若已有更新的请求，则丢弃，避免旧结果覆盖新结果
+  let requestVersion = 0;
+
   function doSearch(reload: boolean, sortType: string = 'default') {
     if (!keyword.value.trim()) {
       loading.value = false;
-      return;
+      return Promise.resolve();
     }
-    if (loading.value && !reload) return; // 防止重复加载
+    if (loading.value && !reload) return Promise.resolve(); // 防止重复加载
     if (reload) {
       page.value = 1;
       resultList.value = [];
       reachedEnd.value = false;
+      error.value = false;
     }
     loading.value = true;
+    const version = ++requestVersion;
 
     const baseParam = {
       keyword: keyword.value,
@@ -93,11 +95,12 @@ export function useChoose() {
     const teacherParam: CourseSearchReq = { ...baseParam, type: 'teacher' };
 
     // 只搜索课程和教师，不搜索提案（提案延迟到点击按钮后）
-    Promise.all([
+    return Promise.all([
       http.CoursesController.searchCreate(courseParam),
       http.CoursesController.searchCreate(teacherParam)
     ])
       .then(([courseRes, teacherRes]) => {
+        if (version !== requestVersion) return; // 过期响应丢弃
         const courseData = courseRes.data as HandlerResponseDtoListCoursesResp;
         const teacherData =
           teacherRes.data as HandlerResponseDtoListCoursesResp;
@@ -109,16 +112,26 @@ export function useChoose() {
         }));
 
         const teacherContent = teacherData?.data?.courses || [];
+        // 注意：/api/search 的 type=teacher 返回的仍是课程列表（命中该教师的课程），
+        // 不是教师实体，因此同样标记为 course，点击后进入课程详情。
         const apiTeachers: MixedResult[] = teacherContent.map((t) => ({
           ...t,
-          resultType: 'teacher' as const
+          resultType: 'course' as const
         }));
 
         // 本页无任何原始数据 => 已到底，后续不再显示「查看更多」
         reachedEnd.value =
           courseContent.length === 0 && teacherContent.length === 0;
 
-        let combined: MixedResult[] = [...apiCourses, ...apiTeachers];
+        // 课程名命中与教师名命中可能返回同一门课，按 id 去重
+        const seenIds = new Set<string>();
+        let combined: MixedResult[] = [];
+        for (const item of [...apiCourses, ...apiTeachers]) {
+          const key = item.id || item.name || '';
+          if (seenIds.has(key)) continue;
+          seenIds.add(key);
+          combined.push(item);
+        }
 
         // 收集可筛选选项（在筛选前，基于完整结果集）
         collectFilterOptions(combined, page.value === 1);
@@ -152,10 +165,13 @@ export function useChoose() {
         }
       })
       .catch((err: unknown) => {
+        if (version !== requestVersion) return; // 过期响应丢弃
         console.error('[useChoose] Search error:', err);
+        // 仅首屏失败进入错误态；加载更多失败不应清掉已有结果
+        if (page.value === 1) error.value = true;
       })
       .finally(() => {
-        loading.value = false;
+        if (version === requestVersion) loading.value = false;
       });
   }
 
@@ -164,6 +180,7 @@ export function useChoose() {
     rows: resultList,
     page,
     loading,
+    error,
     reachedEnd,
     jump,
     doSearch,

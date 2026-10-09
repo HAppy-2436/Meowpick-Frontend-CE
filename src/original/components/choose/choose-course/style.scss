@@ -1,0 +1,63 @@
+$second: #818181;
+.index {
+  @apply
+  relative
+  p-3 mb-5
+  ;
+}
+
+.imgs {
+  @apply
+  flex
+  mb-3
+  ;
+
+  .page-photo {
+    border-radius: var(--app-component-radius, 5vw);
+    @apply
+    w-28 h-36
+    overflow-hidden
+    ;
+
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .course-time {
+    border-radius: var(--app-component-radius, 5vw);
+    @apply
+    flex-1 overflow-hidden
+    ml-5
+    ;
+
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.header {
+  @apply
+  mb-3
+  ;
+}
+
+.score {
+  @apply
+  flex
+  ;
+
+  .num {
+    color: orange;
+  }
+
+  .rate {
+    @apply
+    mr-2
+    ;
+  }
+}
+
+.desc {
+  color: $second;
+  font-size: .84rem;
+}

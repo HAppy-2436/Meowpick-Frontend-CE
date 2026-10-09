@@ -4,7 +4,7 @@ import { http } from '@/config';
 
 export const useInput = () => {
   const searchText = ref('');
-  const placeHolder = ref('搜索课程、老师或吐槽...');
+  const placeHolder = ref('搜索课程、老师');
 
   return {
     searchText,
@@ -17,58 +17,54 @@ export function useSuggest(externalKeyword?: Ref<string>) {
   const keyword = externalKeyword || internalKeyword;
   const type = ref('course');
   const suggestList = ref<(DtoSearchSuggestionsVO & { id?: string })[]>([]);
+  const isLoading = ref(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function suggestContent(_pageNum?: number) {
+  // 请求序号：慢响应返回时丢弃，避免旧建议覆盖新输入
+  let requestVersion = 0;
+
+  function suggestContent() {
     if (!keyword.value) {
       suggestList.value = [];
+      isLoading.value = false;
       return;
     }
 
-    http.SearchController.searchSuggestList({ keyword: keyword.value })
+    const requestKeyword = keyword.value;
+    const version = ++requestVersion;
+    isLoading.value = true;
+    http.SearchController.searchSuggestList({ keyword: requestKeyword })
       .then((res) => {
+        if (version !== requestVersion) return; // 过期响应丢弃
         const suggestions = res.data?.data?.suggestions ?? [];
 
-        // 始终将输入内容作为第一条
-        const inputItem = {
-          name: keyword.value,
-          type: 'input',
-          id: `input-${keyword.value}`
-        };
-
         // 过滤掉与输入完全相同的项，避免重复
-        const filteredSuggestions = suggestions
-          .filter((item) => item.name !== keyword.value)
+        suggestList.value = suggestions
+          .filter((item) => item.name !== requestKeyword)
           .map((item) => ({
             name: item.name,
             type: item.type,
             id: `${String(item.type)}-${String(item.name)}`
           }));
-
-        // 合并：输入内容 + 过滤后的建议
-        suggestList.value = [inputItem, ...filteredSuggestions];
       })
       .catch((err: unknown) => {
+        if (version !== requestVersion) return;
         console.error('[useSuggest] error:', err);
-        // 即使出错，也应该显示输入内容作为第一条
-        suggestList.value = [
-          {
-            name: keyword.value,
-            type: 'input',
-            id: `input-${keyword.value}`
-          }
-        ];
+        suggestList.value = [];
+      })
+      .finally(() => {
+        if (version === requestVersion) isLoading.value = false;
       });
   }
 
   watch([keyword, type], () => {
     suggestList.value = [];
+    isLoading.value = false;
   });
 
   return {
     keyword,
-    type,
     suggestList,
-    suggestContent
+    suggestContent,
+    isLoading
   };
 }

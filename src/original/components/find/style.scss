@@ -1,0 +1,43 @@
+.wrapper {
+  background-color: #EDEDEF;
+  border-radius: var(--app-component-radius, 5vw) var(--app-component-radius, 5vw) 0 0;
+  @apply
+  shadow overflow-hidden
+  ;
+
+  .input-box {
+    @apply
+    flex
+    ;
+
+    .icon {
+      @apply
+      relative
+      flex justify-center items-center
+      w-14 h-14
+      text-gray-700
+      ;
+
+      &::after {
+        content: "";
+        width: 1px;
+        height: 30%;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        @apply
+        absolute
+        bg-gray-400
+        ;
+      }
+    }
+  }
+
+  .search-text {
+    border-radius: var(--app-component-radius, 5vw);
+    @apply
+    flex-1 h-14 px-3
+    text-gray-700
+    ;
+  }
+}

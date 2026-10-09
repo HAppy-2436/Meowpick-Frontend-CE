@@ -1,22 +1,10 @@
-import catFace from '@/images/cat-emoji/cat_face.png';
-import catGrinning from '@/images/cat-emoji/grinning_cat.png';
-import catHeartEyes from '@/images/cat-emoji/heart-eyes-cat.png';
-import catGrinningEyes from '@/images/cat-emoji/grinning_cat_with_smiling_eyes.png';
-import catKissing from '@/images/cat-emoji/kissing_cat.png';
-import catCrying from '@/images/cat-emoji/crying_cat.png';
-import catPouting from '@/images/cat-emoji/pouting_cat.png';
-import catHardcore from '@/images/cat-emoji/hardcore-cat.png';
+import { TotalTags } from './tags';
 
-export const DEFAULT_AVATARS = [
-  catFace,
-  catGrinning,
-  catHeartEyes,
-  catGrinningEyes,
-  catKissing,
-  catCrying,
-  catPouting,
-  catHardcore
-];
+// 头像直接复用「发表吐槽」页的猫猫图片，不再单独维护一份图列表。
+// 按图片去重后得到 7 张（标签里「快跑」「枯燥」共用同一张，属预期）。
+export const DEFAULT_AVATARS: string[] = Array.from(
+  new Set(TotalTags.value.map((tag) => tag.icon))
+);
 
 const DEFAULT_AVATAR_SET = new Set<string>(DEFAULT_AVATARS);
 
